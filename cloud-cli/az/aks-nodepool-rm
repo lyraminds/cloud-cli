@@ -1,0 +1,8 @@
+
+#!/bin/bash
+
+MOD=${1}
+RG=${2:-$RESOURCE_GROUP}
+AKS=${3:-$AKS_CLUSTER}
+
+./run-cmd "az aks nodepool delete -g ${RG} --cluster-name ${AKS} --name ${MOD}"

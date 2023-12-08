@@ -1,0 +1,84 @@
+
+
+RG=${1:-$RESOURCE_GROUP}
+NAME=${2:-auth}
+IP=${3}
+
+# Create resource groups if it does not exist yet
+# if [ -z "${IP}" ]; then
+OGN="${APP}-${NAME}-group"
+OGR=${APP}-${NAME}-route
+DOM="${NAME}.${DOMAIN_NAME}"
+
+ONA="${APP}-${NAME}-orign-${ENVLOCATION}"
+if [ "${ENVLOCATION}" = "master" ]; then
+
+C="az afd origin-group create -g ${RG} --origin-group-name \"${OGN}\" --profile-name \"${FRONT_DOOR_PROFILE}\" \
+  --probe-request-type HEAD --probe-protocol Http \
+  --probe-interval-in-seconds 120 \
+  --probe-path \"/\" \
+  --sample-size 4 \
+  --successful-samples-required 3 \
+  --additional-latency-in-milliseconds 50"
+
+./run-cmd "${C}"
+
+fi
+
+PRIORITY=2
+if [ "${ENVLOCATION}" = "master" ]; then
+PRIORITY=1
+fi
+
+C="az afd origin show --profile-name \"${FRONT_DOOR_PROFILE}\" --origin-group-name ${OGN} --origin-name ${ONA} --resource-group \"${RESOURCE_GROUP_MASTER}\" --query hostName"
+HOST=`${C}`
+
+if [ -z "${HOST}" ]; then
+#TODO naming of front door
+#TODO RESOURCE GROUP MARTER RG name
+C="az afd origin create -g \"${RESOURCE_GROUP_MASTER}\" --host-name \"${IP}\" --profile-name \"${FRONT_DOOR_PROFILE}\" --origin-group-name ${OGN} --origin-name ${ONA} \
+  --origin-host-header \"${DOM}\" \
+  --priority ${PRIORITY} --weight 500 --enabled-state Enabled --http-port 80 --https-port 443"
+
+./run-cmd "${C}"
+else
+C="az afd origin update -g \"${RESOURCE_GROUP_MASTER}\" --host-name \"${IP}\" --profile-name \"${FRONT_DOOR_PROFILE}\" --origin-group-name ${OGN} --origin-name ${ONA} --origin-host-header \"${DOM}\" --priority ${PRIORITY}"
+./run-cmd "${C}"
+fi
+
+
+
+if [ "${ENVLOCATION}" = "master" ]; then
+#ARECORD
+#C="az network dns record-set a add-record -g ${RG} -z ${DOMAIN_NAME} -n ${NAME} -a \"${FRONT_DOOR_ENDPOINT}.z01.azurefd.net\""
+
+#CNAME
+C="az network dns record-set cname set-record -g ${RG} -z ${DOMAIN_NAME} --record-set-name ${NAME} --cname \"${FRONT_DOOR_ENDPOINT}.z01.azurefd.net\""
+
+./run-cmd "${C}"
+
+C="az afd custom-domain create -g \"${RG}\" --custom-domain-name \"${NAME}\" --profile-name \"${FRONT_DOOR_PROFILE}\" --host-name \"${NAME}.${DOMAIN_NAME}\" --minimum-tls-version TLS12 --certificate-type ManagedCertificate"
+./run-cmd "${C}"
+#wait till custom domain is created
+C="az afd custom-domain wait -g \"${RG}\" --profile-name \"${FRONT_DOOR_PROFILE}\" --custom-domain-name \"${NAME}\" --created"
+./run-cmd "${C}"
+
+TOKEN=`az afd custom-domain show -g "${RG}" --profile-name "${FRONT_DOOR_PROFILE}" --custom-domain-name "${NAME}" --query validationProperties.validationToken`
+
+C="az network dns record-set txt add-record -g \"${RG}\" -z \"${DOMAIN_NAME}\" -n \"_dnsauth.${NAME}\" --value \"${TOKEN}\""
+./run-cmd "${C}"
+
+RU=`az afd route show -g "${RG}" --endpoint-name "${FRONT_DOOR_ENDPOINT}" --profile-name "${FRONT_DOOR_PROFILE}" --route-name "${OGR}" --query id`
+if [ -z "${RU}" ]; then
+C="az afd route create -g \"${RG}\" --custom-domains \"${NAME}\" --endpoint-name \"${FRONT_DOOR_ENDPOINT}\" --profile-name \"${FRONT_DOOR_PROFILE}\" --route-name \"${OGR}\" --https-redirect Enabled --origin-group \"${OGN}\" --supported-protocols Http Https --link-to-default-domain Disabled --forwarding-protocol HttpOnly"
+./run-cmd "${C}"
+fi
+
+fi
+#   --private-link-resource /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group/providers/Microsoft.Storage/storageAccounts/plstest 
+#   --private-link-location EastUS 
+#   --private-link-request-message 'Please approve this request' --private-link-sub-resource table
+
+
+
+
