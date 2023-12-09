@@ -40,7 +40,7 @@ if [ -d "$F" ]; then
   
 else
   mkdir -p $F
-  cp $CF -R $F
+  cp -r $CF $F
   sed -i "s/demo/${C}/g" "${F}/private-azure.env"
   sed -i "s/dev/${E}/g" "${F}/private-azure.env"
   sed -i "s/westus2/${R}/g" "${F}/private-azure.env"  
@@ -51,6 +51,7 @@ else
   fi
   if [ "$5" != "" ]; then  
   sed -i "s/azure-subscription-code/${5}/g" "${F}/private-azure.env"  
+  echo "work" > ${F}/.gitignore
   fi
 
   sed -i "s/accounts/${AC2}/g" "${F}/zlink.sh"  

@@ -38,18 +38,22 @@ function nlog(){
 }
 
 function info(){
-  log "$1" "${CC_INFO_FILE}"
+  log "$1" "${CC_LOG_FILE}"
 }
 
 function error(){
-  log "$1" "${CC_ERROR_FILE}"
+  log "$1" "${CC_LOG_FILE}"
+}
+
+function audit(){
+  log "$1" "${CC_AUDIT_FILE}"
 }
 
 function clearlog(){
   if [ "${CC_CLEAN_LOG}" == "true" ]; then
    echo "$1" > ${CC_SCRIPT_FILE}
-   echo "$1" > ${CC_INFO_FILE}
-   echo "$1" > ${CC_ERROR_FILE} 
+  #  echo "$1" > ${CC_AUDIT_FILE}
+   echo "$1" > ${CC_LOG_FILE} 
    echo "$1" > ${CC_REMOVE_FILE} 
    echo "$1" > ${CC_VIEW_FILE}   
   else
@@ -62,6 +66,7 @@ function _exec(){
     local _MODE=${2:-${CC_MODE}} 
     if [ "${_MODE}" == "live" ]; then
      log "$1"
+     audit "$1"
      eval "$1"     
     elif [ "${_MODE}" == "script" ]; then
       log "$1"
@@ -108,7 +113,7 @@ mask() {
 }
 
 empty(){
-info "$2=$1"
+   "$2=$1"
 if [ "$1" = "" ]; then    
     echo "ERROR: $2 is required";
     echo "$3";
