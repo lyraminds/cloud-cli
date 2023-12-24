@@ -17,10 +17,10 @@ cd workspace-cloud-cli
 
 Get the scripts.
 ``````
-bash -c "$(curl -L https://raw.githubusercontent.com/LyraOps/cloud-cli/main/bin/install.sh)"
+bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
 ``````
 
-Note if you are not able to download. Add this ip to your host file
+Note if you are not able to download, add to your host file.
 
 ``````
 sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
