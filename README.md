@@ -87,7 +87,7 @@ cloud-cli/az/onboard.sh \
   -v "Version no" 
 ``````
 
-Example: To Create your customer's dev environment
+Example: Create dev environment
 
 ``````
 cloud-cli/az/onboard.sh \
@@ -95,21 +95,7 @@ cloud-cli/az/onboard.sh \
   -r "westus2" \
   -c "mycustomer" \
   -d "mycustomerdomain.com" \
-  -u "azureuserloginemail@domain.com" \
-  -s "00000000-0000-0000-0000-000000000000" \
-  -v "001" 
-``````
-
-Example: To Create the above customer's uat environment in a different region
-
-``````
-cloud-cli/az/onboard.sh \
-cloud-cli/az/onboard.sh \
-  -e "uat" \
-  -r "westus2" \
-  -c "mycustomer" \
-  -d "mycustomerdomain.com" \
-  -u "azureuserloginemail@domain.com" \
+  -u "azureuserloginemail@mycustomerdomain.com" \
   -s "00000000-0000-0000-0000-000000000000" \
   -v "001" 
 ``````
