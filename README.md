@@ -36,25 +36,38 @@ code .
 ## Azure Quick Start 
 
 
-Generate your first on-boarding script for azure.
+Generate your first on-boarding script for Azure.
 
 
 ``````
 cloud-cli/az/onboard.sh \
   -e "dev" \
   -r "westus2" \
-  -c "mycustomer" \
-  -d "mycustomerdomain.com" \
-  -u "azureuserloginemail@domain.com" \
+  -c "mycompany" \
+  -d "mycompanydomain.com" \
+  -u "azureuserloginemail@mycompanydomain.com" \
   -s "00000000-0000-0000-0000-000000000000" \
   -v "001" 
+``````
+
+Create your customer environment configuration.
+
+``````
+cloud-cli/az/onboard.sh \
+  -e "environment-name-no-space" \ 
+  -r "Region" \
+  -c "customer-name-no-space" \
+  -d "Domain-name" \
+  -u "Aure login name with a valid Subscription" \ 
+  -s "Subscription Code" \
+  -v "Version no" 
 ``````
 
 Go to the generated directory
 
 Example:
 ``````
-cd ~/workspace-cloud-cli/accounts/infra/mycustomer/dev-westus2-001
+cd ~/workspace-cloud-cli/accounts/infra/mycompany/dev-westus2-001
 
 ``````
 
@@ -64,40 +77,6 @@ Your configurations are stored in **private-azure.env**
 To create an AKS cluster (Provide a valid subscription and user credentials)
 ``````
 ./install-aks.sh 
-``````
-
-
-
-## Azure Samples
-
-
-Onboard your customer.
--------------------- 
-
-Create your customer environment configuration.
-
-``````
-cloud-cli/az/onboard.sh \
-  -e "environment-name-no-space" \ 
-  -r "Region" \
-  -c "customer-name-no-space" \
-  -d "Domain name" \
-  -u "Aure login name with a valid Subscription" \ 
-  -s "Subscription Code" \
-  -v "Version no" 
-``````
-
-Example: Create dev environment
-
-``````
-cloud-cli/az/onboard.sh \
-  -e "dev" \
-  -r "westus2" \
-  -c "mycustomer" \
-  -d "mycustomerdomain.com" \
-  -u "azureuserloginemail@mycustomerdomain.com" \
-  -s "00000000-0000-0000-0000-000000000000" \
-  -v "001" 
 ``````
 
 
