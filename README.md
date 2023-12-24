@@ -1,10 +1,143 @@
-# cloud-cli
+# Cloud-CLI
 
-Cloud-CLI is a tool to create docker/kubernetes environments in your host machine, Azure, AWS and Oracle cloud.
-
-
+We're excited to introduce *Cloud CLI*, our next generation multi-platform command line experience for setting up kubernetes and docker environments.
 
 
 
+## Installation
 
-Tested in Ubuntu 22.04
+
+
+Create a workspace folder.
+
+``````
+mkdir -p workspace-cloud-cli
+cd workspace-cloud-cli
+``````
+
+Get the scripts.
+``````
+bash -c "$(curl -L https://raw.githubusercontent.com/LyraOps/cloud-cli/main/bin/install.sh)"
+``````
+
+Note if you are not able to download. Add this ip to your host file
+
+``````
+sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
+``````
+
+
+Open in Microsoft Visual code
+
+```
+code .
+```
+
+## Azure Quick Start 
+
+
+Generate your first on-boarding script for azure.
+
+
+``````
+cloud-cli/az/onboard.sh \
+  -e "dev" \
+  -r "westus2" \
+  -c "mycustomer" \
+  -d "mycustomerdomain.com" \
+  -u "azureuserloginemail@domain.com" \
+  -s "00000000-0000-0000-0000-000000000000" \
+  -v "001" 
+``````
+
+Go to the generated directory
+
+Example:
+``````
+cd ~/workspace-cloud-cli/accounts/infra/mycustomer/dev-westus2-001
+
+``````
+
+Your configurations are stored in **private-azure.env**
+
+
+To create an AKS cluster (Provide a valid subscription and user credentials)
+``````
+./install-aks.sh 
+``````
+
+
+
+## Azure Samples
+
+
+Onboard your customer.
+-------------------- 
+
+Create create your customer environment configuration.
+
+``````
+cloud-cli/az/onboard.sh \
+  -e "environment-name-no-space" \ 
+  -r "Region" \
+  -c "customer-name-no-space" \
+  -d "Domain name" \
+  -u "Aure login name with a valid Subscription" \ 
+  -s "Subscription Code" \
+  -v "Version no" 
+``````
+
+Example: To Create your customer's dev environment
+
+``````
+cloud-cli/az/onboard.sh \
+  -e "dev" \
+  -r "westus2" \
+  -c "mycustomer" \
+  -d "mycustomerdomain.com" \
+  -u "azureuserloginemail@domain.com" \
+  -s "00000000-0000-0000-0000-000000000000" \
+  -v "001" 
+``````
+
+Example: To Create the above customer's uat environment in a different region
+
+``````
+cloud-cli/az/onboard.sh \
+cloud-cli/az/onboard.sh \
+  -e "uat" \
+  -r "westus2" \
+  -c "mycustomer" \
+  -d "mycustomerdomain.com" \
+  -u "azureuserloginemail@domain.com" \
+  -s "00000000-0000-0000-0000-000000000000" \
+  -v "001" 
+``````
+
+Example: To Create another customer's dev environment
+
+``````
+cloud-cli/az/onboard.sh \
+  -e "dev" \ 
+  -r "eastus2" \
+  -c "mycustomer2" \
+  -d "mycustomer2domain.com" \
+  -u "azureuserloginemail@domain.com" \ 
+  -s "00000000-0000-0000-0000-000000000000" \
+  -v "001"
+``````
+
+
+## Plan
+
+| Platform   | Plan        | Doc |
+|:---------------:|:------------:|:------------|
+| Azure       | Preview  |  |
+| AWS  | Coming Soon | |
+| OCI | Coming Soon   | |
+| GCP | Coming Soon    | |
+| Docker  | Coming Soon   | |
+
+## Tested on
+
+Ubuntu 22.04
