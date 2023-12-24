@@ -74,7 +74,7 @@ To create an AKS cluster (Provide a valid subscription and user credentials)
 Onboard your customer.
 -------------------- 
 
-Create create your customer environment configuration.
+Create your customer environment configuration.
 
 ``````
 cloud-cli/az/onboard.sh \
@@ -112,19 +112,6 @@ cloud-cli/az/onboard.sh \
   -u "azureuserloginemail@domain.com" \
   -s "00000000-0000-0000-0000-000000000000" \
   -v "001" 
-``````
-
-Example: To Create another customer's dev environment
-
-``````
-cloud-cli/az/onboard.sh \
-  -e "dev" \ 
-  -r "eastus2" \
-  -c "mycustomer2" \
-  -d "mycustomer2domain.com" \
-  -u "azureuserloginemail@domain.com" \ 
-  -s "00000000-0000-0000-0000-000000000000" \
-  -v "001"
 ``````
 
 
