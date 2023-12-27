@@ -135,8 +135,9 @@ IG="`pwd`/accounts/infra/"
     echo "work/" > ${IG}/.gitignore
     echo "work/" > ${IG}${C}/.gitignore
 
-
+echo "TEMPLATE = ${T}"
 if [ "${T}" != "" ]; then 
+ls -l ${T}
 if [ -f "${T}/az-overrides.env" ]; then
 echo "\cp -fR \"${T}/az-overrides.env\" \"${F}/az-overrides.env\""
 \cp -fR "${T}/az-overrides.env" ${F}/az-overrides.env
