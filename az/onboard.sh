@@ -136,18 +136,22 @@ IG="`pwd`/accounts/infra/"
     echo "work/" > ${IG}${C}/.gitignore
 
 
-if [ "$T" != "" ]; then 
-if [ -f "$T/az-overrides.env" ]; then
-\cp -fR "$T/az-overrides.env" ${F}/az-overrides.env
+if [ "${T}" != "" ]; then 
+if [ -f "${T}/az-overrides.env" ]; then
+echo "\cp -fR \"${T}/az-overrides.env\" \"${F}/az-overrides.env\""
+\cp -fR "${T}/az-overrides.env" ${F}/az-overrides.env
 fi
-if [ -f "$T/install-aks.sh" ]; then
-\cp -fR "$T/install-aks.sh" ${F}/install-aks.sh
+if [ -f "${T}/install-aks.sh" ]; then
+echo "\cp -fR \"${T}/install-aks.sh\" \"${F}/install-aks.sh\""
+\cp -fR "${T}/install-aks.sh" ${F}/install-aks.sh
 fi
-if [ -f "$T/install-app.sh" ]; then
-\cp -fR "$T/install-app.sh" ${F}/install-app.sh
+if [ -f "${T}/install-app.sh" ]; then
+echo "\cp -fR \"${T}/install-app.sh\" \"${F}/install-app.sh\""
+\cp -fR "${T}/install-app.sh" ${F}/install-app.sh
 fi
-if [ -f "$T/install-base.sh" ]; then
-\cp -fR "$T/install-base.sh" ${F}/install-base.sh
+if [ -f "${T}/install-base.sh" ]; then
+echo "\cp -fR \"${T}/install-base.sh\" \"${F}/install-base.sh\""
+\cp -fR "${T}/install-base.sh" ${F}/install-base.sh
 fi
 fi
 
