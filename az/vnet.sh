@@ -6,7 +6,7 @@ source bin/base.sh
 # --subnet-prefixes $SUBNET_PREFIX \
 # --route-table $ROUTE_TABLE_NAME
 
-rlog "az network vnet delete -g ${RG} -n ${VNET}"
+
 
 E=`az network vnet list -g ${RG} --query "[?name=='${VNET}']"`
 if [ "${E}" == "[]" ]; then
@@ -19,9 +19,10 @@ C="az network vnet create -g ${RG} -n ${VNET} \
 "
 echo "$C"
 ok && run-cmd "$C"
-
-fi
+rlog "az network vnet delete -g ${RG} -n ${VNET}"
 vlog "az network vnet list -g ${RG} --query "[?name==\'${VNET}\']""
+fi
+
 
 
 

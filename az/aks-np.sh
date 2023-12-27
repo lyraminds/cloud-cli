@@ -44,8 +44,6 @@ done
 empty "$NPM" "NODE POOL NAME" "$H"
 
 
-rlog "az aks nodepool delete -g ${RG} --cluster-name ${KS} -n ${NPM}"
-
 E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPM}']"`
 if [ "${E}" == "[]" ]; then
 
@@ -61,11 +59,14 @@ C="az aks nodepool add \
 
 ok && run-cmd "$C"
 
+rlog "az aks nodepool delete -g ${RG} --cluster-name ${KS} -n ${NPM}"
+vlog "az aks nodepool show -g ${RG} --cluster-name ${KS} -n ${NPM}"
+vlog "az aks nodepool list -g $RG --cluster-name ${KS} -o table"
 fi
 
 
 
-vlog "az aks nodepool show -g ${RG} --cluster-name ${KS} -n ${NPM}"
+
 
 
 

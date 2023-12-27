@@ -10,7 +10,6 @@ source bin/base.sh
 
 empty "$1" "Secondory Region" "./acr-replica.sh \"eastus\""
 
-rlog "az acr replication delete -g ${RG} -r ${CR} -n ${CC_CONTAINER_REGISTRY_REPLICATION_NAME}"
 
 E=`az acr replication list -g ${RG} -r ${CR} --query "[?name=='${CC_CONTAINER_REGISTRY_REPLICATION_NAME}']"`
 if [ "${E}" == "[]" ]; then
@@ -19,7 +18,9 @@ if [ "${E}" == "[]" ]; then
 C="az acr replication create -n ${CC_CONTAINER_REGISTRY_REPLICATION_NAME} -g $RG -r $CR -l $REGION"
 ok && run-cmd "$C"
 
+rlog "az acr replication delete -g ${RG} -r ${CR} -n ${CC_CONTAINER_REGISTRY_REPLICATION_NAME}"
+vlog "az acr replication show -g ${RG} -r ${CR} -n ${CC_CONTAINER_REGISTRY_REPLICATION_NAME}"
 # fi
 fi
 
-vlog "az acr replication show -g ${RG} -r ${CR} -n ${CC_CONTAINER_REGISTRY_REPLICATION_NAME}"
+

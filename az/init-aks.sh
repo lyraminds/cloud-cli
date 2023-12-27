@@ -19,9 +19,7 @@ if [ $(installed "kubectl") == "false" ]; then
 echo "sudo az aks install-cli"
 sudo az aks install-cli
 
+kubectl version
 fi
 
 
-ok 
-
-kubectl version

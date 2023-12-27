@@ -49,11 +49,7 @@ OR=${_APP}${SD_NAME}-route
 ON="${_APP}${SD_NAME}-orign"
 DOM="${SD_NAME}.${DO}"
 
-
-ok && rlog "az afd origin-group delete -g ${RG} --origin-group-name \"${OG}\" --profile-name \"${CC_FRONT_DOOR_PROFILE}\""
-
 E=`az afd origin-group list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${OG}']"`
-
 if [ "${E}" == "[]" ]; then
 
 C="az afd origin-group create -g ${RG} --origin-group-name \"${OG}\" \
@@ -67,10 +63,11 @@ C="az afd origin-group create -g ${RG} --origin-group-name \"${OG}\" \
 
 ok && run-cmd "${C}"
 
-fi
-
+rlog "az afd origin-group delete -g ${RG} --origin-group-name \"${OG}\" --profile-name \"${CC_FRONT_DOOR_PROFILE}\""
 vlog "az afd origin-group list -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --query \"[?name=='${OG}']\""
 vlog "az afd origin-group show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --origin-group-name \"${OG}\""
+fi
+
 
 E=`az afd origin list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --origin-group-name "${OG}" --query "[?name=='${ON}']"`
 if [ "${E}" == "[]" ]; then
@@ -87,6 +84,10 @@ C="az afd origin create -g \"${RG}\" \
 
 ok && run-cmd "${C}"
 
+vlog "az afd origin delete -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --origin-group-name \"${OG}\" --origin-name ${ON}"
+vlog "az afd origin show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --origin-group-name \"${OG}\" --origin-name ${ON}"
+vlog "az afd origin list -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --origin-group-name \"${OG}\""
+
 # else
 
 # C="az afd origin update -g \"${RG}\" \
@@ -99,10 +100,11 @@ ok && run-cmd "${C}"
 
 # ok && run-cmd "${C}"
 
+
+
 fi
 
-T="az afd endpoint show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --endpoint-name "${CC_FRONT_DOOR_ENDPOINT}" --query hostName"
-echo "${T}"
+
 _CNAME=`az afd endpoint show -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --endpoint-name "${CC_FRONT_DOOR_ENDPOINT}" --query hostName`
 #_CNAME="${CC_FRONT_DOOR_ENDPOINT}.z01.azurefd.net"
 
@@ -110,15 +112,12 @@ _CNAME=`az afd endpoint show -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" 
 ok && ./az/dns-cname.sh -n "${SD_NAME}" -c "${_CNAME}"
 ok && ./az/afd-domain.sh -n "${SD_NAME}"
 
-vlog "az afd custom-domain show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\" --query validationProperties.validationToken"
 
 _TOKEN=`az afd custom-domain show -g "${RG}" --profile-name "${CC_FRONT_DOOR_PROFILE}" --custom-domain-name "${SD_NAME}" --query validationProperties.validationToken`
 ok && ./az/dns-txt.sh -n "_dnsauth.${SD_NAME}" -t "${_TOKEN}"
 
-vlog "az afd route list -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --endpoint-name \"${CC_FRONT_DOOR_ENDPOINT}\" --query \"[?name=='${OR}']\""
 
 E=`az afd route list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --endpoint-name "${CC_FRONT_DOOR_ENDPOINT}" --query "[?name=='${OR}']"`
-
 if [ "${E}" == "[]" ]; then
 
 C="az afd route create -g \"${RG}\" \
@@ -129,6 +128,10 @@ C="az afd route create -g \"${RG}\" \
   --origin-group \"${OG}\" \
   --https-redirect Enabled --supported-protocols Http Https --link-to-default-domain Disabled --forwarding-protocol HttpOnly"
 ok && run-cmd "${C}"
+
+rlog "az afd route delete -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --endpoint-name \"${CC_FRONT_DOOR_ENDPOINT}\" --route-name \"${OR}\""
+vlog "az afd route list -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --endpoint-name \"${CC_FRONT_DOOR_ENDPOINT}\" --query \"[?name=='${OR}']\""
+
 fi
 
 

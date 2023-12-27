@@ -30,8 +30,6 @@ empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 DOM="${SD_NAME}.${DO}"
 
-rlog "az afd custom-domain delete -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\""
-
 E=`az afd custom-domain list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${SD_NAME}']"`
 if [ "${E}" == "[]" ]; then
 
@@ -50,8 +48,11 @@ C="az afd custom-domain wait -g \"${RG}\" \
 
 ok && run-cmd "${C}"
 
+rlog "az afd custom-domain delete -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\""
+vlog "az afd custom-domain show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\""
+vlog "az afd custom-domain show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\" --query validationProperties.validationToken"
+
 fi
 
-vlog "az afd custom-domain show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --custom-domain-name \"${SD_NAME}\""
 
 

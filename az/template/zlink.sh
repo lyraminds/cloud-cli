@@ -24,7 +24,8 @@ source conf/default-azure.env
 export CC_LOG_ROOT=${CFOLDER}
 
 #Link your config file
-source ../accounts/private-azure.env
+source ${CFOLDER}/az.env
+source ${CFOLDER}/az-overrides.env
 
 #Initializing with your configs
 source bin/init.sh

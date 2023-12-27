@@ -10,7 +10,7 @@ cd /opt
 if [ -d "cloud-cli" ]; then
 cd cloud-cli
 echo `cat doc/version.txt`
-echo "To install latest version delete the current folder
+echo "To install latest version delete '/opt/cloud-cli' folder
       sudo rm -rf /opt/cloud-cli"
 else
 echo "cloud-cli not found..."

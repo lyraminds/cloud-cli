@@ -16,7 +16,7 @@ A=''
 # A="--attach-acr $CR"
 # fi
 
-rlog "az aks delete -g ${RG} -n ${KS}"
+
 
 E=`az aks list -g ${RG} --query "[?name=='${KS}']"`
 
@@ -30,13 +30,12 @@ fi
 C="az aks create -g $RG -n $KS $A -s ${CC_AKS_CLUSTER_SERVER} ${SNET_ID} $CC_AKS_CONFIG "
 ok && run-cmd "${C}"
 fi
+
+rlog "az aks delete -g ${RG} -n ${KS}"
+vlog "az aks get-credentials -g $RG --name $KS --admin"
 vlog "az aks show -g ${RG} -n ${KS}"
 vlog "#=======Update attach acr===============
 ACR_ID=\$(az acr show -n "${KS}" -g "${RG}" --query id -o tsv) 
 az aks update -g "${RG}" -n "${KS}" --attach-acr $ACR_ID
 #============================================="
-
-
-
-# az aks nodepool update --cluster-name aks-eastus-test-tradefin-001 -n minio -g rg-eastus-test-tradefin-001 --min-count 1 --max-count 5 --enable-cluster-autoscaler
 

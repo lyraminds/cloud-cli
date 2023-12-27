@@ -3,9 +3,6 @@ RG=${1:-$CC_RESOURCE_GROUP_NAME}
 
 source bin/base.sh
 
-
-rlog "az network nsg delete -g ${RG} -n ${CC_NSG_NAME}"
-
 E=`az network nsg list -g ${RG} --query "[?name=='${CC_NSG_NAME}']"`
 
 if [ "${E}" == "[]" ]; then
@@ -18,5 +15,7 @@ C="az network nsg create \
 
 ok && run-cmd "$C"
 
-fi
+rlog "az network nsg delete -g ${RG} -n ${CC_NSG_NAME}"
 vlog "az network nsg list -g ${RG} --query "[?name==\'${CC_NSG_NAME}\']""
+fi
+

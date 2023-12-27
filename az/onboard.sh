@@ -10,31 +10,46 @@ H="
 Onboard your customer.
 -------------------- 
 
-Create create your customer environment configuration.
+Create your customer environment configuration.
 
 
-cloud-cli/az/onboard.sh \\
   -e \"environment-name-no-space\" \\ 
   -r \"Region\" \\
   -c \"customer-name-no-space\" \\
   -d \"Domain name\" \\
   -u \"Aure login name with a valid Subscription\" \\ 
-  -s \"Subscription Code\" \\
-  -v \"Version no\" 
-
+  -s \"Subscription Code\" \\    
+  -v \"Version no\"              Version No
+  -o \"vscode\"                  open in vscode 
 
 Example: To Create your customer's dev environment
 
 
-cloud-cli/az/onboard.sh \\
+az-onboard \\
   -e \"dev\" \\
   -r \"westus2\" \\
   -c \"mycustomer\" \\
   -d \"mycustomerdomain.com\" \\
   -u \"azureuserloginemail@domain.com\" \\
   -s \"00000000-0000-0000-0000-000000000000\" \\
-  -v \"001\" 
+  -v \"001\" \\
+  -o \"vscode\"
 
+  
+  Required
+
+  -e \"dev\"                      Environment Name eg dev, qa, uat, prod 
+  -r \"westus2\"                  Azure Region
+  -c \"mycustomer\"               Name of your client
+  -d \"mycustomerdomain.com\"                 Domain name to be used for your project
+  -u \"azureuserloginemail@domain.com\"       Azure login id
+  -s \"00000000-0000-0000-0000-000000000000\" Azure Subscription code
+  -v \"001\"                      Version No
+
+  Optional
+
+  -o \"vscode\"                   Open the generated configuration in vscode
+  -t \"/home/user/mytemplate\"    Use your custom folder, your overrides.env and install-* files
 "
 
 
@@ -45,7 +60,7 @@ fi
 
 
 
-while getopts c:e:u:r:s:d:v: flag
+while getopts c:e:u:r:s:d:v:t:o: flag
 do
     case "${flag}" in
         c) C=${OPTARG:-customer};;
@@ -55,6 +70,9 @@ do
         s) S=${OPTARG};;
         d) D=${OPTARG};;
         v) V=${OPTARG:-001};;
+
+        t) T=${OPTARG:-001};;
+        o) O=${OPTARG:-001};;
     esac
 done
 
@@ -94,21 +112,21 @@ if [ -d "$F" ]; then
 else
   mkdir -p $F
   cp -r $CF $F
-  sed -i "s/demo/${C}/g" "${F}/private-azure.env"
-  sed -i "s/dev/${E}/g" "${F}/private-azure.env"
-  sed -i "s/westus2/${R}/g" "${F}/private-azure.env"  
-    sed -i "s/001/${V}/g" "${F}/private-azure.env"  
+  sed -i "s/demo/${C}/g" "${F}/az.env"
+  sed -i "s/dev/${E}/g" "${F}/az.env"
+  sed -i "s/westus2/${R}/g" "${F}/az.env"  
+    sed -i "s/001/${V}/g" "${F}/az.env"  
       if [ "$D" != "" ]; then  
-  sed -i "s/companydomain.com/${D}/g" "${F}/private-azure.env"  
+  sed -i "s/companydomain.com/${D}/g" "${F}/az.env"  
   fi
     
   if [ "$U" != "" ]; then  
     N=`echo "${U}" | cut -d'@' -f 1`
-    sed -i "s/myname@domain.com/${U}/g" "${F}/private-azure.env"  
-    sed -i "s/myname/${N}/g" "${F}/private-azure.env"  
+    sed -i "s/myname@domain.com/${U}/g" "${F}/az.env"  
+    sed -i "s/myname/${N}/g" "${F}/az.env"  
   fi
   if [ "$S" != "" ]; then  
-  sed -i "s/azure-subscription-code/${S}/g" "${F}/private-azure.env"  
+  sed -i "s/azure-subscription-code/${S}/g" "${F}/az.env"  
   fi
   sed -i "s/accounts/${AC2}/g" "${F}/zlink.sh"  
 
@@ -117,11 +135,33 @@ IG="`pwd`/accounts/infra/"
     echo "work/" > ${IG}/.gitignore
     echo "work/" > ${IG}${C}/.gitignore
 
-  
+
+if [ "$T" != "" ]; then 
+if [ -f "$T/az-overrides.env" ]; then
+\cp -fR "$T/az-overrides.env" ${F}/az-overrides.env
+fi
+if [ -f "$T/install-aks.sh" ]; then
+\cp -fR "$T/install-aks.sh" ${F}/install-aks.sh
+fi
+if [ -f "$T/install-app.sh" ]; then
+\cp -fR "$T/install-app.sh" ${F}/install-app.sh
+fi
+if [ -f "$T/install-base.sh" ]; then
+\cp -fR "$T/install-base.sh" ${F}/install-base.sh
+fi
 fi
 
-echo "##"
-echo "Your infra configuration's are available at"
+
+fi
+
+echo "----------------------------------------------------------------"
+echo "Configuration is generated at: ${F}"
+if [ "$O" == "vscode" ] || [ "$O" == "code" ]; then 
+cd ${F}
+code .
+else
 echo "cd ${F}"
+fi
+echo "----------------------------------------------------------------"
 # cd ${CD}
 

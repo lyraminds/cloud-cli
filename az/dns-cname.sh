@@ -32,9 +32,6 @@ empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 
-
-rlog "az network dns record-set cname remove-record -g ${RG} -z ${DO} -n ${SD_NAME} -c ${CNAME}"
-
 E=`az network dns record-set cname list -g ${RG} -z ${DO} --query "[?name=='${SD_NAME}']"` #TODO SD_NAME OR CNAME
 if [ "${E}" == "[]" ]; then
 
@@ -43,19 +40,10 @@ C="az network dns record-set cname set-record -g ${RG} -z ${DO} --record-set-nam
 
 ok && run-cmd "${C}"
 
-fi
-vlog "az network dns record-set ns show -g ${RG} -z ${DO} --name @"
+rlog "az network dns record-set cname remove-record -g ${RG} -z ${DO} -n ${SD_NAME} -c ${CNAME}"
 vlog "az network dns record-set cname show -g ${RG} -z ${DO} -n ${SD_NAME}"
+fi
 
 
 
-
-
-
-# C="az network dns record-set a add-record -g ${RG} -z ${DO} -n www -a $PUB_IP"
-# isok && ./run-cmd "${C}" 
-
-# ./print-out "az network dns record-set list -g ${RG} -z ${DO}"
-# ./print-out "az network dns record-set ns show -g ${RG} -z ${DO} --name @"
-# ./print-out "nslookup www.${DO} ns1-06.azure-dns.com"
 

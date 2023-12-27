@@ -24,7 +24,6 @@ to get id of default subnet
 empty "$1" "Virtual subnet name for vnet $VNET" "${H}"
 empty "$2" "Address" "${H}"
 
-rlog "az network vnet subnet delete -g ${RG} -n ${SNET}"
 
 E=`az network vnet subnet list -g ${RG} --query "[?name=='${SNET}']"`
 if [ "${E}" == "[]" ]; then
@@ -36,8 +35,9 @@ C="az network vnet subnet create -g ${RG} -n ${SNET} \
 "
 echo "$C"
 ok && run-cmd "$C"
-
-fi
+rlog "az network vnet subnet delete -g ${RG} -n ${SNET}"
 vlog "az network vnet subnet list -g ${RG} --query "[?name==\'${SNET}\']""
+fi
+
 
 

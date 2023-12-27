@@ -32,8 +32,6 @@ empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 
-rlog "az network dns record-set txt remove-record -g ${RG} -z ${DO} -n ${SD_NAME}"
-
 E=`az network dns record-set txt list -g ${RG} -z ${DO} --query "[?name=='${SD_NAME}']"` #TODO SD_NAME OR TXT_VALUE
 if [ "${E}" == "[]" ]; then
 
@@ -42,8 +40,6 @@ C="az network dns record-set txt add-record -g ${RG} -z ${DO} -n ${SD_NAME} --va
 
 ok && run-cmd "${C}"
 
-fi
-
+rlog "az network dns record-set txt remove-record -g ${RG} -z ${DO} -n ${SD_NAME}"
 vlog "az network dns record-set txt show -g ${RG} -z ${DO} -n ${SD_NAME}"
-
-
+fi

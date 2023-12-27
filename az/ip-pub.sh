@@ -30,7 +30,7 @@ empty "$IP_NAME" "IP NAME" "$H"
 empty "$DU" "REDUNDANCY" "$H"
 empty "$RG" "RESOURCE_GROUP_NAME" "$H"
 
-rlog "az network public-ip delete -g ${RG} -n ${IP_NAME}"
+
 Z=''
 if [ "${DU}" != "0" ]; then
 Z="--zone ${DU}"
@@ -47,8 +47,11 @@ C="az network public-ip create \
 #  --zone 1 use update\
 ok && run-cmd "$C"
 
-fi
+rlog "az network public-ip delete -g ${RG} -n ${IP_NAME}"
 vlog "az network public-ip list -g ${RG} --query "[?name==\'${IP_NAME}\']""
+
+fi
+
 
 
 # az rest --method get --uri '/subscriptions/${CC_SUBSCRIPTION}/locations?api-version=2022-12-01' --query name --output tsv
