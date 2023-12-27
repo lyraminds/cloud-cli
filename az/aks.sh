@@ -29,7 +29,6 @@ fi
 
 C="az aks create -g $RG -n $KS $A -s ${CC_AKS_CLUSTER_SERVER} ${SNET_ID} $CC_AKS_CONFIG "
 ok && run-cmd "${C}"
-fi
 
 rlog "az aks delete -g ${RG} -n ${KS}"
 vlog "az aks get-credentials -g $RG --name $KS --admin"
@@ -38,4 +37,8 @@ vlog "#=======Update attach acr===============
 ACR_ID=\$(az acr show -n "${KS}" -g "${RG}" --query id -o tsv) 
 az aks update -g "${RG}" -n "${KS}" --attach-acr $ACR_ID
 #============================================="
+
+fi
+
+
 
