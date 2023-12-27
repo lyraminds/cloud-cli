@@ -4,11 +4,12 @@
 SUB=${1:-$CC_SUBSCRIPTION}
 source bin/base.sh
 #az account clear
-vlog "az account list --output table"
+
 
 
 subscriptionId="$(az account list --query "[?isDefault].id" --output tsv)"
 if [ "${subscriptionId}" != "$SUB" ]; then
+vlog "az account list --output table"
 az account list --output table
 info "Your default subscription is ${subscriptionId} 
       Your given subscription is $SUB 
