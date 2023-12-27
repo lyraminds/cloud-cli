@@ -49,7 +49,7 @@ az-onboard \\
   Optional
 
   -o \"vscode\"                   Open the generated configuration in vscode
-  -t \"/home/user/mytemplate\"    Use your custom folder, your overrides.env and install-* files
+  -t \"/home/user/mytemplate\"    Use your custom template, your overrides.env and install-* files 
 "
 
 
