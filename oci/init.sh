@@ -13,4 +13,4 @@ else
  oci --version
 fi
 
-bash -c "$(curl -L https://raw.githubusercontent.com/LyraOps/cloud-cli/main/bin/init.sh)"
+bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/init.sh)"

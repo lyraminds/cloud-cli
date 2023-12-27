@@ -2,6 +2,9 @@
 #!/bin/bash
 set -e
 
+CC_HOME=/opt/cloud-cli
+CC_TEMPLATE="${CC_HOME}/az/template/*"
+
 H="
 
 Onboard your customer.
@@ -31,34 +34,6 @@ cloud-cli/az/onboard.sh \\
   -u \"azureuserloginemail@domain.com\" \\
   -s \"00000000-0000-0000-0000-000000000000\" \\
   -v \"001\" 
-
-
-Example: To Create the above customer's uat environment in a different region
-
-
-cloud-cli/az/onboard.sh \\
-cloud-cli/az/onboard.sh \\
-  -e \"uat\" \\
-  -r \"westus2\" \\
-  -c \"mycustomer\" \\
-  -d \"mycustomerdomain.com\" \\
-  -u \"azureuserloginemail@domain.com\" \\
-  -s \"00000000-0000-0000-0000-000000000000\" \\
-  -v \"001\" 
-
-
-Example: To Create another customer's dev environment
-
-
-cloud-cli/az/onboard.sh \\
-  -e \"dev\" \\ 
-  -r \"eastus2\" \\
-  -c \"mycustomer2\" \\
-  -d \"mycustomer2domain.com\" \\
-  -u \"azureuserloginemail@domain.com\" \\ 
-  -s \"00000000-0000-0000-0000-000000000000\" \\
-  -v \"001\"
-
 
 "
 
@@ -90,7 +65,7 @@ empty(){
 if [ "$1" == "" ]; then    
     echo "ERROR: $2 is required";
     echo "$3";
-    return
+    exit
 fi
 }
 
@@ -111,7 +86,7 @@ fi
 AC="/accounts/infra/${C}/${E}-${R}${VER}"
 AC2="accounts\/infra\/${C}\/${E}-${R}${VER}"
 F="`pwd`${AC}"
-CF="`pwd`/cloud-cli/az/template/*"
+CF=${CC_TEMPLATE}
 if [ -d "$F" ]; then
   echo "$F Already exist."
   ls -l $F

@@ -2,7 +2,8 @@
 CFOLDER=`pwd`
 
 #Going back to folder outside cloud-cli
-cd ../../../../
+# cd ../../../../
+cd /opt/
 
 ##install cli if missing
 
@@ -10,8 +11,8 @@ if [ -d "cloud-cli" ]; then
 echo "cloud-cli found..."
 else
 echo "cloud-cli not found..."
-bash -c "$(curl -L https://raw.githubusercontent.com/LyraOps/cloud-cli/main/bin/install.sh)"
-echo "Visit https://github.com/LyraOps/cloud-cli"
+bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
+echo "Visit https://github.com/lyraminds/cloud-cli"
 fi
 
 cd cloud-cli
