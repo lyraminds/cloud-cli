@@ -6,15 +6,6 @@ We're excited to introduce *Cloud CLI*, our next generation multi-platform comma
 
 ## Installation
 
-
-
-Create a workspace folder.
-
-``````
-mkdir -p workspace-cloud-cli
-cd workspace-cloud-cli
-``````
-
 Get the scripts.
 ``````
 bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
@@ -27,20 +18,21 @@ sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
 ``````
 
 
-Open in Microsoft Visual code
-
-```
-code .
-```
-
 ## Azure Quick Start 
 
+
+Create a workspace folder.
+
+``````
+mkdir -p workspace-cloud-cli
+cd workspace-cloud-cli
+``````
 
 Generate your first on-boarding script for Azure.
 
 
 ``````
-cloud-cli/az/onboard.sh \
+az-onboard \
   -e "dev" \
   -r "westus2" \
   -c "mycompany" \
@@ -50,31 +42,35 @@ cloud-cli/az/onboard.sh \
   -v "001" 
 ``````
 
-Create your customer environment configuration.
 
 ``````
-cloud-cli/az/onboard.sh \
-  -e "environment-name-no-space" \ 
-  -r "Region" \
-  -c "customer-name-no-space" \
-  -d "Domain-name" \
-  -u "Aure login name with a valid Subscription" \ 
-  -s "Subscription Code" \
-  -v "Version no" 
+  Required
+
+  -e \"dev\"                      Environment Name eg dev, qa, uat, prod 
+  -r \"westus2\"                  Azure Region
+  -c \"mycustomer\"               Name of your client
+  -d \"mycustomerdomain.com\"                 Domain name to be used for your project
+  -u \"azureuserloginemail@domain.com\"       Azure login id
+  -s \"00000000-0000-0000-0000-000000000000\" Azure Subscription code
+  -v \"001\"                      Version No
+
+  Optional
+
+  -o \"vscode\"                   Open the generated configuration in vscode
+  -t \"/home/user/mytemplate\"    Use your custom template, replaces overrides.env and install-* files. 
 ``````
 
 Go to the generated directory
 
-Example:
 ``````
 cd ~/workspace-cloud-cli/accounts/infra/mycompany/dev-westus2-001
 
 ``````
 
-Your configurations are stored in **private-azure.env**
+Your configurations are stored in **az.env**
 
 
-To create an AKS cluster (Provide a valid subscription and user credentials)
+To create an AKS cluster (You need a valid Azure subscription and user credentials)
 ``````
 ./install-aks.sh 
 ``````
