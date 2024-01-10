@@ -30,4 +30,3 @@ source ${CFOLDER}/az-overrides.env
 #Initializing with your configs
 source bin/init.sh
 
-source helm/init.sh

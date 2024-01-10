@@ -59,7 +59,10 @@ A=''
 # A="--attach-acr $CR"
 # fi
 
-
+KSV=""
+if [ ! -z "${CC_KUBERNETES_VERSION}" -a "${CC_KUBERNETES_VERSION}" != " " ]; then
+KSV="--kubernetes-version ${CC_KUBERNETES_VERSION}"
+fi
 
 E=`az aks list -g ${RG} --query "[?name=='${KS}']"`
 
@@ -70,7 +73,7 @@ if [ ! -z "$SNET_ID" -a "$SNET_ID" != " " ]; then
 SNET_ID="--vnet-subnet-id $SNET_ID"
 fi
 
-C="az aks create -g $RG -n $KS $A -s ${VMSIZE} ${SNET_ID} --tags ${CC_TAGS} --node-osdisk-size ${DISKSIZE} $CC_AKS_CONFIG ${OPTIONS}"
+C="az aks create -g $RG -n $KS $A -s ${VMSIZE} ${SNET_ID} --tags ${CC_TAGS} ${KSV} --node-osdisk-size ${DISKSIZE} $CC_AKS_CONFIG ${OPTIONS}"
 ok && run-cmd "${C}"
 
 #To stop scheduling other np to system pool

@@ -8,7 +8,7 @@ We're excited to introduce *Cloud CLI*, our next generation multi-platform comma
 
 Get the scripts.
 ``````
-bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
+sudo bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
 ``````
 
 Note if you are not able to download, add to your host file.

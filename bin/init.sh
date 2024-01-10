@@ -7,3 +7,4 @@ buildlog
 initlog
 
 buildbase
+buildbaseapp

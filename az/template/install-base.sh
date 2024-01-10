@@ -8,7 +8,7 @@ export CC_MODE=live
 # ./az/aks-np.sh -p "npqueue" -m "Standard_DS2_v2" -d "60"
 
 # Customize the creation with -o options
-# to use specific version add to options --kubernetes-version 1.27.7
+
 # to use 3 availability zone add to options --zones 1 2 3
 # ./az/aks-np.sh -o "--node-count 1 --min-count 1 --max-count 8 --max-pods 250 --enable-cluster-autoscaler --zones 1 2 3"
 
@@ -16,6 +16,8 @@ export CC_MODE=live
 
 #### Helm Deployments #######################
 #### Provide path of your helm charts in az-overrides.env
+#source helm/init.sh
+
 # ./helm/rabbitmq.sh.sh -p "npqueue" -s "nsqueue" -a "install"
 # ./az/helm/emissary-ingress.sh -p "nplb" -s "nslb" -a "install"
 # ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "install"
