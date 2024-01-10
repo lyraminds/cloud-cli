@@ -63,7 +63,7 @@ az-onboard \
 Go to the generated directory
 
 ``````
-cd ~/workspace-cloud-cli/accounts/infra/mycompany/dev-westus2-001
+cd ~/workspace-cloud-cli/accounts/mycompany/dev-westus2-001
 
 ``````
 

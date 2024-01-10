@@ -1,4 +1,6 @@
+#!/bin/bash
 
+source bin/base.sh
 
 
 az aks get-credentials -g $RG -n $AKSNAME --admin
@@ -15,5 +17,3 @@ kubectl create secret docker-registry acr-secret `
 # Assign k8s secret to default service account
 kubectl patch serviceaccount default -p '{\"imagePullSecrets\": [{\"name\": \"acr-secret\"}]}'
 
-# Create all the services
-kubectl apply -f .\manifests\<whatever>.yml

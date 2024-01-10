@@ -8,7 +8,7 @@ cd /opt/
 ##install cli if missing
 
 if [ -d "cloud-cli" ]; then
-echo "cloud-cli found..."
+echo "..."
 else
 echo "cloud-cli not found..."
 bash -c "$(curl -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/bin/install.sh)"
@@ -29,3 +29,5 @@ source ${CFOLDER}/az-overrides.env
 
 #Initializing with your configs
 source bin/init.sh
+
+source helm/init.sh

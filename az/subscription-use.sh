@@ -11,9 +11,19 @@ subscriptionId="$(az account list --query "[?isDefault].id" --output tsv)"
 if [ "${subscriptionId}" != "$SUB" ]; then
 vlog "az account list --output table"
 az account list --output table
-info "Your default subscription is ${subscriptionId} 
+M="Your default subscription is ${subscriptionId} 
       Your given subscription is $SUB 
       Switching your $SUB to default subscription"
+info "${M}"
+
+E=`az account list --query "[?name=='${SUB}']"`
+if [ "${E}" == "[]" ]; then
+C="az account set --subscription ${SUB}"
+ok && run-cmd "$C"
+else
+error "You don't belong to subscription [${SUB}]"
+exit 0;
+fi
 # az logout
 # az login
 fi

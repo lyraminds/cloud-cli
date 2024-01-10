@@ -15,18 +15,18 @@ while getopts n:c:g: flag
 do
 info "az/aks-np-delete.sh ${flag} ${OPTARG}"
     case "${flag}" in
-        n) NPM=${OPTARG};;
+        n) NPN=${OPTARG};;
         c) KS=${OPTARG};;
         g) RG=${OPTARG};;
     esac
 done
 
-empty "$NPM" "NODE POOL NAME" "$H"
+empty "$NPN" "NODE POOL NAME" "$H"
 
-E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPM}']"`
+E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPN}']"`
 if [ "${E}" == "[]" ]; then
 
-ok && run-cmd "az aks nodepool delete -g ${RG} --cluster-name ${KS} -n ${NPM}"
+ok && run-cmd "az aks nodepool delete -g ${RG} --cluster-name ${KS} -n ${NPN}"
 
 fi
 

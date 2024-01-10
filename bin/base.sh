@@ -76,7 +76,11 @@ function initlog(){
   log "## $(date)"
   
   audit ""
-  _AC="${CC_CUSTOMER}-${CC_CUSTOMER_ENV}-${CC_REGION}-${CC_RESOURCE_VERSION}"
+CV=""
+if [ "${CC_RESOURCE_VERSION}" != "" ]; then
+CV="-${CC_RESOURCE_VERSION}"
+fi
+  _AC="${CC_CUSTOMER}-${CC_CUSTOMER_ENV}-${CC_REGION}${CV}"
   audit "## $(date), ${CC_ACCOUNT_LOGIN_ID}, ${_AC}, ${CC_SUBSCRIPTION}" 
 }
 
@@ -119,8 +123,10 @@ if [ "$CC_ERROR" == "1" ] ; then
 fi 
 }
 
-function use(){
-  echo "ok && source ${1}"
+function initdir(){
+  if [ ! -d "${1}" ]; then
+    mkdir -p "${1}"
+  fi
 }
 
 installed(){
@@ -190,4 +196,89 @@ help(){
   echo "${2}"
   exit 0;
 fi
+}
+
+helm-install(){
+run-helm "install" "$1" "$2" "$3" "$4"
+}
+
+helm-upgrade(){
+run-helm "upgrade" "$1" "$2" "$3" "$4"
+}
+
+helm-uninstall(){
+local APP_NAME=${1}
+local NS=${2}
+local H="
+helm-uninstall \"app-name\" \"my-namespace\" 
+"
+empty "$NS" "Namespace" "${H}"
+empty "$APP_NAME" "App name" "${H}"
+
+C="helm uninstall $APP_NAME --namespace=$NS"
+run-cmd "$C" 
+
+}
+
+run-helm(){
+
+local ACTION=${1}
+local APP_NAME=${2}
+local NS=${3}
+local CHART=${4}
+local OVR=${5}
+
+local H="
+helm-install \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" 
+helm-install \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" \"/home/user/deploy/app-name-overrides.yaml\" 
+helm-upgrade \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" \"/home/user/deploy/app-name-overrides.yaml\" 
+
+"
+empty "$NS" "Namespace" "${H}"
+empty "$CHART" "Path of helm chart" "${H}"
+empty "$APP_NAME" "App name" "${H}"
+empty "$ACTION" "Chart action install|upgrade" "${H}"
+
+if [ ! -d "$CHART" ]; then
+error "No helm folders found at [${CHART}], define right path in xx-overrides.env"
+exit;
+fi
+
+SRT="-f $OVR"
+if [ -z "$OVR" ]; then
+    SRT=""
+fi
+
+#install or upgrade helm
+C="helm $ACTION $SRT $APP_NAME --namespace=$NS $CHART"
+run-cmd "$C" 
+# run-sleep 6
+
+
+}
+fqn(){
+if [ ! -z "$CC_SUB_DOMAIN_SUFFIX" -a "$CC_SUB_DOMAIN_SUFFIX" != " " ]; then
+_APP="-${CC_SUB_DOMAIN_SUFFIX}"
+fi
+echo "${1}${_APP}"
+}
+
+fqhn(){
+echo "$(fqn ${1}).${CC_DOMAIN_NAME}"
+}
+
+export CC_GEN_SECRET_FILES=""
+secret-add(){
+local G="${CC_BASE_SECRET_FOLDER}/${1}"
+local F="${G}/${3}"
+export CC_GEN_SECRET_FILES="${CC_GEN_SECRET_FILES} --from-file=${F}"
+initdir "${G}"
+if [ ! -e "${F}" ]; then
+echo -n "${2}" > "${F}"
+fi
+}
+
+secret-file(){
+export CC_GEN_SECRET_FILES=""
+secret-add "$1" "$2" "$3"
 }

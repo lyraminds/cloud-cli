@@ -1,5 +1,4 @@
 SD_NAME=""
-_APP=""
 IP_NAME=${CC_AKS_IP_NAME}
 KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
@@ -40,14 +39,11 @@ MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} -
 empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
 
 
-if [ ! -z "$_APP" -a "$_APP" != " " ]; then
-_APP="${_APP}-"
-fi
-
-OG="${_APP}${SD_NAME}-group"
-OR=${_APP}${SD_NAME}-route
-ON="${_APP}${SD_NAME}-orign"
-DOM="${SD_NAME}.${DO}"
+SDN=${SD_NAME}
+OG="${SDN}-group"
+OR="${SDN}-route"
+ON="${SDN}-orign"
+DOM="${SDN}.${DO}"
 
 E=`az afd origin-group list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${OG}']"`
 if [ "${E}" == "[]" ]; then

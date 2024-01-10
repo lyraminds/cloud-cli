@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NPM=$1
+NPN=$1
 KUBERNETES_VERSION=$2
 KS=${3:-$CC_AKS_CLUSTER_NAME}
 RG=${4:-$CC_RESOURCE_GROUP_NAME}
@@ -18,13 +18,13 @@ H="np-upgrade-version \"nodepoolname\" \"1.27.7\""
 empty "$1" "Node pool name" "$H"
 empty "$2" "KUBERNETES_VERSION" "$H"
 
-E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPM}']"`
+E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPN}']"`
 
 if [ "${E}" != "[]" ]; then
 C="az aks nodepool upgrade \
     -g ${RG} \
     --cluster-name ${KS} \
-    --name ${NPM} \
+    --name ${NPN} \
     --kubernetes-version ${KUBERNETES_VERSION} \
     --wait"
 ok && run-cmd "${C}"

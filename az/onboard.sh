@@ -101,8 +101,8 @@ VER=''
 if [ "$V" != "" ]; then 
 VER="-${V}"
 fi
-AC="/accounts/infra/${C}/${E}-${R}${VER}"
-AC2="accounts\/infra\/${C}\/${E}-${R}${VER}"
+AC="/accounts/${C}/${E}-${R}${VER}"
+AC2="accounts\/${C}\/${E}-${R}${VER}"
 F="`pwd`${AC}"
 CF=${CC_TEMPLATE}
 if [ -d "$F" ]; then
@@ -131,7 +131,7 @@ else
   sed -i "s/accounts/${AC2}/g" "${F}/zlink.sh"  
 
   echo "work/" > ${F}/.gitignore
-IG="`pwd`/accounts/infra/"
+IG="`pwd`/accounts/"
     echo "work/" > ${IG}/.gitignore
     echo "work/" > ${IG}${C}/.gitignore
 
