@@ -33,9 +33,7 @@ empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name $KS --resource-group $RG --output tsv`
-
 MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`
-
 empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
 
 

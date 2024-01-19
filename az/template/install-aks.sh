@@ -24,11 +24,11 @@ source az/acr.sh
 
 #### Install kubernetes, create aks cluster and node pools
 source az/init-aks.sh
-source az/aks.sh
+./az/aks.sh
 
 # Customize the creation with -o options
 # to use 3 availability zone add to options --zones 1 2 3
-# ./az/aks.sh -o "--node-count 1 --min-count 1 --max-count 8 --max-pods 250 --enable-cluster-autoscaler --load-balancer-sku Standard --tier standard --zones 1 2 3"
+# ./az/aks.sh -m "Standard_D2s_v4" -d "30" -o "--node-count 1 --min-count 1 --max-count 8 --max-pods 250 --enable-cluster-autoscaler --load-balancer-sku Standard --tier standard --zones 1 2 3"
 
 
 #### DNS, AKS Public IP, Front Door

@@ -30,15 +30,38 @@ info ${CV}
 
 if [ "${CV}" != "${LV}" ]; then
 
- read -sp "###################### IMPORTANT WARNING: #########################3
-  Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}
-  Latest Image Version ${LV}  on Nodepool ${NPN} on cluster ${KS}
-  Are you sure to upgrade your nodepool image (y/n): " YN && echo && if [ "${YN}" == "y" ]; then run-cmd "az aks nodepool upgrade \
+echo "
+###################### IMPORTANT WARNING: #########################
+Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}
+Latest Image Version ${LV}  on Nodepool ${NPN} on cluster ${KS}
+"
+# read -p "Are you sure to upgrade your nodepool image (y/n):" YN
+
+#  read -sp "###################### IMPORTANT WARNING: #########################3
+#   Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}
+#   Latest Image Version ${LV}  on Nodepool ${NPN} on cluster ${KS}
+#   Are you sure to upgrade your nodepool image (y/n): " YN && echo && if [ "${YN}" == "y" ]; then run-cmd "az aks nodepool upgrade \
+#  -g ${RG} \
+#  --cluster-name ${KS} \
+#  --name ${NPN} \
+#  --node-image-only"; fi
+# else
+# info "No Change in Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}"
+# fi
+
+
+if [ "$YN" == "y" ]; then
+run-cmd "az aks nodepool upgrade \
  -g ${RG} \
  --cluster-name ${KS} \
  --name ${NPN} \
- --node-image-only"; fi
+ --node-image-only"
+elif [ "$YN" == "n" ]; then
+echo "You choose to cancel"
+info "No Change in Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}"
 else
+echo "Invalid option use y or n"
 info "No Change in Current Image Version ${CV} on Nodepool ${NPN} on cluster ${KS} under resource group [${RG}] in ${CC_REGION}"
 fi
+
 fi

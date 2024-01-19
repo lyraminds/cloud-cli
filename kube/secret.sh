@@ -12,6 +12,8 @@ empty $1 "Secret Name" "${H}"
 empty $2 "Namespace" "${H}"
 empty $3 "Secret files" "${H}"
 
-C="kubectl create secret generic $SECRET --save-config --dry-run=client --namespace=$NS ${SECRET_FILES} -o yaml | kubectl apply -f -"
+./kube/ns.sh "${NS}"
+
+C="kubectl create secret generic $SECRET --save-config --dry-run=client --namespace=${NS} ${SECRET_FILES} -o yaml | kubectl apply -f -"
 run-cmd "$C"
 

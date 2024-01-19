@@ -1,14 +1,11 @@
 #!/bin/bash
-source conf/default.env
-source accounts/private-azure.env
-source cloud-cli/init.sh
+source zlink.sh
 
 export CC_MODE=live
 
 ./docker/cli.sh
 
-
-run-git "${CC_GIT_URL}/ecla" "weasis-pacs-connector"
+# run-git "${CC_GIT_URL}/ecla" "weasis-pacs-connector"
 
 
 

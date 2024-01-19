@@ -2,7 +2,7 @@
 export CC_RUN=`pwd`
 
 #Going back to folder outside cloud-cli
-# cd ../../../../
+# cd ../../../
 cd /opt/
 
 ##install cli if missing
@@ -18,15 +18,14 @@ fi
 cd cloud-cli
 echo `cat doc/version.txt`
 #Using defaults
-source conf/default-azure.env
+source conf/default-docker.env
 
 #To change root of log folder 
 export CC_LOG_ROOT=${CC_RUN}
 
 #Link your config file
-source ${CC_RUN}/az.env
-source ${CC_RUN}/az-overrides.env
+# source ${CC_RUN}/az.env
+# source ${CC_RUN}/az-overrides.env
 
 #Initializing with your configs
 source bin/init.sh
-

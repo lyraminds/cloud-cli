@@ -20,12 +20,12 @@ H="
 you may override the default configs
 
 export CC_AKS_CONFIG=\"--vm-set-type VirtualMachineScaleSets \\
- --enable-aad --enable-azure-rbac \\
  --nodepool-name ${CC_AKS_SYSTEM_NP} \\
  --service-cidr 10.0.0.0/16 \\
  --dns-service-ip 10.0.0.10 \\
- --enable-managed-identity \\
  --network-plugin azure \\
+ --network-policy calico \\
+ --network-plugin-mode overlay \\
  --generate-ssh-keys \"
 
 "
@@ -77,7 +77,8 @@ C="az aks create -g $RG -n $KS $A -s ${VMSIZE} ${SNET_ID} --tags ${CC_TAGS} ${KS
 ok && run-cmd "${C}"
 
 #To stop scheduling other np to system pool
-./az/aks-np-update.sh -p "${CC_AKS_SYSTEM_NP}" -o "--node-taints CriticalAddonsOnly=true:NoSchedule"
+# commented because emissary-apitext has no toleration to any nodepool and will get created in system pool
+# ./az/aks-np-update.sh -p "${CC_AKS_SYSTEM_NP}" -o "--node-taints CriticalAddonsOnly=true:NoSchedule"
 
 
 rlog "az aks delete -g ${RG} -n ${KS}"

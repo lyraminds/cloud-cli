@@ -1,1 +1,1 @@
-Cloud CLI Version v1.2 Build 10012024
+Cloud CLI Version v1.3 Build 19012024

@@ -86,12 +86,12 @@ fi
 
 function _exec(){
     local _MODE=${2:-${CC_MODE}} 
-    if [ "${_MODE}" == "live" ]; then
-        audit "$1" 
+    if [ "${_MODE}" == "live" ]; then        
     echo "$1"
     log "$1"
     eval "$1"    
-
+    ok
+    audit "$1"
     elif [ "${_MODE}" == "script" ]; then
       log "$1"
     else
@@ -198,12 +198,60 @@ help(){
 fi
 }
 
+helm-pull(){
+
+local REPO_URL=$1
+local REPO_LOCAL=$2
+local REPO_APP=$3
+local HELM_VERSION=$4
+
+H="
+helm-pull \"https://charts.helm.sh/stable\" \"stable\" \"mysql\" \"1.6.1\" 
+helm-pull \"https://prometheus-community.github.io/helm-charts\" \"prometheus-community\" \"prometheus-blackbox-exporter\" \"8.5.0\" 
+
+"
+empty "$REPO_URL" "Helm url" "${H}"
+empty "$REPO_LOCAL" "Helm repo name" "${H}"
+empty "$REPO_APP" "Helm componet/app name" "${H}"
+
+local VER=""
+if [ ! -z "${HELM_VERSION}" -a "${HELM_VERSION}" != " " ]; then
+VER="--version ${HELM_VERSION}"
+fi
+
+# RPATH="${CC_WORKSPACE_ROOT}/work"
+# if [ ! -d ${RPATH}/${REPO_APP} ]; then
+# P=`pwd`
+# mkdir -p ${RPATH}
+# cd ${RPATH}
+# curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${VER} TARGET_ARCH=x86_64 sh -
+# cd $P
+# fi
+
+local CPATH="${CC_HELM_CHARTS_ROOT}/${REPO_APP}/"
+if [ ! -d ${CPATH} ]; then
+local P=`pwd`
+# mkdir -p ${CPATH}
+helm repo add ${REPO_LOCAL} ${REPO_URL}
+helm repo update ${REPO_LOCAL}
+helm pull ${REPO_LOCAL}/${REPO_APP} ${VER} --untar --untardir ${CC_HELM_CHARTS_ROOT}
+# local C="run-git ${GIT_URL} ${REPO_APP}"
+# _exec "$C" "ignore"
+cd $P
+fi
+
+}
+
 helm-install(){
 run-helm "install" "$1" "$2" "$3" "$4"
 }
 
 helm-upgrade(){
 run-helm "upgrade" "$1" "$2" "$3" "$4"
+}
+
+helm-delete(){
+run-helm "delete" "$1" "$2" "$3" "$4"
 }
 
 helm-uninstall(){
@@ -230,18 +278,22 @@ local OVR=${5}
 
 local H="
 helm-install \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" 
+helm-install \"app-name\" \"my-namespace\" \"/chart-folder\" \"/your-custom-value-file\" 
 helm-install \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" \"/home/user/deploy/app-name-overrides.yaml\" 
 helm-upgrade \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" \"/home/user/deploy/app-name-overrides.yaml\" 
-
+helm-delete  \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\"
 "
 empty "$NS" "Namespace" "${H}"
-empty "$CHART" "Path of helm chart" "${H}"
+
 empty "$APP_NAME" "App name" "${H}"
 empty "$ACTION" "Chart action install|upgrade" "${H}"
 
+if [ "$ACTION" == "install" ] || [ "$ACTION" == "upgrade" ]; then
+empty "$CHART" "Path of helm chart" "${H}"
 if [ ! -d "$CHART" ]; then
 error "No helm folders found at [${CHART}], define right path in xx-overrides.env"
 exit;
+fi
 fi
 
 SRT="-f $OVR"
@@ -249,13 +301,26 @@ if [ -z "$OVR" ]; then
     SRT=""
 fi
 
-#install or upgrade helm
-C="helm $ACTION $SRT $APP_NAME --namespace=$NS $CHART"
+C="helm $ACTION $SRT $APP_NAME --namespace=${NS} $CHART"
+if [ "$ACTION" == "install" ]; then
+if [[ $(helm list -A | grep ${NS} | grep $APP_NAME" " | wc -l) -gt 0 ]]; then 
+    log "$APP_NAME already installed in namespace $NS "
+else
+#install or upgrade or delete helm
+./kube/ns.sh "${NS}"
 run-cmd "$C" 
+fi
+elif [ "$ACTION" == "delete" ] || [ "$ACTION" == "uninstall" ]; then
+run-cmd "helm $ACTION $APP_NAME --namespace=${NS}"
+else
+run-cmd "$C" 
+fi
 # run-sleep 6
 
 
 }
+
+
 fqn(){
 if [ ! -z "$CC_SUB_DOMAIN_SUFFIX" -a "$CC_SUB_DOMAIN_SUFFIX" != " " ]; then
 _APP="-${CC_SUB_DOMAIN_SUFFIX}"
