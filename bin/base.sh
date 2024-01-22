@@ -316,7 +316,6 @@ fi
 elif [ "$ACTION" == "delete" ] || [ "$ACTION" == "uninstall" ]; then
 run-cmd "helm $ACTION $APP_NAME --namespace=${NS}"
 else
-echo "eeeeeeeeeeeeeeeeeeeeeeeeeeee"
 run-cmd "${C}" 
 fi
 
