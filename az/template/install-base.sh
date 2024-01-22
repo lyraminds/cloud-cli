@@ -28,8 +28,8 @@ source az/aks-use.sh
 # ./az/helm/emissary-ingress.sh -p "nplb" -a "install"
 # ./az/helm/istio.sh -p "npistio" -a "install"
 # ./az/kube/istio-gateway.sh -d "seldon" -a "install"
-# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "delete"
-# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "delete"
+# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "install"
+# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "install"
 # ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "install"
 
 
