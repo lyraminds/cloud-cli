@@ -362,4 +362,3 @@ run-install "pwgen"
 fi
 }
 
-initfirst
