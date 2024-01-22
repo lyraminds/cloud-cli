@@ -77,18 +77,19 @@ extraEnvVars:
 
 " > $OVR
 
-# if [ "${ACTION}" == "install" ]; then
-# ./kube/ns.sh $NS
-# fi
-
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
+
+if [ "${ACTION}" == "install" ]; then
+# ./kube/ns.sh $NS
+# fi
 
 #define secret and create
 secret-file "${SECRET}" "${CC_MINIO_ROOT_USER}" "root-user" 
 secret-add "${SECRET}" "${CC_MINIO_ROOT_PASSWORD}" "root-password" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 
+fi
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 

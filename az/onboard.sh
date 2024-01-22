@@ -124,6 +124,9 @@ else
     N=`echo "${U}" | cut -d'@' -f 1`
     sed -i "s/myname@domain.com/${U}/g" "${F}/az.env"  
     sed -i "s/myname/${N}/g" "${F}/az.env"  
+    N="${CC_GIT_LOGIN_ID}@dev.azure.com"
+    sed -i "s/gitdomain.com/${N}/g" "${F}/az.env"  
+    
   fi
   if [ "$S" != "" ]; then  
   sed -i "s/azure-subscription-code/${S}/g" "${F}/az.env"  

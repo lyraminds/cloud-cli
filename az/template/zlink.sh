@@ -18,6 +18,7 @@ fi
 cd cloud-cli
 echo `cat doc/version.txt`
 #Using defaults
+source bin/base.sh
 source conf/default-azure.env
 
 #To change root of log folder 

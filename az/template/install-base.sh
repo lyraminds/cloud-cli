@@ -6,6 +6,7 @@ export CC_MODE=live
 #### Helm Deployments #######################
 #### Provide path of your helm charts in az-overrides.env
 source helm/init.sh
+source az/aks-use.sh
 
 #### Download required charts to CC_HELM_CHARTS_ROOT folder defined in  az-overrides.env
 #### Optional if your charts are already available in CC_HELM_CHARTS_ROOT folder
@@ -25,18 +26,14 @@ source helm/init.sh
 
 
 # ./az/helm/emissary-ingress.sh -p "nplb" -a "install"
-./az/helm/istio.sh -p "npistio" -a "install"
+# ./az/helm/istio.sh -p "npistio" -a "install"
 # ./az/kube/istio-gateway.sh -d "seldon" -a "install"
+# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "delete"
+# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "delete"
+# ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "install"
 
 
-# ./helm/minio.sh -p "npdata" -s "nsdata" -a "install"
-# ./az/afd-aks-origin.sh -n "`fqn minio`"
-# ./az/afd-aks-origin.sh -n "`fqn minio-console`"
 
-# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "install"
-
-# ./helm/rabbitmq.sh -p "npdata" -s "nsqueue" -a "install"
-# ./az/afd-aks-origin.sh -n "`fqn rabbitmq`"
+# ./kube/purge-all.sh -s "nsdata"
 
 
-source az/aks-use.sh

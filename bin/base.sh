@@ -44,8 +44,8 @@ function info(){
 }
 
 function error(){
-  log "$1" "${CC_LOG_FILE}"
-  echo "$1"
+  log "${1}" "${CC_LOG_FILE}"
+  echo "############################## ${1}"
 export CC_ERROR=1
 
 }
@@ -108,17 +108,18 @@ function run-install(){
 
 
 function run-cmd(){    
-    _exec "$1"
+    _exec "${1}"
 }
 
 
 ok() {
 STATUS=$?
 if [[ $STATUS -ne 0 ]] ; then
-    error "ERROR CODE=$STATUS"
+    error "ERROR CODE1=$STATUS"
     exit $STATUS;
 fi
-if [ "$CC_ERROR" == "1" ] ; then
+if [ "${CC_ERROR}" == "1" ] ; then
+error "ERROR CODE2=1"
  exit 0;
 fi 
 }
@@ -264,7 +265,7 @@ empty "$NS" "Namespace" "${H}"
 empty "$APP_NAME" "App name" "${H}"
 
 C="helm uninstall $APP_NAME --namespace=$NS"
-run-cmd "$C" 
+run-cmd "${C}" 
 
 }
 
@@ -284,7 +285,6 @@ helm-upgrade \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\" \"/
 helm-delete  \"app-name\" \"my-namespace\" \"/home/user/helm-chats/maridb/\"
 "
 empty "$NS" "Namespace" "${H}"
-
 empty "$APP_NAME" "App name" "${H}"
 empty "$ACTION" "Chart action install|upgrade" "${H}"
 
@@ -301,21 +301,30 @@ if [ -z "$OVR" ]; then
     SRT=""
 fi
 
-C="helm $ACTION $SRT $APP_NAME --namespace=${NS} $CHART"
-if [ "$ACTION" == "install" ]; then
-if [[ $(helm list -A | grep ${NS} | grep $APP_NAME" " | wc -l) -gt 0 ]]; then 
-    log "$APP_NAME already installed in namespace $NS "
+local C="helm $ACTION $SRT $APP_NAME --namespace=${NS} $CHART"
+if [ "${ACTION}" == "install" ]; then
+if [[ $(helm list -A | grep ${NS} | grep ${APP_NAME}" " | wc -l) -gt 0 ]]; then 
+  echo "$APP_NAME already installed in namespace ${NS}"
+  log "$APP_NAME already installed in namespace $NS "
 else
 #install or upgrade or delete helm
 ./kube/ns.sh "${NS}"
-run-cmd "$C" 
+run-cmd "${C}" 
+run-sleep "3"
+# kubectl describe pod ${APP_NAME} -n "$NS"
 fi
 elif [ "$ACTION" == "delete" ] || [ "$ACTION" == "uninstall" ]; then
 run-cmd "helm $ACTION $APP_NAME --namespace=${NS}"
 else
-run-cmd "$C" 
+echo "eeeeeeeeeeeeeeeeeeeeeeeeeeee"
+run-cmd "${C}" 
 fi
-# run-sleep 6
+
+vlog "kubectl get pods -n ${NS}"
+vlog "kubectl get events -n ${NS}"
+vlog "kubectl describe pod ${APP_NAME} -n ${NS}"
+echo "kubectl get pods -n ${NS}"
+kubectl get pods -n ${NS}
 
 
 }
@@ -347,3 +356,11 @@ secret-file(){
 export CC_GEN_SECRET_FILES=""
 secret-add "$1" "$2" "$3"
 }
+
+initfirst(){
+if [ $(installed "pwgen") == "false" ]; then
+run-install "pwgen"
+fi
+}
+
+initfirst

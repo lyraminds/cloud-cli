@@ -47,10 +47,15 @@ empty "$DISK" "DISK" "$H"
 export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 SECRET=${APP_NAME}-secret
+if [ "${ACTION}" == "install" ]; then
+# ./kube/ns.sh $NS
 #define secret and create
 secret-file "${SECRET}" "${CC_RABBITMQ_USER_PASSWORD}" "rabbitmq-password" 
 secret-add "${SECRET}" "${CC_RABBITMQ_ERLANG_COOKIE}" "rabbitmq-erlang-cookie" 
 ./kube/secret.sh "${SECRET}" "${NS}"
+
+
+fi
 RABITMQ_USER_PASS=`cat ${CC_BASE_SECRET_FOLDER}/${SECRET}/rabbitmq-password`
 
 OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
@@ -70,19 +75,20 @@ persistence:
 
 auth:
   username: \"${CC_RABBITMQ_USER}\"
+  password: \"${RABITMQ_USER_PASS}\"
   existingPasswordSecret: \"$SECRET\"
   existingErlangSecret: \"$SECRET\"
-  password: \"${RABITMQ_USER_PASS}\"
+
 
 extraEnvVars: 
   - name: \"LOG_LEVEL\"
-    value: \"error\" 
+    value: \"ERROR\" 
 
-      " > $OVR  
+      " > ${OVR}  
 
 if [ ! -f "${CC_RABBITMQ_DEFINITION}" ]; then
 echo "####################### WARNING ##############################"
-error "No rabbitmq definitions found at [${CC_RABBITMQ_DEFINITION}], define right path at [CC_RABBITMQ_DEFINITION] in xx-overrides.env"
+echo "No rabbitmq definitions found at [${CC_RABBITMQ_DEFINITION}], define right path at [CC_RABBITMQ_DEFINITION] in xx-overrides.env"
 echo "Will continue with out rabbitmq definitions in 5 sec..."
 echo "####################### WARNING ##############################"
 sleep "5"
@@ -91,32 +97,28 @@ echo "
 extraSecrets:
   load-definition:
     load_definition.json: |
-      " >> $OVR  
-cat ${CC_RABBITMQ_DEFINITION} >> $OVR
+      " >> ${OVR}  
+cat ${CC_RABBITMQ_DEFINITION} >> ${OVR}
 echo "
 loadDefinition:
   enabled: true
   existingSecret: load-definition
 extraConfiguration: |
   load_definitions = /app/load_definition.json
- " >> $OVR   
+ " >> ${OVR}   
 fi
-
-
-# if [ "${ACTION}" == "install" ]; then
-# ./kube/ns.sh $NS
-# fi
 
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
-run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
+run-helm "${ACTION}" "${APP_NAME}" "${NS}" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
+
 
 if [ "${ACTION}" == "install" ]; then
 ./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672"
 fi
-
+# trap cleanup EXIT
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"
 
 

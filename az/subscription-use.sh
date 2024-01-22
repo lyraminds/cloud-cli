@@ -36,3 +36,5 @@ else
 az account set --subscription ${SUB}
 fi
 
+vlog "az quota list --scope /subscriptions/${subscriptionId}/providers/Microsoft.Compute/locations/${CC_REGION}"
+vlog "az quota update --resource-name standardFSv2Family --scope /subscriptions/${subscriptionId}/providers/Microsoft.Compute/locations/${CC_REGION} --limit-object value=24 --resource-type dedicated"
