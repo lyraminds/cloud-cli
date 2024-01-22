@@ -89,13 +89,14 @@ function _exec(){
     if [ "${_MODE}" == "live" ]; then        
     echo "$1"
     log "$1"
-    eval "$1"    
+    eval "${1}"    
     ok
     audit "$1"
     elif [ "${_MODE}" == "script" ]; then
       log "$1"
     else
       error "Invalid CC_MODE=${CC_MODE} Use live or script"
+      exit
     fi
 }
 
@@ -103,7 +104,7 @@ function _exec(){
 function run-install(){    
     local i=$(install "$CC_OS") 
     local c="$i $1"
-    _exec "$c"
+    _exec "${c}"
 }
 
 
@@ -357,6 +358,7 @@ secret-add "$1" "$2" "$3"
 }
 
 initfirst(){
+
 if [ $(installed "pwgen") == "false" ]; then
 run-install "pwgen"
 fi
