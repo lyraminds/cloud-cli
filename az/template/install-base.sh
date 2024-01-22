@@ -1,15 +1,30 @@
 source zlink.sh
-
 export CC_MODE=live
-
-
-#### Helm Deployments #######################
-#### Provide path of your helm charts in az-overrides.env
 source helm/init.sh
 source az/aks-use.sh
 
-#### Download required charts to CC_HELM_CHARTS_ROOT folder defined in  az-overrides.env
-#### Optional if your charts are already available in CC_HELM_CHARTS_ROOT folder
+#### Helm Deployments #######################
+#### Provide path of your helm charts in CC_HELM_CHARTS_ROOT variable in az-overrides.env
+#### Download required charts to CC_HELM_CHARTS_ROOT folder
+
+### Ingress setup
+### To see the full option use -h
+##./az/helm/emissary-ingress.sh -h
+
+# ./az/helm/emissary-ingress.sh -p "nplb" -a "install"
+# ./az/helm/istio.sh -p "npistio" -a "install"
+# ./az/kube/istio-gateway.sh -d "seldon" -a "install"
+
+
+### Other applications
+
+# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "install"
+# ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "install"
+# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "install"
+
+
+
+
 
 
 #### Helm install/upgrade/uninstall ####################################
@@ -22,18 +37,3 @@ source az/aks-use.sh
 # helm-install "alertmanager" "nsmonitor" "${CC_HELM_CHARTS_ROOT}/alertmanager" "${CONFIG_ROOT}/alertmanager/values.yaml" 
 # helm-install "kibana" "nsmonitor" "${CC_HELM_CHARTS_ROOT}/kibana" "${CONFIG_ROOT}/kibana/values.yaml" 
 # helm-install "filebeat" "nsmonitor" "${CC_HELM_CHARTS_ROOT}/filebeat" "${CONFIG_ROOT}/filebeat/values.yaml" 
-
-
-
-# ./az/helm/emissary-ingress.sh -p "nplb" -a "install"
-# ./az/helm/istio.sh -p "npistio" -a "install"
-# ./az/kube/istio-gateway.sh -d "seldon" -a "install"
-# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "install"
-# ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "install"
-# ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "install"
-
-
-
-# ./kube/purge-all.sh -s "nsdata"
-
-
