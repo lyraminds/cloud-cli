@@ -18,10 +18,11 @@ fi
 cd cloud-cli
 echo `cat doc/version.txt`
 #Using defaults
+
+source conf/default-azure.env
 source bin/base.sh
 initfirst
-source conf/default-azure.env
-
+source conf/base.env
 #To change root of log folder 
 export CC_LOG_ROOT=${CC_RUN}
 
