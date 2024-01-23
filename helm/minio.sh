@@ -35,8 +35,6 @@ info "helm/minio.sh ${flag} ${OPTARG}"
     esac
 done
 
-HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
-
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
 empty "$NPN" "NODE POOL NAME" "$H"
@@ -44,6 +42,8 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
+
+HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
 PUBLIC_NAME="${APP_NAME}-console"
 HNAME="$(fqhn $PUBLIC_NAME)"
