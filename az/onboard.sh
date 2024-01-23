@@ -124,7 +124,7 @@ else
     N=`echo "${U}" | cut -d'@' -f 1`
     sed -i "s/myname@domain.com/${U}/g" "${F}/az.env"  
     sed -i "s/myname/${N}/g" "${F}/az.env"  
-    N="${CC_GIT_LOGIN_ID}@dev.azure.com"
+    N="${N}@dev.azure.com"
     sed -i "s/gitdomain.com/${N}/g" "${F}/az.env"  
     
   fi
