@@ -45,7 +45,7 @@ function info(){
 
 function error(){
   log "${1}" "${CC_LOG_FILE}"
-  echo "############################## ${1}"
+  echo "${1}"
 export CC_ERROR=1
 
 }
@@ -332,9 +332,11 @@ kubectl get pods -n ${NS}
 
 fqn(){
 if [ ! -z "$CC_SUB_DOMAIN_SUFFIX" -a "$CC_SUB_DOMAIN_SUFFIX" != " " ]; then
-_APP="-${CC_SUB_DOMAIN_SUFFIX}"
+_APP="${CC_SUB_DOMAIN_SUFFIX}-${1}"
+else
+_APP="${1}"
 fi
-echo "${1}${_APP}"
+echo "${_APP}"
 }
 
 fqhn(){

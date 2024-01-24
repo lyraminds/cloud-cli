@@ -6,6 +6,7 @@ NPN=""
 REPLICA_COUNT=2
 ACTION="install"
 DISK=32Gi
+SUB_DOMAIN=${APP_NAME}
 #==============================================
 source bin/base.sh
 H="
@@ -20,7 +21,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d: flag
+while getopts a:p:n:s:r:h:d:e: flag
 do
 info "helm/rabbitmq.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -31,6 +32,7 @@ info "helm/rabbitmq.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -79,6 +81,20 @@ auth:
   existingPasswordSecret: \"$SECRET\"
   existingErlangSecret: \"$SECRET\"
 
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 120
+  timeoutSeconds: 20
+  periodSeconds: 30
+  failureThreshold: 6
+  successThreshold: 1
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  timeoutSeconds: 20
+  periodSeconds: 30
+  failureThreshold: 3
+  successThreshold: 1
 
 extraEnvVars: 
   - name: \"LOG_LEVEL\"
@@ -116,7 +132,7 @@ run-sleep "2"
 
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672"
+./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}"
 fi
 # trap cleanup EXIT
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

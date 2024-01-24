@@ -6,6 +6,7 @@ NPN=""
 REPLICA_COUNT=4
 ACTION="install"
 DISK="16Gi"
+SUB_DOMAIN=${APP_NAME}
 #==============================================
 source bin/base.sh
 H="
@@ -20,7 +21,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d: flag
+while getopts a:p:n:s:r:h:d:e: flag
 do
 info "az/helm/minio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -31,6 +32,7 @@ info "az/helm/minio.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -42,9 +44,9 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
-./helm/minio.sh -n "${APP_NAME}" -s "${NS}" -p "$NPN" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}"
+./helm/minio.sh -n "${APP_NAME}" -s "${NS}" -p "$NPN" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}"
 
 if [ "${ACTION}" == "install" ]; then
-./az/afd-aks-origin.sh -n "`fqn ${APP_NAME}`"
-./az/afd-aks-origin.sh -n "`fqn ${APP_NAME}-console`"
+./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
+./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}-console`"
 fi

@@ -8,6 +8,7 @@ ACTION="install"
 DISK=16Gi
 VER="1.14.0"
 IMG="apache/nifi"
+SUB_DOMAIN=${APP_NAME}
 #==============================================
 source bin/base.sh
 H="
@@ -24,7 +25,7 @@ exit 0;
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:v: flag
+while getopts a:p:n:s:r:h:d:i:v:e: flag
 do
 info "helm/nifi.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -37,6 +38,7 @@ info "helm/nifi.sh ${flag} ${OPTARG}"
         d) DISK=${OPTARG};;
         i) IMG=${OPTARG};;
         v) VER=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -90,7 +92,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080"
+./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080" "${SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

@@ -69,10 +69,10 @@ do
         r) R=${OPTARG};;
         s) S=${OPTARG};;
         d) D=${OPTARG};;
-        v) V=${OPTARG:-001};;
+        v) V=${OPTARG};;
 
-        t) T=${OPTARG:-001};;
-        o) O=${OPTARG:-001};;
+        t) T=${OPTARG};;
+        o) O=${OPTARG};;
     esac
 done
 
@@ -112,18 +112,18 @@ if [ -d "$F" ]; then
 else
   mkdir -p $F
   cp -r $CF $F
-  sed -i "s/demo/${C}/g" "${F}/az.env"
-  sed -i "s/dev/${E}/g" "${F}/az.env"
-  sed -i "s/westus2/${R}/g" "${F}/az.env"  
-    sed -i "s/001/${V}/g" "${F}/az.env"  
+  sed -i "s/my-cc-customer-name/${C}/g" "${F}/az.env"
+  sed -i "s/my-cc-customer-env/${E}/g" "${F}/az.env"
+  sed -i "s/my-cc-region/${R}/g" "${F}/az.env"  
+    sed -i "s/my-cc-version/${V}/g" "${F}/az.env"  
       if [ "$D" != "" ]; then  
   sed -i "s/companydomain.com/${D}/g" "${F}/az.env"  
   fi
     
   if [ "$U" != "" ]; then  
     N=`echo "${U}" | cut -d'@' -f 1`
-    sed -i "s/myname@domain.com/${U}/g" "${F}/az.env"  
-    sed -i "s/myname/${N}/g" "${F}/az.env"  
+    sed -i "s/my-cc-name@domain.com/${U}/g" "${F}/az.env"  
+    sed -i "s/my-cc-name/${N}/g" "${F}/az.env"  
     N="\${CC_GIT_LOGIN_ID}@dev.azure.com"
     sed -i "s/gitdomain.com/${N}/g" "${F}/az.env"  
     

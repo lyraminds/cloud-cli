@@ -5,7 +5,7 @@ NS=""
 NPN=""
 REPLICA_COUNT=4
 ACTION="install"
-
+SUB_DOMAIN=${APP_NAME}
 DISK=16Gi
 #==============================================
 source bin/base.sh
@@ -21,7 +21,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d: flag
+while getopts a:p:n:s:r:h:d:e: flag
 do
 info "helm/minio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -32,6 +32,7 @@ info "helm/minio.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -45,8 +46,9 @@ empty "$DISK" "DISK" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
-PUBLIC_NAME="${APP_NAME}-console"
-HNAME="$(fqhn $PUBLIC_NAME)"
+PUBLIC_APP_NAME="${APP_NAME}-console"
+PUBLIC_SUB_DOMAIN="${SUB_DOMAIN}-console"
+HNAME="$(fqhn $PUBLIC_SUB_DOMAIN)"
 
 export CC_MINIO_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 export CC_MINIO_PUBLIC_URL=https://${HNAME}
@@ -94,8 +96,8 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9000"
-./helm/emissary-host-mapping.sh "${PUBLIC_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9001" "${PUBLIC_NAME}"
+./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9000" "${SUB_DOMAIN}"
+./helm/emissary-host-mapping.sh "${PUBLIC_APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9001" "${PUBLIC_SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

@@ -5,7 +5,7 @@ NS=""
 NPN=""
 REPLICA_COUNT=1
 ACTION="install"
-
+SUB_DOMAIN=${APP_NAME}
 #==============================================
 source bin/base.sh
 H="
@@ -19,7 +19,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h: flag
+while getopts a:p:n:s:r:h:e: flag
 do
 info "helm/nifi-registry.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -29,6 +29,7 @@ info "helm/nifi-registry.sh ${flag} ${OPTARG}"
         r) REPLICA_COUNT=${OPTARG};;
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -65,7 +66,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080"
+./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080" "${SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

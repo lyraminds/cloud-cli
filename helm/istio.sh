@@ -6,7 +6,7 @@ LB_IP=""
 REPLICA_COUNT=1
 ACTION="install"
 VER=1.14.0
-
+SUB_DOMAIN=${APP_NAME}
 source bin/base.sh
 H="
 ./helm/istio.sh -a \"install\" -p \"nodepoolname\" -r \"${REPLICA_COUNT}\" -v \"${VER}\" 
@@ -17,7 +17,7 @@ H="
 
 help "${1}" "${H}"
 
-while getopts a:p:n:i:r:v: flag
+while getopts a:p:n:i:r:v:e: flag
 do
 info "helm/istio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -27,6 +27,7 @@ info "helm/istio.sh ${flag} ${OPTARG}"
         r) REPLICA_COUNT=${OPTARG};;
         a) ACTION=${OPTARG};;
         v) VER=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 

@@ -7,6 +7,7 @@ VER=1.14.0
 IP_NAME=${CC_ISTIO_IP_NAME}
 KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
+SUB_DOMAIN=${APP_NAME}
 source bin/base.sh
 H="
 ./helm/istio.sh -a \"install\" -p \"nodepoolname\" -r \"${REPLICA_COUNT}\" -v \"${VER}\" 
@@ -17,7 +18,7 @@ H="
 
 help "${1}" "${H}"
 
-while getopts a:p:n:r:v: flag
+while getopts a:p:n:r:v:e: flag
 do
 info "helm/istio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -26,6 +27,7 @@ info "helm/istio.sh ${flag} ${OPTARG}"
         r) REPLICA_COUNT=${OPTARG};;
         a) ACTION=${OPTARG};;
         v) VER=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 
@@ -41,6 +43,6 @@ export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name 
 MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`
 empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
 
-./helm/istio.sh -a "${ACTION}" -n "${APP_NAME}" -p "${NPN}" -r "${REPLICA_COUNT}" -v ${VER} -i "${MYIP}"
+./helm/istio.sh -a "${ACTION}" -n "${APP_NAME}" -p "${NPN}" -r "${REPLICA_COUNT}" -v ${VER} -i "${MYIP}" -e "${SUB_DOMAIN}"
 
-./az/afd-aks-origin.sh -n "`fqn ${APP_NAME}`" -i "${IP_NAME}"
+./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`" -i "${IP_NAME}"
