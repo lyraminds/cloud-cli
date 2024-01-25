@@ -1,6 +1,7 @@
 
 DO=${CC_DOMAIN_NAME}
-RG=${CC_RESOURCE_GROUP_NAME}
+RG=${CC_RESOURCE_GROUP_NAME_DNS}
+SUB=${CC_SUBSCRIPTION_DNS}
 
 source bin/base.sh
 
@@ -24,11 +25,11 @@ done
 empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
-E=`az network dns zone list -g ${RG} --query "[?name=='${DO}']"`
+E=`az network dns zone list --subscription ${SUB} -g ${RG} --query "[?name=='${DO}']"`
 if [ "${E}" == "[]" ]; then
-C="az network dns zone create -g ${RG} -n ${DO} --tags ${CC_TAGS}"
+C="az network dns zone create --subscription ${SUB} -g ${RG} -n ${DO} --tags ${CC_TAGS}"
 ok && run-cmd "${C}" 
 
-rlog "az network dns zone delete -g ${RG} -n ${DO}"
-vlog "az network dns zone show -g ${RG} -n ${DO}"
+rlog "az network dns zone delete --subscription ${SUB} -g ${RG} -n ${DO}"
+vlog "az network dns zone show --subscription ${SUB} -g ${RG} -n ${DO}"
 fi

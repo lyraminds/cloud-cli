@@ -1,5 +1,5 @@
 SD_NAME=""
-IP_NAME=${CC_AKS_IP_NAME}
+IP_NAME=${CC_EMISSARY_IP_NAME}
 KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
 AFD_PRIORITY=1
@@ -10,7 +10,7 @@ source bin/base.sh
 H="
 ./adf-aks-origin.sh -n \"sub-domain\" 
 ./adf-aks-origin.sh -n \"sub-domain\" -d \"domain-name.com\" -i \"ip-name\"
-./adf-aks-origin.sh -n \"mysubdomain\" -d \"domain-name\" -i \"\$CC_AKS_IP_NAME\"
+./adf-aks-origin.sh -n \"mysubdomain\" -d \"domain-name\" -i \"\$CC_EMISSARY_IP_NAME\"
 "
 
 help "$1" "$H"

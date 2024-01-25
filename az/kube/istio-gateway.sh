@@ -1,6 +1,6 @@
 #!/bin/bash
-APP_NAME=""
-NS=""
+APP_NAME="istio-gateway"
+NS="istio-system"
 ACTION="install"
 SUB_DOMAIN=${APP_NAME}
 IP_NAME=${CC_ISTIO_IP_NAME}

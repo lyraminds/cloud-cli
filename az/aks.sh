@@ -8,21 +8,23 @@ KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
 SNET=${CC_SUBNET_NAME}
 CR=${CC_CONTAINER_REGISTRY}
+SNPN=${CC_AKS_SYSTEM_NP}
 
 source bin/base.sh
 
 H="
 ./az/aks.sh  will use the default spec
-./az/aks.sh -m \"Virtual machine size\" -d \"Disk size\" -o \"Options\"
-./az/aks.sh -m \"${VMSIZE}\" -d \"${DISKSIZE}\" 
-./az/aks.sh -m \"${VMSIZE}\" -d \"${DISKSIZE}\" -o \"$OPTIONS\" -c \"clustername-optional\" -s \"subnet-name\" -r \"container-registry\"
+./az/aks.sh -m \"Virtual machine size\" -d \"Disk size\" -o \"Options\" 
+./az/aks.sh -m \"${VMSIZE}\" -d \"${DISKSIZE}\" -p \"${SNPN}\"
+./az/aks.sh -m \"${VMSIZE}\" -d \"${DISKSIZE}\" -p \"systen-nodepool-name\" -o \"$OPTIONS\" -c \"clustername-optional\" -s \"subnet-name\" -r \"container-registry\"
 
 you may override the default configs
 
 export CC_AKS_CONFIG=\"--vm-set-type VirtualMachineScaleSets \\
- --nodepool-name ${CC_AKS_SYSTEM_NP} \\
+ --pod-cidr 192.168.0.0/16 \\
  --service-cidr 10.0.0.0/16 \\
  --dns-service-ip 10.0.0.10 \\
+ --enable-managed-identity \\
  --network-plugin azure \\
  --network-policy calico \\
  --network-plugin-mode overlay \\
@@ -32,7 +34,7 @@ export CC_AKS_CONFIG=\"--vm-set-type VirtualMachineScaleSets \\
 
 help "${1}" "${H}"
 
-while getopts o:s:m:c:d:r: flag
+while getopts o:s:m:c:d:r:p: flag
 do
 info "az/aks.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -42,6 +44,7 @@ info "az/aks.sh ${flag} ${OPTARG}"
         c) KS=${OPTARG};;
         r) CR=${OPTARG};;
         d) DISKSIZE=${OPTARG};;
+        p) SNPN=${OPTARG};;
     esac
 done
 
@@ -73,7 +76,7 @@ if [ ! -z "$SNET_ID" -a "$SNET_ID" != " " ]; then
 SNET_ID="--vnet-subnet-id $SNET_ID"
 fi
 
-C="az aks create -g $RG -n $KS $A -s ${VMSIZE} ${SNET_ID} --tags ${CC_TAGS} ${KSV} --node-osdisk-size ${DISKSIZE} $CC_AKS_CONFIG ${OPTIONS}"
+C="az aks create -g $RG -n $KS $A -s ${VMSIZE} ${SNET_ID} --tags ${CC_TAGS} ${KSV}  --nodepool-name ${SNPN} --node-osdisk-size ${DISKSIZE} $CC_AKS_CONFIG ${OPTIONS}"
 ok && run-cmd "${C}"
 
 #To stop scheduling other np to system pool

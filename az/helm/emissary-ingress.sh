@@ -6,7 +6,7 @@ REPLICA_COUNT=1
 ACTION="install"
 VER="2.2.2"
 
-IP_NAME=${CC_AKS_IP_NAME}
+IP_NAME=${CC_EMISSARY_IP_NAME}
 KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
 
@@ -44,6 +44,8 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$VER" "VERSION" "$H"
+
+./az/ip-aks.sh "${IP_NAME}"
 
 export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name $KS --resource-group $RG --output tsv`
 MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`

@@ -1,7 +1,8 @@
 SD_NAME=""
 TXT_VALUE=""
 DO=${CC_DOMAIN_NAME}
-RG=${CC_RESOURCE_GROUP_NAME}
+RG=${CC_RESOURCE_GROUP_NAME_DNS}
+SUB=${CC_SUBSCRIPTION_DNS}
 
 source bin/base.sh
 
@@ -32,14 +33,14 @@ empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 
-E=`az network dns record-set txt list -g ${RG} -z ${DO} --query "[?name=='${SD_NAME}']"` #TODO SD_NAME OR TXT_VALUE
+E=`az network dns record-set txt list --subscription ${SUB} -g ${RG} -z ${DO} --query "[?name=='${SD_NAME}']"` #TODO SD_NAME OR TXT_VALUE
 if [ "${E}" == "[]" ]; then
 
 #TXT_VALUE
-C="az network dns record-set txt add-record -g ${RG} -z ${DO} -n ${SD_NAME} --value \"${TXT_VALUE}\""
+C="az network dns record-set txt add-record --subscription ${SUB} -g ${RG} -z ${DO} -n ${SD_NAME} --value \"${TXT_VALUE}\""
 
 ok && run-cmd "${C}"
 
-rlog "az network dns record-set txt remove-record -g ${RG} -z ${DO} -n ${SD_NAME}"
-vlog "az network dns record-set txt show -g ${RG} -z ${DO} -n ${SD_NAME}"
+rlog "az network dns record-set txt remove-record --subscription ${SUB} -g ${RG} -z ${DO} -n ${SD_NAME}"
+vlog "az network dns record-set txt show --subscription ${SUB} -g ${RG} -z ${DO} -n ${SD_NAME}"
 fi

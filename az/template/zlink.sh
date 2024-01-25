@@ -33,3 +33,6 @@ source ${CC_RUN}/az-overrides.env
 #Initializing with your configs
 source bin/init.sh
 
+#### Define your custom tags
+#export CC_TAGS="'env=${CC_CUSTOMER_ENV}' 'cc=${CC_CUSTOMER}'"
+
