@@ -36,7 +36,7 @@ info "helm/rabbitmq.sh ${flag} ${OPTARG}"
     esac
 done
 
-HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
+
 
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
@@ -46,17 +46,15 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
+HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
-SECRET=${APP_NAME}-secret
+SECRET=rabbitmq-secret
 if [ "${ACTION}" == "install" ]; then
-# ./kube/ns.sh $NS
-#define secret and create
 secret-file "${SECRET}" "${CC_RABBITMQ_USER_PASSWORD}" "rabbitmq-password" 
 secret-add "${SECRET}" "${CC_RABBITMQ_ERLANG_COOKIE}" "rabbitmq-erlang-cookie" 
+secret-add "${SECRET}" "${CC_RABBITMQ_SERVICE_URL}" "service-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
-
-
 fi
 RABITMQ_USER_PASS=`cat ${CC_BASE_SECRET_FOLDER}/${SECRET}/rabbitmq-password`
 
@@ -83,14 +81,16 @@ auth:
 
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 120
+  failureThreshold: 2000000
+  initialDelaySeconds: 320
   timeoutSeconds: 20
   periodSeconds: 30
   failureThreshold: 6
   successThreshold: 1
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 10
+  failureThreshold: 2000000
+  initialDelaySeconds: 120
   timeoutSeconds: 20
   periodSeconds: 30
   failureThreshold: 3

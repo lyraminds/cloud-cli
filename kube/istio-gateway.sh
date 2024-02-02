@@ -7,20 +7,20 @@ SUB_DOMAIN=${APP_NAME}
 #==============================================
 source bin/base.sh
 H="
-./helm/istio-gateway.sh -a \"install\" -n "app-name" -d \"subdomain\" 
-./helm/istio-gateway.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -d \"sub-domain\"
+./helm/istio-gateway.sh -a \"install\" -n "app-name" -e \"subdomain\" 
+./helm/istio-gateway.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -e \"sub-domain\"
 
 "
 
 help "${1}" "${H}"
 
-while getopts a:n:d: flag
+while getopts a:n:e: flag
 do
 info "helm/istio-gateway.sh ${flag} ${OPTARG}"
     case "${flag}" in
         n) APP_NAME=${OPTARG};;
         a) ACTION=${OPTARG};;
-        d) SUB_DOMAIN=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
     esac
 done
 

@@ -160,15 +160,26 @@ fi
 run-git(){
 
 H="
-run-git \"http://git.company.com/companyspace\" \"myproject\" 
-run-git \"\${CC_BRANCH} \${CC_GIT_URL}/companyspace/Documents/_git\" \"\${PROJECT}\" 
-run-git \"-b master \${CC_GIT_URL}/companyspace\" \"\${PROJECT}\"
+run-git \"http://git.company.com/companyspace\" \"myproject\" "master"
+run-git \"\${CC_GIT_URL}/companyspace/Documents/_git\" \"\${PROJECT}\" 
+run-git \"\${CC_GIT_URL}/companyspace\" \"\${PROJECT}\" "branch-name"
 "
 empty "$1" "Git url" "${H}"
 empty "$2" "Git Project Name" "${H}"
 
+local BRANCH=${3}
+
 GCMD="${1}/${2}"
-APP_SRC=${CC_PROJECT_SRC}/${3:-${2}}
+APP_SRC=${CC_PROJECT_SRC}/${4:-${2}}
+
+if [ ! -z "${BRANCH}" ]; then
+GCMD="-b ${BRANCH} ${GCMD}"
+else
+BRANCH="main"
+fi
+APP_SRC="${APP_SRC=}/${BRANCH}"
+
+
 
 info "${GCMD}"
 info "${APP_SRC}"
@@ -206,6 +217,7 @@ local REPO_URL=$1
 local REPO_LOCAL=$2
 local REPO_APP=$3
 local HELM_VERSION=$4
+local UPGRADE=${5:-noupgrade}
 
 H="
 helm-pull \"https://charts.helm.sh/stable\" \"stable\" \"mysql\" \"1.6.1\" 
@@ -230,17 +242,27 @@ fi
 # cd $P
 # fi
 
-local CPATH="${CC_HELM_CHARTS_ROOT}/${REPO_APP}/"
+local CPATH="${CC_HELM_CHARTS_ROOT}/versions/${REPO_APP}/${HELM_VERSION}"
+local TIME=$(date '+%Y-%m-%d-%H-%M-%S')
+local HELM_BACKUP=${CC_WORKSPACE_ROOT}/work/helm-backups/${REPO_APP}_${TIME}/
 if [ ! -d ${CPATH} ]; then
 local P=`pwd`
+mkdir -p "${CPATH}"
 # mkdir -p ${CPATH}
 helm repo add ${REPO_LOCAL} ${REPO_URL}
 helm repo update ${REPO_LOCAL}
-helm pull ${REPO_LOCAL}/${REPO_APP} ${VER} --untar --untardir ${CC_HELM_CHARTS_ROOT}
-# local C="run-git ${GIT_URL} ${REPO_APP}"
-# _exec "$C" "ignore"
+helm pull ${REPO_LOCAL}/${REPO_APP} ${VER} --untar --untardir ${CPATH}
+
+mkdir -p "${HELM_BACKUP}"
+if [ ! -d "${CC_HELM_CHARTS_ROOT}/${REPO_APP}" ]; then
+mv  "${CC_HELM_CHARTS_ROOT}/${REPO_APP}" "${HELM_BACKUP}"
+fi
+if [ ! -d "${CPATH}/${REPO_APP}" ]; then
+cp -R "${CPATH}/${REPO_APP}" "${CC_HELM_CHARTS_ROOT}"
+fi
 cd $P
 fi
+
 
 }
 
@@ -366,3 +388,8 @@ run-install "pwgen"
 fi
 }
 
+function build-acr() {
+local VER=${1}; local BRANCH=${2}; local PROJECT=${3}; local PROJECT_URL=${4}; local DOCKER_FILE=${5:-Dockerfile};local OPTIONS=${6}
+run-git "${CC_GIT_URL}/${PROJECT_URL}" "${PROJECT}" "${BRANCH}"
+./docker/build-acr.sh -n "${PROJECT}" -v "${VER}" -f "${DOCKER_FILE}" -o "${OPTIONS}" -b "${BRANCH}"
+}

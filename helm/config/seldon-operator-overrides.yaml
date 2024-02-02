@@ -1,0 +1,101 @@
+ambassador:
+  enabled: false
+  singleNamespace: false
+# When activating Istio, respecive virtual services will be created
+# You must make sure you create the seldon-gateway as well
+istio:
+  enabled: true
+  gateway: istio-system/seldon-gateway
+
+predictor_servers:
+  MLFLOW_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.13.1"
+        image: seldonio/mlflowserver
+      v2:
+        defaultImageVersion: "1.0.0-mlflow"
+        image: seldonio/mlserver
+  SKLEARN_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.13.1"
+        image: seldonio/sklearnserver
+      v2:
+        defaultImageVersion: "1.0.0-sklearn"
+        image: seldonio/mlserver
+  TENSORFLOW_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.13.1"
+        image: seldonio/tfserving-proxy
+      tensorflow:
+        defaultImageVersion: 2.1.0
+        image:  tensorflow/serving
+  XGBOOST_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "1.13.1"
+        image: seldonio/xgboostserver
+      v2:
+        defaultImageVersion: "1.0.0-xgboost"
+        image: seldonio/mlserver
+  TRITON_SERVER:
+    protocols:
+      v2:
+        defaultImageVersion: "21.08-py3"
+        image: nvcr.io/nvidia/tritonserver
+  HUGGINGFACE_SERVER:
+    protocols:
+      v2:
+        defaultImageVersion: "1.1.0.dev3-huggingface"
+        image: seldonio/mlserver
+  TEMPO_SERVER:
+    protocols:
+      v2:
+        defaultImageVersion: "1.0.0-slim"
+        image: seldonio/mlserver
+
+  LAYOUTLM_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: "${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-layoutlm"
+        imagePullPolicy: Always
+  BERTNER_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-bert-ner
+        imagePullPolicy: Always
+  LAYOUTLM_CLASSIFICATION_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-layoutlm-classification
+        imagePullPolicy: Always
+  YOLO_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-yolo
+        imagePullPolicy: Always
+  INVERSE_LABEL_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-inverse-label
+        imagePullPolicy: Always
+  LC_EXTRACT_TENSORFLOW:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-tensorflow
+        imagePullPolicy: Always
+  NAME_ADDRESS_SERVER:
+    protocols:
+      seldon:
+        defaultImageVersion: "${CC_APP_VERSION}"
+        image: ${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}ce-inference-name-address
+        imagePullPolicy: Always
+        

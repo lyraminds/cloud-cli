@@ -1,7 +1,3 @@
-source zlink.sh
-
-export CC_MODE=live
-
 
 #### Helm Deployments #######################
 #### Provide path of your helm charts in az-overrides.env
