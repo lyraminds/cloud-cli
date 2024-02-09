@@ -72,18 +72,22 @@ export CC_KEYCLOAK_PUBLIC_URL=https://${HNAME}
 export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 
-SECRET=${APP_NAME}-secret
+SECRET=keycloak-secret
 if [ "${ACTION}" == "install" ]; then
 
 secret-file "${SECRET}" "${CC_KEYCLOAK_MANAGEMENT_PASSWORD}" "management-password" 
 secret-add "${SECRET}" "${CC_KEYCLOAK_ADMIN_PASSWORD}" "admin-password" 
 secret-add "${SECRET}" "${CC_KEYCLOAK_POSTGRES_PASSWORD}" "password" 
 secret-add "${SECRET}" "${CC_KEYCLOAK_POSTGRES_ROOT_PASSWORD}" "postgres-password" 
+secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "${SECRET}" "80" "local-port" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 
 fi
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 #================================================
 
@@ -213,6 +217,6 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}"
 fi
 

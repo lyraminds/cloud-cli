@@ -50,19 +50,22 @@ PUBLIC_APP_NAME="${APP_NAME}-console"
 PUBLIC_SUB_DOMAIN="${SUB_DOMAIN}-console"
 HNAME="$(fqhn $PUBLIC_SUB_DOMAIN)"
 
-export CC_MINIO_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local:9000
-export CC_MINIO_PUBLIC_URL=https://${HNAME}
+MINIO_PUBLIC_URL=https://${HNAME}
 
 SECRET=minio-secret
 
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}" "${CC_MINIO_ROOT_USER}" "root-user" 
 secret-add "${SECRET}" "${CC_MINIO_ROOT_PASSWORD}" "root-password" 
-secret-add "${SECRET}" "${CC_MINIO_SERVICE_URL}" "service-url" 
+secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "${SECRET}" "9000" "local-port" 
+secret-add "${SECRET}" "${MINIO_PUBLIC_URL}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 persistence:
@@ -95,8 +98,8 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9000" "${SUB_DOMAIN}"
-./helm/emissary-host-mapping.sh "${PUBLIC_APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9001" "${PUBLIC_SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9000" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${PUBLIC_APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9001" "${PUBLIC_SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

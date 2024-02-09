@@ -55,10 +55,26 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 empty "$VERSION" "VERSION or TAG" "$H"
 
-export CC_MYSQL_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
+# export CC_MYSQL_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
-SECRET=${APP_NAME}-secret
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+SECRET=mariadb-galera-secret
+if [ "${ACTION}" == "install" ]; then
+
+#define secret and create
+secret-file "${SECRET}" "${CC_MYSQL_USER_PASSWORD}" "mariadb-password" 
+secret-add "${SECRET}" "${CC_MYSQL_ROOT_PASSWORD}" "mariadb-root-password"
+secret-add "${SECRET}" "${CC_MYSQL_BACKUP_PASSWORD}" "mariadb-galera-mariabackup-password" 
+secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "${SECRET}" "3306" "local-port" 
+./kube/secret.sh "${SECRET}" "${NS}"
+
+vlog "kubectl -n "$NS" describe service ${APP_NAME}"
+
+fi
+
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 image:
@@ -101,19 +117,7 @@ db:
   #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
-if [ "${ACTION}" == "install" ]; then
 
-#define secret and create
-secret-file "${SECRET}" "${CC_MYSQL_USER_PASSWORD}" "mariadb-password" 
-secret-add "${SECRET}" "${CC_MYSQL_ROOT_PASSWORD}" "mariadb-root-password"
-secret-add "${SECRET}" "${CC_MYSQL_BACKUP_PASSWORD}" "mariadb-galera-mariabackup-password" 
-./kube/secret.sh "${SECRET}" "${NS}"
-
-
-
-vlog "kubectl -n "$NS" describe service ${APP_NAME}"
-
-fi
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 
 # kubectl -n "$NS" logs -p "${APP_NAME}-0" --previous --tail 10

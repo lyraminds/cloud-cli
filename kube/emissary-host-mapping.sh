@@ -4,13 +4,17 @@ NS=${2}
 SERVICE=${3}
 SUB_DOMAIN=${4:-$APP_NAME}
 #BEHIND_L7, L7
-LB=${5:-"BEHIND_L7"}
+OVR_FOLDER=${5:-"${CC_BASE_DEPLOY_FOLDER}"}
+LB=${6:-"BEHIND_L7"}
 
 source bin/base.sh
 
 HNAME="$(fqhn $SUB_DOMAIN)"
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-host-mapping.yaml"
+DPF="${OVR_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-host-mapping.yaml"
+
 if [ "${LB}" == "BEHIND_L7" ]; then
 
 echo "

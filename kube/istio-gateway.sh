@@ -32,7 +32,9 @@ empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
 HNAME="$(fqhn $SUB_DOMAIN)"
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-istio-ingress-gateway.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-istio-ingress-gateway.yaml"
 
 echo " 
 ######################## ${NAME} ###########################

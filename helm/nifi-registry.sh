@@ -42,9 +42,18 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 
-export CC_NIFI_REGISTRY_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
-SECRET=${APP_NAME}-secret
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+
+SECRET=nifi-registry-secret
+if [ "${ACTION}" == "install" ]; then
+secret-file "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "${SECRET}" "18080" "local-port" 
+./kube/secret.sh "${SECRET}" "${NS}"
+fi
+
+
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 replicaCount: ${REPLICA_COUNT}
@@ -52,7 +61,7 @@ replicaCount: ${REPLICA_COUNT}
 # service:
 #   port: 18080
 
-    " > $OVR
+    " > ${OVR}
 
 
 # if [ "${ACTION}" == "install" ]; then
@@ -62,11 +71,11 @@ replicaCount: ${REPLICA_COUNT}
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
-run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
+run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "${OVR}"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080" "${SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

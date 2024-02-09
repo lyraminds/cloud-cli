@@ -62,7 +62,8 @@ empty "$MODEL_PATH" "MODEL_PATH" "$H"
 
 SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" == "replace" ]; then
-MINIO_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/service-url`
+MINIO_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-url`
+MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-port`
 MINIO_ROOT_PASSWORD=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/root-password`
 
 secret-file "${SECRET}" "s3" "RCLONE_CONFIG_S3_TYPE" 
@@ -70,7 +71,9 @@ secret-add "${SECRET}" "minio" "RCLONE_CONFIG_S3_PROVIDER"
 secret-add "${SECRET}" "false" "RCLONE_CONFIG_S3_ENV_AUTH" 
 secret-add "${SECRET}" "${CC_MINIO_ROOT_USER}" "RCLONE_CONFIG_S3_ACCESS_KEY_ID" 
 secret-add "${SECRET}" "${MINIO_ROOT_PASSWORD}" "RCLONE_CONFIG_S3_SECRET_ACCESS_KEY" 
-secret-add "${SECRET}" "${MINIO_SERVICE_URL}" "RCLONE_CONFIG_S3_ENDPOINT" 
+secret-add "${SECRET}" "http://${MINIO_SERVICE_URL}:${MINIO_SERVICE_PORT}" "RCLONE_CONFIG_S3_ENDPOINT" 
+# secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+# secret-add "${SECRET}" "5672" "local-port"  
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 
@@ -80,7 +83,9 @@ echo "${DISP}" > "${CC_RESOURCES_ROOT}/seldon-secret.yaml"
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/seldon-secret.yaml"`
 
-OVR="${CC_APP_DEPLOY_FOLDER}/${APP_NAME}-deploy.yaml"
+DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-deploy.yaml"
 
 STORAGE_CONF="
           image: seldonio/rclone-storage-initializer:1.13.1

@@ -47,18 +47,21 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
-export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
+# export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 SECRET=rabbitmq-secret
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}" "${CC_RABBITMQ_USER_PASSWORD}" "rabbitmq-password" 
 secret-add "${SECRET}" "${CC_RABBITMQ_ERLANG_COOKIE}" "rabbitmq-erlang-cookie" 
-secret-add "${SECRET}" "${CC_RABBITMQ_SERVICE_URL}" "service-url" 
+secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "${SECRET}" "5672" "local-port"  
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 RABITMQ_USER_PASS=`cat ${CC_BASE_SECRET_FOLDER}/${SECRET}/rabbitmq-password`
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 replicaCount: ${REPLICA_COUNT}
@@ -81,7 +84,6 @@ auth:
 
 livenessProbe:
   enabled: true
-  failureThreshold: 2000000
   initialDelaySeconds: 320
   timeoutSeconds: 20
   periodSeconds: 30
@@ -89,7 +91,6 @@ livenessProbe:
   successThreshold: 1
 readinessProbe:
   enabled: true
-  failureThreshold: 2000000
   initialDelaySeconds: 120
   timeoutSeconds: 20
   periodSeconds: 30
@@ -132,7 +133,7 @@ run-sleep "2"
 
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}"
 fi
 # trap cleanup EXIT
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

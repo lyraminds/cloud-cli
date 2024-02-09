@@ -49,7 +49,9 @@ empty "$VER" "VERSION" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 replicaCount: ${REPLICA_COUNT}

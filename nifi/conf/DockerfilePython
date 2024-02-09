@@ -1,0 +1,29 @@
+ARG NIFI_IMAGE
+FROM ${NIFI_IMAGE} as builder
+ARG INDEX_URL
+ARG FOLDER
+RUN pip3 install --upgrade pip
+RUN pip3 config set global.index-url "${INDEX_URL}"
+COPY requirements.txt .
+RUN pip3 download -r requirements.txt -d packages
+
+# Multistage Build
+FROM ${NIFI_IMAGE}
+USER root
+RUN apt-get update --allow-releaseinfo-change
+RUN apt-get update -y && apt-get install -y libpoppler-cpp-dev \
+                                            poppler-utils
+WORKDIR /opt/nifi/${FOLDER}/
+RUN pip3 install --upgrade pip
+COPY --from=builder /opt/nifi/nifi-current/packages packages
+COPY requirements.txt .
+# RUN pip3 install setuptools_scm
+RUN pip3 install -r requirements.txt --no-index --find-links=packages && rm -rf packages
+
+COPY src/ /opt/nifi/
+COPY templates/ /opt/nifi/nifi-current/conf/templates
+
+WORKDIR /opt/nifi/nifi-current
+
+
+

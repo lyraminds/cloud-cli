@@ -52,8 +52,10 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 
 
-SECRET=${APP_NAME}-secret
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+SECRET=nifi-secret
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
 replicaCount:  ${REPLICA_COUNT}
@@ -92,7 +94,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./helm/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080" "${SUB_DOMAIN}"
 fi
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

@@ -60,7 +60,9 @@ HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 export CC_SELDON_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 
 

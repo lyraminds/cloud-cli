@@ -45,4 +45,6 @@ empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
 
 ./helm/istio.sh -a "${ACTION}" -n "${APP_NAME}" -p "${NPN}" -r "${REPLICA_COUNT}" -v ${VER} -i "${MYIP}" -e "${SUB_DOMAIN}"
 
+if [ "${ACTION}" == "install" ]; then
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`" -i "${IP_NAME}"
+fi

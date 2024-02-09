@@ -63,10 +63,11 @@ if [ "${ACTION}" == "install" ]; then
 ./kube/ns.sh $NS
 fi
 
-# SECRET=${APP_NAME}-secret
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-base-overrides.yaml"
-OVRD="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-dameon-overrides.yaml"
-OVRG="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-gateway-overrides.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-base-overrides.yaml"
+OVRD="${DPF}/${APP_NAME}-dameon-overrides.yaml"
+OVRG="${DPF}/${APP_NAME}-gateway-overrides.yaml"
 
 echo "
 replicaCount: ${REPLICA_COUNT}

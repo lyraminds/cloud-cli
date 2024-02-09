@@ -1,0 +1,17 @@
+              - name: EULA
+                value: accept
+              - name: billing
+                value: ${CC_MICROSOFT_OCR_ENDPOINT_URI}
+              - name: apikey
+                value: ${CC_MICROSOFT_OCR_API_KEY}
+              # - name: Storage__ObjectStore__AzureBlob__ConnectionString
+              #   value: # {AZURE_STORAGE_CONNECTION_STRING}
+              # - name: Queue__Azure__ConnectionString
+              #   value: # {AZURE_STORAGE_CONNECTION_STRING}
+          livenessProbe:
+            httpGet:
+              path: /ContainerLiveness
+              port: 5000
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 20

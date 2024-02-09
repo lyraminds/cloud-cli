@@ -8,7 +8,9 @@ LB=${3:-BEHIND_L7}
 
 source bin/base.sh
 
-OVR="${CC_BASE_DEPLOY_FOLDER}/${APP_NAME}-listener.yaml"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
+OVR="${DPF}/${APP_NAME}-listener.yaml"
 
 if [ ${LB} = BEHIND_L7 ]; then
 

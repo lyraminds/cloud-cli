@@ -4,6 +4,9 @@ export CC_MODE=live
 
 #### Destroy the whole infrastructure
 # source az/rg-destroy.sh
+# source az/aks-stop.sh
+# source az/aks-start.sh
+
 
 #### Install Azure cli and initialize
 source az/cli.sh
@@ -24,6 +27,7 @@ source az/acr.sh
 
 #### Install kubernetes, create aks cluster and node pools
 source az/init-aks.sh
+
 
 ### Use default for test or customized for production
 ### Customize the creation with -o options

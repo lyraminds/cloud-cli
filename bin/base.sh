@@ -177,7 +177,7 @@ GCMD="-b ${BRANCH} ${GCMD}"
 else
 BRANCH="main"
 fi
-APP_SRC="${APP_SRC=}/${BRANCH}"
+APP_SRC="${APP_SRC}/${BRANCH}"
 
 
 
@@ -188,7 +188,7 @@ if [ -d "$APP_SRC" ]; then
 
 P=`pwd`
 run-cmd "cd \"${APP_SRC}\""
-run-cmd "git reset --hard"
+git reset --hard
 run-cmd "git pull"
 run-cmd "cd \"${P}\""
 
@@ -244,7 +244,7 @@ fi
 
 local CPATH="${CC_HELM_CHARTS_ROOT}/versions/${REPO_APP}/${HELM_VERSION}"
 local TIME=$(date '+%Y-%m-%d-%H-%M-%S')
-local HELM_BACKUP=${CC_WORKSPACE_ROOT}/work/helm-backups/${REPO_APP}_${TIME}/
+local HELM_BACKUP=${CC_BACKUP_FOLDER}/helm-chats/${REPO_APP}_${TIME}/
 if [ ! -d ${CPATH} ]; then
 local P=`pwd`
 mkdir -p "${CPATH}"
@@ -354,7 +354,11 @@ kubectl get pods -n ${NS}
 
 fqn(){
 if [ ! -z "$CC_SUB_DOMAIN_SUFFIX" -a "$CC_SUB_DOMAIN_SUFFIX" != " " ]; then
+if [ ! -z "${1}" ]; then
 _APP="${CC_SUB_DOMAIN_SUFFIX}-${1}"
+else
+_APP="${CC_SUB_DOMAIN_SUFFIX}"
+fi
 else
 _APP="${1}"
 fi
@@ -362,7 +366,12 @@ echo "${_APP}"
 }
 
 fqhn(){
-echo "$(fqn ${1}).${CC_DOMAIN_NAME}"
+local vv=$(fqn ${1})
+if [ ! -z "${vv}" ]; then
+echo "${vv}.${CC_DOMAIN_NAME}"
+else
+echo "${CC_DOMAIN_NAME}"
+fi
 }
 
 export CC_GEN_SECRET_FILES=""
@@ -388,8 +397,49 @@ run-install "pwgen"
 fi
 }
 
-function build-acr() {
+build-acr() {
 local VER=${1}; local BRANCH=${2}; local PROJECT=${3}; local PROJECT_URL=${4}; local DOCKER_FILE=${5:-Dockerfile};local OPTIONS=${6}
 run-git "${CC_GIT_URL}/${PROJECT_URL}" "${PROJECT}" "${BRANCH}"
 ./docker/build-acr.sh -n "${PROJECT}" -v "${VER}" -f "${DOCKER_FILE}" -o "${OPTIONS}" -b "${BRANCH}"
+}
+
+project-replace-url(){
+
+local HNAME=$(fqhn $3)
+echo "===================$HNAME"
+project-replace "${1}" "${2}" "${HNAME}" "${4}" "${5}"
+}
+
+project-replace(){
+local FILE=${1}
+local FROM=${2}
+local TO=${3}
+local PROJECT=${4}
+local BRANCH=${5}  
+
+
+local H="
+project-replace \"src/assets/appsettings.json/\" \"localhost:8080\" \"https://myapi.abc.com\" \"project-name\" \"main\"
+project-replace \"file-to-replace\" \"To Replace url\" \"Replace With\" \"project-name\" \"branch-name\"
+
+"
+empty "$FILE" "FILE" "${H}"
+empty "$FROM" "FROM" "${H}"
+empty "$TO" "TO" "${H}"
+empty "$PROJECT" "PROJECT" "${H}"
+empty "$BRANCH" "BRANCH" "${H}"
+
+
+APP_SRC=${CC_PROJECT_SRC}/${PROJECT}/${BRANCH}
+
+
+RPATH="${APP_SRC}/${FILE}"
+if [ -f ${RPATH} ]; then
+log "project-replace replacing ${FROM} with ${TO} in file ${RPATH}"
+sed -i "s/${FROM}/${TO}/g" "${RPATH}"
+# cat "${RPATH}"
+else
+log "project-replace ignored. File not found ${RPATH}"
+fi
+
 }
