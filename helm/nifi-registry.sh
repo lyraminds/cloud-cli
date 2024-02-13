@@ -45,8 +45,10 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 
 SECRET=nifi-registry-secret
 if [ "${ACTION}" == "install" ]; then
-secret-file "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
-secret-add "${SECRET}" "18080" "local-port" 
+secret-file "${SECRET}"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "nifi-registry-local-url" 
+secret-add "18080" "nifi-registry-local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:18080" "nifi-registry-local-url-port" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 

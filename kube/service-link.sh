@@ -31,20 +31,22 @@ done
 
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
-empty "$PORT" "PORT" "$H"
+# empty "$PORT" "PORT" "$H"
 empty "$ACTION" "ACTION" "$H"
-empty "$SERVICE_URL" "SERVICE_URL" "$H"
+# empty "$SERVICE_URL" "SERVICE_URL" "$H"
+
+./kube/ns.sh "${NS}"
 
 if [ -z ${SERVICE_URL} ]; then
-SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/local-url`
+SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${APP_NAME}-local-url`
 fi
 if [ -z ${PORT} ]; then
-PORT=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/local-port`
+PORT=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${APP_NAME}-local-port`
 fi
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
-OVR="${DPF}/${APP_NAME}-link-at-${NS}.yaml"
+OVR="${DPF}/${APP_NAME}-link.yaml"
 
 
 echo " 

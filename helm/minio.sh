@@ -55,11 +55,13 @@ MINIO_PUBLIC_URL=https://${HNAME}
 SECRET=minio-secret
 
 if [ "${ACTION}" == "install" ]; then
-secret-file "${SECRET}" "${CC_MINIO_ROOT_USER}" "root-user" 
-secret-add "${SECRET}" "${CC_MINIO_ROOT_PASSWORD}" "root-password" 
-secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
-secret-add "${SECRET}" "9000" "local-port" 
-secret-add "${SECRET}" "${MINIO_PUBLIC_URL}" "public-url" 
+secret-file "${SECRET}"
+secret-add "${CC_MINIO_ROOT_USER}" "root-user" 
+secret-add "${CC_MINIO_ROOT_PASSWORD}" "root-password" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "minio-local-url" 
+secret-add "9000" "minio-local-port"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:9000" "minio-local-url-port" 
+secret-add "${MINIO_PUBLIC_URL}" "minio-public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 

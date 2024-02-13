@@ -75,12 +75,14 @@ export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 SECRET=keycloak-secret
 if [ "${ACTION}" == "install" ]; then
 
-secret-file "${SECRET}" "${CC_KEYCLOAK_MANAGEMENT_PASSWORD}" "management-password" 
-secret-add "${SECRET}" "${CC_KEYCLOAK_ADMIN_PASSWORD}" "admin-password" 
-secret-add "${SECRET}" "${CC_KEYCLOAK_POSTGRES_PASSWORD}" "password" 
-secret-add "${SECRET}" "${CC_KEYCLOAK_POSTGRES_ROOT_PASSWORD}" "postgres-password" 
-secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
-secret-add "${SECRET}" "80" "local-port" 
+secret-file "${SECRET}"
+secret-add "${CC_KEYCLOAK_MANAGEMENT_PASSWORD}" "management-password" 
+secret-add "${CC_KEYCLOAK_ADMIN_PASSWORD}" "admin-password" 
+secret-add "${CC_KEYCLOAK_POSTGRES_PASSWORD}" "password" 
+secret-add "${CC_KEYCLOAK_POSTGRES_ROOT_PASSWORD}" "postgres-password" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "keycloak-local-url" 
+secret-add "80" "keycloak-local-port"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:80" "keycloak-local-url-port" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 
 fi

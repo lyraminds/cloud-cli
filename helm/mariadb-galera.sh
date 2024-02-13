@@ -61,11 +61,13 @@ SECRET=mariadb-galera-secret
 if [ "${ACTION}" == "install" ]; then
 
 #define secret and create
-secret-file "${SECRET}" "${CC_MYSQL_USER_PASSWORD}" "mariadb-password" 
-secret-add "${SECRET}" "${CC_MYSQL_ROOT_PASSWORD}" "mariadb-root-password"
-secret-add "${SECRET}" "${CC_MYSQL_BACKUP_PASSWORD}" "mariadb-galera-mariabackup-password" 
-secret-add "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
-secret-add "${SECRET}" "3306" "local-port" 
+secret-file "${SECRET}"
+secret-add "${CC_MYSQL_USER_PASSWORD}" "mariadb-password" 
+secret-add "${CC_MYSQL_ROOT_PASSWORD}" "mariadb-root-password"
+secret-add "${CC_MYSQL_BACKUP_PASSWORD}" "mariadb-galera-mariabackup-password" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "mariadb-galera-local-url" 
+secret-add "3306" "mariadb-galera-local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:3306" "mariadb-galera-local-url-port" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

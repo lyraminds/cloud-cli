@@ -23,8 +23,7 @@ VERSION="1.0"
 # ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "${ACTION}" -e "queue"
 # ./helm/seldon-operator.sh -p "nplb" -s "nslb" -a "${ACTION}" -v "${VERSION}"
 
-###Build custom theme image
-#  build-keycloak-theme
+###Build custom theme image before you
 # ./az/helm/keycloak.sh -p "npdata" -s "nsdata" -a "${ACTION}" -e "auth" -t "ce-keycloak" -v "${VERSION}"
 
 

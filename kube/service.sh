@@ -5,12 +5,13 @@ NPN=""
 REPLICA_COUNT=1
 ACTION="apply"
 # DISK=32Gi
-SUB_DOMAIN=${APP_NAME}
+SUB_DOMAIN=""
 
 PROBE="true"
 
 MYENV=${CC_CUSTOMER_ENV}
 IMG_NAME=""
+APP_IMG_URL=""
 VER=""
 PORT=""
 # NPN=${9:-`echo "${APP_NAME}" | tr -d -`}
@@ -51,7 +52,7 @@ H="
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:o:c:v: flag
+while getopts a:p:n:s:r:o:c:v:e:i:u: flag
 do
 info "kube/service.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -63,7 +64,9 @@ info "kube/service.sh ${flag} ${OPTARG}"
         o) REFENV=${OPTARG};;
         v) VER=${OPTARG};;
         c) PORT=${OPTARG};;
-        e) PORT=${OPTARG};;
+        e) SUB_DOMAIN=${OPTARG};;
+        i) IMG_NAME=${OPTARG};;
+        u) APP_IMG_URL=${OPTARG};;
     esac
 done
 
@@ -77,16 +80,23 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$PORT" "PORT" "$H"
 
 
-
+# if [ -z "$SUB_DOMAIN" ]; then
+# SUB_DOMAIN="${APP_NAME}"
+# if
 
 # NPN=${9:-`echo "${APP_NAME}" | tr -d -`}
 
 
-export APP_IMG_URL=${CC_CONTAINER_REGISTRY_URL}/${APP_NAME}:${VER}
+# export APP_IMG_URL=${CC_CONTAINER_REGISTRY_URL}/${APP_NAME}:${VER}
 
+if [ -z "$APP_IMG_URL" ]; then
+if [ -z "$IMG_NAME" ]; then
+IMG_NAME="${APP_NAME}"
+fi
 export APP_IMG_URL="${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}${IMG_NAME}:latest"
 if [ ! -z "$VER" ]; then
 export APP_IMG_URL="${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}${IMG_NAME}:${VER}"
+fi
 fi
 
 if [ ! -z "$SECRET_NAME" ]; then
@@ -96,8 +106,10 @@ fi
 SECRET=${APP_NAME}-secret
 
 if [ "${ACTION}" == "install" ]; then
-secret-file "${SECRET}" "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
-secret-add "${SECRET}" "$PORT" "local-port" 
+secret-file "${SECRET}"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "${APP_NAME}-local-url" 
+secret-add "$PORT" "${APP_NAME}-local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:$PORT" "${APP_NAME}-local-url-port" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 
@@ -225,9 +237,9 @@ vlog "kubectl -n $NS set env deployment/${APP_NAME} env=${MYENV}"
 rlog "kubectl -n $NS delete deploy ${APP_NAME}"
 run-sleep "6"
 # ./run-cmd "kubectl -n $NS logs service/${APP_NAME} --follow"
-run-cmd "kubectl -n $NS logs service/${APP_NAME}"
+# run-cmd "kubectl -n $NS logs service/${APP_NAME}"
 
-if [ "${ACTION}" == "install" ]; then
+if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ]; then
 if [ ! -z ${SUB_DOMAIN} ]; then
 ./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}"
 
@@ -235,14 +247,19 @@ if [ ! -z ${SUB_DOMAIN} ]; then
 
 fi
 fi
-
+kubectl -n $NS get service
 elif [ "${ACTION}" == "upgrade" ]; then
 
 run-cmd "kubectl -n ${NS} set image deployment/${APP_NAME} ${APP_NAME}=${IMG_NAME}"
 run-cmd "kubectl -n ${NS} rollout status deployment/${APP_NAME}"
+kubectl -n $NS get service
 
+elif [ "${ACTION}" == "delete" ]; then
+kube/service-uninstall.sh "${NS}" "${APP_NAME}"
 fi
 
 
-echo "kubectl -n $NS logs service/${APP_NAME} --follow"
-echo "https://${SUB_DOMAIN}.${DOMAIN_NAME}"
+kubectl -n $NS get pods
+vlog "kubectl -n $NS logs service/${APP_NAME}"
+echo "kubectl -n $NS logs service/${APP_NAME}"
+

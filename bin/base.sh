@@ -375,20 +375,98 @@ fi
 }
 
 export CC_GEN_SECRET_FILES=""
+export CC_GEN_SECRET=""
 secret-add(){
-local G="${CC_BASE_SECRET_FOLDER}/${1}"
-local F="${G}/${3}"
+local F="${CC_GEN_SECRET}/${2}"
 export CC_GEN_SECRET_FILES="${CC_GEN_SECRET_FILES} --from-file=${F}"
-initdir "${G}"
+initdir "${CC_GEN_SECRET}"
 if [ ! -e "${F}" ]; then
-echo -n "${2}" > "${F}"
+echo -n "${1}" > "${F}"
 fi
 }
 
 secret-file(){
+local F="${2:-$CC_BASE_SECRET_FOLDER}"
+export CC_GEN_SECRET="${F}/${1}"  
 export CC_GEN_SECRET_FILES=""
-secret-add "$1" "$2" "$3"
+# secret-add "$1" "$2" "$3"
 }
+
+
+export CC_GEN_ENV_FILE=""
+export CC_GEN_ENV_FILEPATH=""
+
+env-add(){
+export CC_ENV_VALUE="${1}"  
+export CC_ENV_NAME="${2}"
+env-sub "env-value.yaml"
+}
+
+env-sub(){
+# export CC_ENV_VALUE="${1}"  
+# export CC_ENV_NAME="${2}"
+export CC_GEN_SECRET_NAME="${CC_GEN_ENV_FILE}-secret"
+
+DISP=`cat  ./bin/config/${1}`
+DISP=`echo "${DISP}" | envsubst '${CC_ENV_VALUE}' | envsubst '${CC_ENV_NAME}' | envsubst '${CC_GEN_SECRET_NAME}'`
+echo -n "${DISP}" >> "${CC_GEN_ENV_FILEPATH}"
+}
+
+env-secret-add(){
+export CC_ENV_VALUE="${1}"  
+export CC_SEC_KEY="${2}"
+export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
+
+if [ -z "${CC_GEN_SECRET}" ]; then
+export CC_GEN_SECRET="${CC_GEN_ENV_FILE}-secret"
+secret-file "${CC_GEN_SECRET}" "${CC_APP_SECRET_FOLDER}"
+fi
+
+secret-add "$CC_ENV_VALUE" "${CC_SEC_KEY}"
+export CC_ENV_VALUE="${CC_SEC_KEY}"  
+env-sub "env-secret.yaml"
+
+}
+
+env-secret-copy(){
+
+
+local APP_NAME="${1}"
+local CC_SEC_KEY="${2}"
+export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
+
+local F="${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+if [ ! -f "${F}" ]; then
+echo "secret not found at ${F}"
+exit
+fi
+export CC_ENV_VALUE=`cat ${F}`
+if [ -z "${CC_ENV_VALUE}" ]; then
+echo "secret value is empty check ${F}"
+exit
+fi
+env-secret-add "${CC_ENV_VALUE}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+
+}
+
+export E_NS=""
+env-file(){
+export CC_GEN_SECRET=""
+export E_NS="${1}"
+export CC_GEN_ENV_FILE="${2}" 
+
+local G="${CC_APP_DEPLOY_FOLDER}/${E_NS}"
+export CC_GEN_ENV_FILEPATH="${G}/${CC_GEN_ENV_FILE}.env"
+initdir "${G}"
+echo -n "" > "${CC_GEN_ENV_FILEPATH}"
+}
+
+env-write(){
+if [ ! -z "${CC_GEN_SECRET}" ]; then
+./kube/secret.sh "${CC_GEN_SECRET_NAME}" "${E_NS}"
+fi
+}
+
 
 initfirst(){
 

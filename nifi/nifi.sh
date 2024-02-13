@@ -27,13 +27,13 @@ nifi-config-replace(){
 ###TODO can replace with a template filne anad get from that template and replace with env or from secret
 
 local TEMPLATE_FILE=${1}
-local MINIO_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-url`
-local MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-port`
+local MINIO_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/minio-local-url`
+local MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/minio-local-port`
 local MINIO_ROOT_USER=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/root-user`
 local MINIO_ROOT_PASSWORD=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/root-password`
 
-local RABBITMQ_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/rabbitmq-secret/local-url`
-local RABBITMQ_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/rabbitmq-secret/local-port`
+local RABBITMQ_SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/rabbitmq-secret/rabbitmq-local-url`
+local RABBITMQ_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/rabbitmq-secret/rabbitmq-local-port`
 local RABBITMQ_PASSWORD=`cat ${CC_BASE_SECRET_FOLDER}/rabbitmq-secret/rabbitmq-password`
 
 

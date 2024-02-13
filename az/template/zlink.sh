@@ -34,5 +34,5 @@ source ${CC_RUN}/az-overrides.env
 source bin/init.sh
 source ${CC_RUN}/az-overrides.env
 #### Define your custom tags
-source ${CC_RUN}/build-docker.sh
+# source ${CC_RUN}/build-docker.sh
 

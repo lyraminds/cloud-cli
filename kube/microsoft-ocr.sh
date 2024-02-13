@@ -5,7 +5,7 @@ NPN=""
 SUB_DOMAIN=""
 REPLICA_COUNT=1
 ACTION="apply"
-IMG="mcr.microsoft.com/azure-cognitive-services/vision/read:3.2"
+IMG_URL="mcr.microsoft.com/azure-cognitive-services/vision/read:3.2"
 # DISK=32Gi
 SUB_DOMAIN=${APP_NAME}
 
@@ -26,7 +26,7 @@ H="
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:e: flag
+while getopts a:p:n:s:r:e:u: flag
 do
 info "kube/microsoft-ocr.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -36,6 +36,7 @@ info "kube/microsoft-ocr.sh ${flag} ${OPTARG}"
         r) REPLICA_COUNT=${OPTARG};;
         a) ACTION=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
+        u) IMG_URL=${OPTARG};;
     esac
 done
 
@@ -48,11 +49,12 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 EF="microsoft-ocr.yaml"
 if [ ! -f "${CC_RESOURCES_ROOT}/${EF}" ]; then
 DISP=`cat ./kube/config/${EF}`
+DISP=`echo "${DISP}" | envsubst '${CC_MICROSOFT_OCR_ENDPOINT_URI}' | envsubst '${CC_MICROSOFT_OCR_API_KEY}'`
 echo "${DISP}" > "${CC_RESOURCES_ROOT}/${EF}"   
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/${EF}"`
 
-./kube/service.sh -a "${ACTION}" -n "${APP_NAME}" -e "${SUB_DOMAIN}" -c "5000" -s "${NS}" -p "${NPN}" -o "${REFENV}" -i "${IMG}" -r "${REPLICA_COUNT}"
+./kube/service.sh -a "${ACTION}" -n "${APP_NAME}" -e "${SUB_DOMAIN}" -c "5000" -s "${NS}" -p "${NPN}" -o "${REFENV}" -u "${IMG_URL}" -r "${REPLICA_COUNT}"
 
 
 
