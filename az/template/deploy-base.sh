@@ -15,16 +15,16 @@ VERSION="1.0"
 
 # ./az/helm/emissary-ingress.sh -p "nplb" -a "${ACTION}"
 # ./az/helm/istio.sh -p "npistio" -a "${ACTION}"
-# ./az/kube/istio-gateway.sh -a "${ACTION}" -e "seldon" 
+# ./az/kube/istio-gateway.sh -e "seldon" -a "${ACTION}"
 
-# ./az/helm/minio.sh -p "npdata" -s "nsdata" -a "${ACTION}" -e "storage"
+# ./az/helm/minio.sh -p "npdata" -s "nsdata" -e "storage" -a "${ACTION}"
 # ./helm/mariadb-galera.sh -p "npdata" -s "nsdata" -a "${ACTION}"
 # ./helm/nifi-registry.sh -p "nplb" -s "nslb" -a "${ACTION}"
-# ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -a "${ACTION}" -e "queue"
-# ./helm/seldon-operator.sh -p "nplb" -s "nslb" -a "${ACTION}" -v "${VERSION}"
+# ./az/helm/rabbitmq.sh -p "npdata" -s "nsdata" -e "queue" -a "${ACTION}"
+# ./helm/seldon-operator.sh -p "nplb" -s "nslb" -v "${VERSION}" -a "${ACTION}"
 
 ###Build custom theme image before you
-# ./az/helm/keycloak.sh -p "npdata" -s "nsdata" -a "${ACTION}" -e "auth" -t "ce-keycloak" -v "${VERSION}"
+# ./az/helm/keycloak.sh -p "npdata" -s "nsdata" -e "auth" -t "ce-keycloak" -v "${VERSION}" -a "${ACTION}" 
 
 
 CONFIG_ROOT=${CC_RESOURCES_ROOT}/deploy/ce-analytics

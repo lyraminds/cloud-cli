@@ -161,14 +161,19 @@ if [ -e "${T}/build-docker.sh" ]; then
 echo "\cp -fR \"${T}/build-docker.sh\" \"${F}/build-docker.sh\""
 \cp -fR "${T}/build-docker.sh" ${F}/build-docker.sh
 fi
-if [ -e "${T}/install-np.sh" ]; then
-echo "\cp -fR \"${T}/install-np.sh\" \"${F}/install-np.sh\""
-\cp -fR "${T}/install-np.sh" ${F}/install-np.sh
-fi
 if [ -e "${T}/build-charts.sh" ]; then
 echo "\cp -fR \"${T}/build-charts.sh\" \"${F}/build-charts.sh\""
 \cp -fR "${T}/build-charts.sh" ${F}/build-charts.sh
 fi
+if [ -e "${T}/env-vars.sh" ]; then
+echo "\cp -fR \"${T}/env-vars.sh\" \"${F}/env-vars.sh\""
+\cp -fR "${T}/env-vars.sh" ${F}/env-vars.sh
+fi
+if [ -e "${T}/install-np.sh" ]; then
+echo "\cp -fR \"${T}/install-np.sh\" \"${F}/install-np.sh\""
+\cp -fR "${T}/install-np.sh" ${F}/install-np.sh
+fi
+
 fi
 
 

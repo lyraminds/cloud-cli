@@ -86,8 +86,8 @@ export CC_GEN_ENV_FILEPATH="${G}/${APP_NAME}.env"
 if [ -z "${REFENV}" ]; then
 if [ -f "${CC_GEN_ENV_FILEPATH}" ]; then
 REFENV=`cat "${CC_GEN_ENV_FILEPATH}"`
-if
-if
+fi
+fi
 
 # if [ -z "$SUB_DOMAIN" ]; then
 # SUB_DOMAIN="${APP_NAME}"
@@ -239,6 +239,10 @@ spec:
 
 
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" == "replace" ]; then
+
+./kube/ns.sh "${NS}"
+run-cmd "${C}" 
+# run-sleep "2"
 
 run-cmd "kubectl ${ACTION} -f ${OVR}"
 run-cmd "kubectl -n $NS get deploy"

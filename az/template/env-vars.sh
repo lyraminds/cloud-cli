@@ -6,20 +6,20 @@ export CC_MODE=live
 
 minio(){
 
-env-secret-copy "minio" "root-user" "MINIO_ACCESS_KEY"
-env-secret-copy "minio" "root-user" "MINIO_ROOT_USER"
-env-secret-copy "minio" "root-password" "MINIO_SECRET_KEY"
-env-secret-copy "minio" "root-password" "MINIO_ROOT_PASSWORD"
-env-secret-copy "minio" "local-url-port" "MINIO_ENDPOINT"
+env-copy-base "minio" "root-user" "MINIO_ACCESS_KEY"
+env-copy-base "minio" "root-user" "MINIO_ROOT_USER"
+env-copy-base "minio" "root-password" "MINIO_SECRET_KEY"
+env-copy-base "minio" "root-password" "MINIO_ROOT_PASSWORD"
+env-copy-base "minio" "local-url-port" "MINIO_ENDPOINT"
 env-add "false" "MINIO_SECURE"
 
 }
 
 rabbitmq(){
 
-env-secret-copy "rabbitmq" "rabbitmq-password" "RABBITMQ_PASS"
-env-secret-copy "rabbitmq" "local-url" "RABBITMQ_HOST"
-env-secret-copy "rabbitmq" "local-port" "RABBITMQ_PORT"
+env-copy-base "rabbitmq" "rabbitmq-password" "RABBITMQ_PASS"
+env-copy-base "rabbitmq" "local-url" "RABBITMQ_HOST"
+env-copy-base "rabbitmq" "local-port" "RABBITMQ_PORT"
 env-add "${CC_RABBITMQ_USER}" "RABBITMQ_USER"
 
 }
@@ -27,9 +27,9 @@ env-add "${CC_RABBITMQ_USER}" "RABBITMQ_USER"
 mariadb-galeria(){
 
 env-add "root" "MARIADB_USER"
-env-secret-copy "mariadb-galera" "mariadb-root-password" "MARIADB_PASS"
-env-secret-copy "mariadb-galera" "local-url" "MARIADB_HOST"
-env-secret-copy "mariadb-galera" "local-port" "MARIADB_PORT"
+env-copy-base "mariadb-galera" "mariadb-root-password" "MARIADB_PASS"
+env-copy-base "mariadb-galera" "local-url" "MARIADB_HOST"
+env-copy-base "mariadb-galera" "local-port" "MARIADB_PORT"
 
 }
 
@@ -49,7 +49,7 @@ env-sample-ui(){
 #1 app-name, 2 namespace, 3 port, 4 sub-domain-name
 env-file "${1}" "${2}" "${3}" "${4}"
 env-add "https://admanager.google.com" "AD_URL"
-env-secret-add "sdshdsadjsadasdkadsakdskdsadsad" "CAPTCHA_KEY"
-env-secret-copy "test-api" "local-url-port" "API_HOST"
+env-add-secret "sdshdsadjsadasdkadsakdskdsadsad" "CAPTCHA_KEY"
+env-copy "test-api" "local-url-port" "API_HOST"
 env-write  
 }

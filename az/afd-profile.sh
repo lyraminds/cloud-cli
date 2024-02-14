@@ -9,7 +9,7 @@ source bin/base.sh
 E=`az afd profile list -g ${RG} --query "[?name=='${CC_FRONT_DOOR_PROFILE}']"`
 if [ "${E}" == "[]" ]; then
 
-C="az afd profile create -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE} --sku ${CC_FRONT_DOOR_SKU} --tags ${CC_TAGS}"
+C="az afd profile create -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE} --origin-response-timeout-seconds ${CC_ORIGIN_RESPONSE_TIMEOUT} --sku ${CC_FRONT_DOOR_SKU} --tags ${CC_TAGS}"
 ok && run-cmd "$C"
 
 rlog "az afd profile delete -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE}"

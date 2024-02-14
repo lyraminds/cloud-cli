@@ -72,11 +72,11 @@ export CC_KEYCLOAK_PUBLIC_URL=https://${HNAME}
 # export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 
-SECRET=keycloak-secret
+SECRET="keycloak-secret"
 if [ "${ACTION}" == "install" ]; then
 
 secret-file "${SECRET}"
-secret-add "${CC_KEYCLOAK_ADMIN_USER}" admin-user" 
+secret-add "${CC_KEYCLOAK_ADMIN_USER}" "admin-user" 
 secret-add "${CC_KEYCLOAK_MANAGEMENT_PASSWORD}" "management-password" 
 secret-add "${CC_KEYCLOAK_ADMIN_PASSWORD}" "admin-password" 
 secret-add "${CC_KEYCLOAK_POSTGRES_PASSWORD}" "password" 

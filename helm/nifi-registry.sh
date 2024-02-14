@@ -54,8 +54,8 @@ secret-add "${HNAME}" "public-url"
 fi
 
 
-DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"`
-mkdir -p "${DPF}"`
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
+mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
