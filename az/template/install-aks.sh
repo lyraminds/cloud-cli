@@ -36,9 +36,6 @@ source az/init-aks.sh
 ## OR
 #./az/aks.sh -p "systempool" -m "Standard_D2s_v4" -d "30" -o "--node-count 1 --min-count 1 --max-count 8 --max-pods 250 --enable-cluster-autoscaler --load-balancer-sku Standard --tier standard --zones 1 2 3"
 
-### Link your acr with aks
-source az/aks-acr-link.sh 
-
 #### DNS, AKS Public IP, Front Door
 source az/dns-zone.sh
 source az/ip-aks.sh "${CC_EMISSARY_IP_NAME}"
@@ -48,3 +45,8 @@ source az/afd-aks.sh
 
 #### View the running node pools
 source az/aks-use.sh
+
+
+#### Link your acr with aks is required for deployment of apps,
+#### You would also need role update permission run this command
+source az/aks-acr-link.sh 
