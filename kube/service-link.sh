@@ -38,10 +38,10 @@ empty "$ACTION" "ACTION" "$H"
 ./kube/ns.sh "${NS}"
 
 if [ -z ${SERVICE_URL} ]; then
-SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${APP_NAME}-local-url`
+SERVICE_URL=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/local-url`
 fi
 if [ -z ${PORT} ]; then
-PORT=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${APP_NAME}-local-port`
+PORT=`cat ${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/local-port`
 fi
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"

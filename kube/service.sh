@@ -80,6 +80,15 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$PORT" "PORT" "$H"
 
 
+G="${CC_APP_DEPLOY_FOLDER}/${NS}"
+export CC_GEN_ENV_FILEPATH="${G}/${APP_NAME}.env"
+
+if [ -z "${REFENV}" ]; then
+if [ -f "${CC_GEN_ENV_FILEPATH}" ]; then
+REFENV=`cat "${CC_GEN_ENV_FILEPATH}"`
+if
+if
+
 # if [ -z "$SUB_DOMAIN" ]; then
 # SUB_DOMAIN="${APP_NAME}"
 # if
@@ -99,17 +108,17 @@ export APP_IMG_URL="${CC_CONTAINER_REGISTRY_URL}/${CC_CONTAINER_IMAGE_PREFIX}${I
 fi
 fi
 
-if [ ! -z "$SECRET_NAME" ]; then
-SECRET_NAME=$APP_NAME-secret
-fi
-
+# if [ ! -z "$SECRET_NAME" ]; then
+# SECRET_NAME=$APP_NAME-secret
+# fi
+HNAME="$(fqhn $SUB_DOMAIN)"
 SECRET=${APP_NAME}-secret
-
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
-secret-add "${APP_NAME}.${NS}.svc.cluster.local" "${APP_NAME}-local-url" 
-secret-add "$PORT" "${APP_NAME}-local-port" 
-secret-add "${APP_NAME}.${NS}.svc.cluster.local:$PORT" "${APP_NAME}-local-url-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "$PORT" "local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:$PORT" "local-url-port" 
+secret-add "${HNAME}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 

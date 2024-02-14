@@ -62,6 +62,8 @@ if [ "${ACTION}" == "install" ]; then
 
 #define secret and create
 secret-file "${SECRET}"
+secret-add "${DB_USER}" "mariadb-user" 
+secret-add "${DB_NAME}" "mariadb-db" 
 secret-add "${CC_MYSQL_USER_PASSWORD}" "mariadb-password" 
 secret-add "${CC_MYSQL_ROOT_PASSWORD}" "mariadb-root-password"
 secret-add "${CC_MYSQL_BACKUP_PASSWORD}" "mariadb-galera-mariabackup-password" 

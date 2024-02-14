@@ -417,10 +417,7 @@ export CC_ENV_VALUE="${1}"
 export CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
 
-if [ -z "${CC_GEN_SECRET}" ]; then
-export CC_GEN_SECRET="${CC_GEN_ENV_FILE}-secret"
-secret-file "${CC_GEN_SECRET}" "${CC_APP_SECRET_FOLDER}"
-fi
+
 
 secret-add "$CC_ENV_VALUE" "${CC_SEC_KEY}"
 export CC_ENV_VALUE="${CC_SEC_KEY}"  
@@ -445,20 +442,40 @@ if [ -z "${CC_ENV_VALUE}" ]; then
 echo "secret value is empty check ${F}"
 exit
 fi
-env-secret-add "${CC_ENV_VALUE}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+env-secret-add "${CC_ENV_VALUE}${4}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 
 }
 
 export E_NS=""
 env-file(){
+
 export CC_GEN_SECRET=""
-export E_NS="${1}"
-export CC_GEN_ENV_FILE="${2}" 
+export E_NS="${2}"
+export CC_GEN_ENV_FILE="${1}" 
+export PORT="${3}" 
+export SUB_DOMAIN="${4}" 
 
 local G="${CC_APP_DEPLOY_FOLDER}/${E_NS}"
 export CC_GEN_ENV_FILEPATH="${G}/${CC_GEN_ENV_FILE}.env"
 initdir "${G}"
 echo -n "" > "${CC_GEN_ENV_FILEPATH}"
+
+if [ -z "${CC_GEN_SECRET}" ]; then
+export CC_GEN_SECRET="${CC_GEN_ENV_FILE}-secret"
+secret-file "${CC_GEN_SECRET}" "${CC_APP_SECRET_FOLDER}"
+
+secret-add "${CC_GEN_ENV_FILE}.${E_NS}.svc.cluster.local" "local-url" 
+secret-add "${PORT}" "local-port" 
+secret-add "${CC_GEN_ENV_FILE}.${E_NS}.svc.cluster.local:${PORT}" "local-url-port" 
+
+if [ ! -z "${SUB_DOMAIN}" ]; then
+HNAME="$(fqhn $SUB_DOMAIN)"
+secret-add "${HNAME}" "public-url" 
+fi
+
+fi
+
+
 }
 
 env-write(){

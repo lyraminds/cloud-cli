@@ -67,22 +67,24 @@ empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
-HNAME="$(fqhn $APP_NAME)"
+HNAME="$(fqhn $SUB_DOMAIN)"
 export CC_KEYCLOAK_PUBLIC_URL=https://${HNAME}
-export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
+# export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 
 SECRET=keycloak-secret
 if [ "${ACTION}" == "install" ]; then
 
 secret-file "${SECRET}"
+secret-add "${CC_KEYCLOAK_ADMIN_USER}" admin-user" 
 secret-add "${CC_KEYCLOAK_MANAGEMENT_PASSWORD}" "management-password" 
 secret-add "${CC_KEYCLOAK_ADMIN_PASSWORD}" "admin-password" 
 secret-add "${CC_KEYCLOAK_POSTGRES_PASSWORD}" "password" 
 secret-add "${CC_KEYCLOAK_POSTGRES_ROOT_PASSWORD}" "postgres-password" 
-secret-add "${APP_NAME}.${NS}.svc.cluster.local" "keycloak-local-url" 
-secret-add "80" "keycloak-local-port"
-secret-add "${APP_NAME}.${NS}.svc.cluster.local:80" "keycloak-local-url-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "80" "local-port"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:80" "local-url-port" 
+secret-add "${HNAME}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 
 fi

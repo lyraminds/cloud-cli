@@ -62,8 +62,8 @@ empty "$MODEL_PATH" "MODEL_PATH" "$H"
 
 SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" == "replace" ]; then
-MINIO_SERVICE_URL_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/minio-local-url-port`
-# MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/minio-local-port`
+MINIO_SERVICE_URL_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-url-port`
+# MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-port`
 MINIO_ROOT_PASSWORD=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/root-password`
 
 secret-file "${SECRET}"

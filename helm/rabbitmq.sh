@@ -48,15 +48,17 @@ empty "$DISK" "DISK" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 # export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
+HNAME="$(fqhn $SUB_DOMAIN)"
 
 SECRET=rabbitmq-secret
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
 secret-add "${CC_RABBITMQ_USER_PASSWORD}" "rabbitmq-password" 
 secret-add "${CC_RABBITMQ_ERLANG_COOKIE}" "rabbitmq-erlang-cookie" 
-secret-add "${APP_NAME}.${NS}.svc.cluster.local" "rabbitmq-local-url" 
-secret-add "5672" "rabbitmq-local-port"  
-secret-add "${APP_NAME}.${NS}.svc.cluster.local:5672" "rabbitmq-local-url-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "5672" "local-port"  
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:5672" "local-url-port" 
+secret-add "${HNAME}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 RABITMQ_USER_PASS=`cat ${CC_BASE_SECRET_FOLDER}/${SECRET}/rabbitmq-password`

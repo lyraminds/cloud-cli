@@ -48,8 +48,8 @@ HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
 PUBLIC_APP_NAME="${APP_NAME}-console"
 PUBLIC_SUB_DOMAIN="${SUB_DOMAIN}-console"
-HNAME="$(fqhn $PUBLIC_SUB_DOMAIN)"
 
+HNAME="$(fqhn $PUBLIC_SUB_DOMAIN)"
 MINIO_PUBLIC_URL=https://${HNAME}
 
 SECRET=minio-secret
@@ -58,10 +58,10 @@ if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
 secret-add "${CC_MINIO_ROOT_USER}" "root-user" 
 secret-add "${CC_MINIO_ROOT_PASSWORD}" "root-password" 
-secret-add "${APP_NAME}.${NS}.svc.cluster.local" "minio-local-url" 
-secret-add "9000" "minio-local-port"
-secret-add "${APP_NAME}.${NS}.svc.cluster.local:9000" "minio-local-url-port" 
-secret-add "${MINIO_PUBLIC_URL}" "minio-public-url" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "9000" "local-port"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:9000" "local-url-port" 
+secret-add "${MINIO_PUBLIC_URL}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 

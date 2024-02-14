@@ -42,19 +42,20 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 
-
+HNAME="$(fqhn $SUB_DOMAIN)"
 SECRET=nifi-registry-secret
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
-secret-add "${APP_NAME}.${NS}.svc.cluster.local" "nifi-registry-local-url" 
-secret-add "18080" "nifi-registry-local-port" 
-secret-add "${APP_NAME}.${NS}.svc.cluster.local:18080" "nifi-registry-local-url-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "18080" "local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:18080" "local-url-port" 
+secret-add "${HNAME}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
 
 
-DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
-mkdir -p "${DPF}"
+DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"`
+mkdir -p "${DPF}"`
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 echo " 
