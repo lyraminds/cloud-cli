@@ -412,7 +412,7 @@ DISP=`echo "${DISP}" | envsubst '${CC_ENV_VALUE}' | envsubst '${CC_ENV_NAME}' | 
 echo -n "${DISP}" >> "${CC_GEN_ENV_FILEPATH}"
 }
 
-env-add-secret(){
+env-secret-add(){
 export CC_ENV_VALUE="${1}"  
 export CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
@@ -425,11 +425,7 @@ env-sub "env-secret.yaml"
 
 }
 
-env-copy(){
-env-copy-base "${1}" "${2}" "${3}" "${CC_APP_SECRET_FOLDER}"
-}
-
-env-copy-base(){
+env-secret-copy(){
 
 local APP_NAME="${1}"
 local CC_SEC_KEY="${2}"
@@ -437,15 +433,22 @@ export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
 
 local F="${4:-$CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F}" ]; then
-echo "secret not found at ${F}"
+local F2="${4:-$CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+if [ ! -f "${F2}" ]; then
+echo "secret not found at ${F1}"
+echo "OR"
+echo "secret not found at ${F2}"
 exit
+else
+F="${F2}"
+fi
 fi
 export CC_ENV_VALUE=`cat ${F}`
 if [ -z "${CC_ENV_VALUE}" ]; then
 echo "secret value is empty check ${F}"
 exit
 fi
-env-add-secret "${CC_ENV_VALUE}${4}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+env-secret-add "${CC_ENV_VALUE}${4}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 
 }
 
