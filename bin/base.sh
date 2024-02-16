@@ -425,11 +425,22 @@ env-sub "env-secret.yaml"
 
 }
 
+env-url(){
+env-secret-copy "${1}" "local-url-port" "${2}" "" "${3}" "http://"
+}
+
+env-url-public(){
+env-secret-copy "${1}" "public-url" "${2}" "" "${3}" "" "https://"
+}
+
+
+
 env-secret-copy(){
 
 local APP_NAME="${1}"
 local CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
+local URL_PROTO=${6}
 
 local F="${4:-$CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F}" ]; then
@@ -448,7 +459,7 @@ if [ -z "${CC_ENV_VALUE}" ]; then
 echo "secret value is empty check ${F}"
 exit
 fi
-env-secret-add "${CC_ENV_VALUE}${4}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+env-secret-add "${CC_ENV_VALUE}${5}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 
 }
 
@@ -485,6 +496,9 @@ fi
 }
 
 env-write(){
+if [ ! -z "${1}" ]; then
+echo -n "${1}" >> "${CC_GEN_ENV_FILEPATH}"
+fi  
 if [ ! -z "${CC_GEN_SECRET}" ]; then
 ./kube/secret.sh "${CC_GEN_SECRET_NAME}" "${E_NS}"
 fi

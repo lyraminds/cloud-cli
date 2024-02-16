@@ -187,11 +187,31 @@ spec:
               - name: env
                 value: ${MYENV}
               ${REFENV}
-          resources: {}
 
     " > "${OVR}"
 
-
+if [ "${CC_SECRET_STORE}" == "true" ]; then
+echo "
+          volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+          resources: {}
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "${secretProviderClass}"
+            nodePublishSecretRef:                       # Only required when using service principal mode
+              name: ${nodePublishSecretRef}                 # Only required when using service principal mode
+" >> "${OVR}"
+else
+echo "
+          resources: {}
+" >> "${OVR}"
+fi
 
 # if [ ${PROBE} = true ]; then
 # echo "
