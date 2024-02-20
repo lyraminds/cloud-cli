@@ -8,7 +8,7 @@ ACTION="apply"
 IMG_URL="mcr.microsoft.com/azure-cognitive-services/vision/read:3.2"
 # DISK=32Gi
 SUB_DOMAIN=${APP_NAME}
-
+PORT="5000"
 PROBE="true"
 MYENV=${CC_CUSTOMER_ENV}
 
@@ -46,6 +46,13 @@ empty "$NPN" "NODE POOL NAME" "$H"
 empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 
+if [ "${ACTION}" == "install" ]; then
+ACTION=apply
+fi
+if [ "${ACTION}" == "uninstall" ]; then
+ACTION=delete
+fi
+
 EF="microsoft-ocr.yaml"
 if [ ! -f "${CC_RESOURCES_ROOT}/${EF}" ]; then
 DISP=`cat ./kube/config/${EF}`
@@ -54,7 +61,7 @@ echo "${DISP}" > "${CC_RESOURCES_ROOT}/${EF}"
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/${EF}"`
 
-./kube/service.sh -a "${ACTION}" -n "${APP_NAME}" -e "${SUB_DOMAIN}" -c "5000" -s "${NS}" -p "${NPN}" -o "${REFENV}" -u "${IMG_URL}" -r "${REPLICA_COUNT}"
+./kube/service.sh -a "${ACTION}" -n "${APP_NAME}" -e "${SUB_DOMAIN}" -c "${PORT}" -s "${NS}" -p "${NPN}" -o "${REFENV}" -u "${IMG_URL}" -r "${REPLICA_COUNT}"
 
 
 

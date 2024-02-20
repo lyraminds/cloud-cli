@@ -106,7 +106,7 @@ run-cmd "kubectl label namespace ${NS} istio-injection=enabled --overwrite"
 # ../secret/custom "${SECRET}" "${NS}" "${SECRET_NAME}"
 # fi
 
-run-sleep 1 
+run-sleep "1" 
 run-cmd "kubectl apply -f $OVR"
 kubectl get namespace -L istio-injection
 
@@ -114,7 +114,8 @@ vlog "kubectl get namespace -L istio-injection"
 vlog "kubectl -n $NS get all"
 vlog "kubectl -n $NS set env deployment/${APP_NAME} env=${MYENV}"
 vlog "kubectl -n $NS delete deploy ${APP_NAME}"
-vlog "waiting to finish in 5 sec..." sleep 5
+vlog "waiting to finish in 5 sec..." 
+run-sleep "5"
 vlog "kubectl -n $NS logs service/${APP_NAME} --follow"
 vlog "kubectl -n $NS logs service/${APP_NAME} --follow"
 vlog "https://${HNAME}"

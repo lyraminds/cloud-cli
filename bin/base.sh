@@ -405,19 +405,22 @@ env-sub "env-value.yaml"
 env-sub(){
 # export CC_ENV_VALUE="${1}"  
 # export CC_ENV_NAME="${2}"
+
+if [ "${CC_SECRET_STORE}" == "true" ]; then
+export CC_GEN_SECRET_NAME="${CC_SECRET_PROVIDER_CLASS}"
+else
 export CC_GEN_SECRET_NAME="${CC_GEN_ENV_FILE}-secret"
+fi
 
 DISP=`cat  ./bin/config/${1}`
 DISP=`echo "${DISP}" | envsubst '${CC_ENV_VALUE}' | envsubst '${CC_ENV_NAME}' | envsubst '${CC_GEN_SECRET_NAME}'`
 echo -n "${DISP}" >> "${CC_GEN_ENV_FILEPATH}"
 }
 
-env-secret-add(){
+env-add-secret(){
 export CC_ENV_VALUE="${1}"  
 export CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
-
-
 
 secret-add "$CC_ENV_VALUE" "${CC_SEC_KEY}"
 export CC_ENV_VALUE="${CC_SEC_KEY}"  
@@ -426,25 +429,29 @@ env-sub "env-secret.yaml"
 }
 
 env-url(){
-env-secret-copy "${1}" "local-url-port" "${2}" "" "${3}" "http://"
+env-copy-secret "${1}" "local-url-port" "${2}" "${3}" "http://" "false"
 }
 
 env-url-public(){
-env-secret-copy "${1}" "public-url" "${2}" "" "${3}" "" "https://"
+env-copy-secret "${1}" "public-url" "${2}" "${3}" "" "https://" "false"
 }
 
+env-copy(){
+env-copy-secret "${1}" "${2}" "${3}" "${4}" "" "false"
+}
 
-
-env-secret-copy(){
+env-copy-secret(){
 
 local APP_NAME="${1}"
 local CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
-local URL_PROTO=${6}
+local PREFIX=${4}
+local URL_PROTO=${5}
+local IS_SECRET=${6:-"true"}
 
-local F="${4:-$CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+local F="${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F}" ]; then
-local F2="${4:-$CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+local F2="${$CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F2}" ]; then
 echo "secret not found at ${F1}"
 echo "OR"
@@ -459,8 +466,17 @@ if [ -z "${CC_ENV_VALUE}" ]; then
 echo "secret value is empty check ${F}"
 exit
 fi
-env-secret-add "${CC_ENV_VALUE}${5}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 
+if [ "${IS_SECRET}" == "true" ]; then
+
+if [ "${CC_SECRET_STORE}" == "true" ]; then
+env-add-secret "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+else
+env-add-secret "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+fi
+else
+env-add "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}"
+fi
 }
 
 export E_NS=""
@@ -494,13 +510,17 @@ fi
 
 
 }
-
-env-write(){
+env-set(){
 if [ ! -z "${1}" ]; then
 echo -n "${1}" >> "${CC_GEN_ENV_FILEPATH}"
 fi  
+}
+env-write(){
+env-set "${1}"
 if [ ! -z "${CC_GEN_SECRET}" ]; then
+if [ "${CC_SECRET_STORE}" != "true" ]; then
 ./kube/secret.sh "${CC_GEN_SECRET_NAME}" "${E_NS}"
+fi
 fi
 }
 

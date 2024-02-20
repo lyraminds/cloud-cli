@@ -12,17 +12,33 @@ RUN pip3 config set global.index-url "${INDEX_URL}"
 COPY requirements.txt .
 RUN pip3 download -r requirements.txt --no-deps -d packages
 
+
 # Multistage Build
 FROM ${NIFI_IMAGE}
 USER root
 RUN apt-get update --allow-releaseinfo-change
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y libpoppler-cpp-dev \
                                             poppler-utils
+RUN apt-get update && apt-get install wget build-essential cmake libfreetype6-dev pkg-config libfontconfig-dev libjpeg-dev libopenjp2-7-dev -y
+RUN wget --no-check-certificate https://poppler.freedesktop.org/poppler-data-0.4.9.tar.gz \
+    && tar -xf poppler-data-0.4.9.tar.gz \
+    && cd poppler-data-0.4.9 \
+    && make install \
+    && cd .. \
+    && wget --no-check-certificate https://poppler.freedesktop.org/poppler-0.86.1.tar.xz \
+    && tar -xf poppler-0.86.1.tar.xz \
+    && cd poppler-0.86.1 \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make \
+    && make install \
+    && ldconfig
 WORKDIR /opt/nifi/${FOLDER}/
 RUN apt-get update && apt-get install -y sudo
 RUN sudo apt-get update && sudo apt-get install -y python3-pip
 RUN pip3 install --upgrade pip
-COPY --from=builder  /opt/nifi/nifi-current/packages packages
+COPY --from=builder /opt/nifi/nifi-current/packages packages
 COPY requirements.txt .
 RUN pip3 install "cython<3.0.0" wheel && pip3 install pyyaml==5.4.1 --no-build-isolation
 RUN pip3 install -r requirements.txt --find-links=packages && rm -rf packages
@@ -32,4 +48,7 @@ COPY templates/ /opt/nifi/nifi-current/conf/templates
 
 WORKDIR /opt/nifi/nifi-current
 HEALTHCHECK NONE
+
+
+
 

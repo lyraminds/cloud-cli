@@ -113,7 +113,7 @@ fi
 # fi
 HNAME="$(fqhn $SUB_DOMAIN)"
 SECRET=${APP_NAME}-secret
-if [ "${ACTION}" == "install" ]; then
+if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ]; then
 secret-file "${SECRET}"
 secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
 secret-add "$PORT" "local-port" 
@@ -203,9 +203,9 @@ echo "
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: "${secretProviderClass}"
-            nodePublishSecretRef:                       # Only required when using service principal mode
-              name: ${nodePublishSecretRef}                 # Only required when using service principal mode
+              CC_SECRET_PROVIDER_CLASS: "${CC_SECRET_PROVIDER_CLASS}"
+            CC_NODE_PUBLISTH_SECRET_REF:                       # Only required when using service principal mode
+              name: ${CC_NODE_PUBLISTH_SECRET_REF}                 # Only required when using service principal mode
 " >> "${OVR}"
 else
 echo "

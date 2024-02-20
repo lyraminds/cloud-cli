@@ -19,8 +19,8 @@ H="
 
 Using custom theme
 
--t \"keycloak-theme\" -v \"1.0\" -f \"mytheme\" 
--t \"custom-theme-docker-image\" -v \"theme-docker-image-version\" -f \"custom-theme-folder-inside-docker-image\" 
+-i \"keycloak-theme\" -v \"1.0\" -f \"mytheme\" 
+-i \"custom-theme-docker-image\" -v \"theme-docker-image-version\" -f \"custom-theme-folder-inside-docker-image\" 
 
 To Create Realm define the realms in your xxx-overrides.env
 
@@ -38,7 +38,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:t:e:f:v: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -50,7 +50,7 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
-        t) THEME_IMG=${OPTARG};;
+        i) THEME_IMG=${OPTARG};;
         v) THEME_VER=${OPTARG};;
         f) THEME_FOLDER=${OPTARG};;
     esac
@@ -170,6 +170,9 @@ else
 info "Skiping relm configuration, Define CC_KEYCLOAK_REALM_NAME, CC_KEYCLOAK_CLIENT_NAME and CC_KEYCLOAK_CLIENT_SECRET in xxx-overrides.env"
 fi
 ##if custom theme then do this
+if [ -z "${THEME_FOLDER}" ]; then
+THEME_FOLDER="${THEME_IMG}"
+fi
 
 export APP_IMG="${THEME_IMG}"
 if [ ! -z "$THEME_VER" ]; then
@@ -178,7 +181,6 @@ fi
 
 #TODO may have to pass for other clusters
 export THEME_IMG_URL="${CC_CONTAINER_REGISTRY_URL}/${APP_IMG}"
-
 if [ ! -z "${THEME_FOLDER}" ] && [ ! -z "${THEME_IMG}" ] ; then
 echo "
 initContainers: |
@@ -213,9 +215,8 @@ extraVolumes:
 
 " >> ${OVR}
 else
-info "Skiping custom theme, Use -i \"custom-keycloak-theme-image\" and -t \"theme-folder-in-custom-image-to-copy\" "
+echo "Skiping custom theme, Use -i \"custom-keycloak-theme-image\" and -f \"theme-folder-in-custom-image-to-copy\" "
 fi
-#storageClass: managed-premium,
 
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
