@@ -254,10 +254,10 @@ helm repo update ${REPO_LOCAL}
 helm pull ${REPO_LOCAL}/${REPO_APP} ${VER} --untar --untardir ${CPATH}
 
 mkdir -p "${HELM_BACKUP}"
-if [ ! -d "${CC_HELM_CHARTS_ROOT}/${REPO_APP}" ]; then
+if [ -d "${CC_HELM_CHARTS_ROOT}/${REPO_APP}" ]; then
 mv  "${CC_HELM_CHARTS_ROOT}/${REPO_APP}" "${HELM_BACKUP}"
 fi
-if [ ! -d "${CPATH}/${REPO_APP}" ]; then
+if [ -d "${CPATH}/${REPO_APP}" ]; then
 cp -R "${CPATH}/${REPO_APP}" "${CC_HELM_CHARTS_ROOT}"
 fi
 cd $P

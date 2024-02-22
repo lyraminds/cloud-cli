@@ -11,6 +11,7 @@ SUB_DOMAIN=${APP_NAME}
 THEME_VER=""
 ###Custom theme folder in theme image to copy
 THEME_FOLDER="${THEME_IMG}"
+THEME_NAME="custom"
 #==============================================
 source bin/base.sh
 H="
@@ -21,7 +22,7 @@ Using custom theme
 
 -i \"keycloak-theme\" -v \"1.0\" -f \"mytheme\" 
 -i \"custom-theme-docker-image\" -v \"theme-docker-image-version\" -f \"custom-theme-folder-inside-docker-image\" 
-
+-t custom-theme-name
 To Create Realm define the realms in your xxx-overrides.env
 
 export CC_KEYCLOAK_REALM_NAME=
@@ -38,7 +39,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -53,6 +54,7 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         i) THEME_IMG=${OPTARG};;
         v) THEME_VER=${OPTARG};;
         f) THEME_FOLDER=${OPTARG};;
+        t) THEME_NAME=${OPTARG};; 
     esac
 done
 
@@ -65,7 +67,7 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
-./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -i "${THEME_IMG}" -v "${THEME_VER}" -f "${THEME_FOLDER}"
+./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -t ${THEME_NAME} -i "${THEME_IMG}" -v "${THEME_VER}" -f "${THEME_FOLDER}"
 
 if [ "${ACTION}" == "install" ]; then
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"

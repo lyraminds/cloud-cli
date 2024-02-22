@@ -11,6 +11,7 @@ SUB_DOMAIN=${APP_NAME}
 THEME_VER=""
 ###Custom theme folder in theme image to copy
 THEME_FOLDER=""
+THEME_NAME="custom"
 #==============================================
 source bin/base.sh
 H="
@@ -21,6 +22,7 @@ Using custom theme
 
 -i \"keycloak-theme\" -v \"1.0\" -f \"mytheme\" 
 -i \"custom-theme-docker-image\" -v \"theme-docker-image-version\" -f \"custom-theme-folder-inside-docker-image\" 
+-t theme-name-to-display
 
 To Create Realm define the realms in your xxx-overrides.env
 
@@ -38,7 +40,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -53,6 +55,7 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         i) THEME_IMG=${OPTARG};;
         v) THEME_VER=${OPTARG};;
         f) THEME_FOLDER=${OPTARG};;
+        t) THEME_NAME=${OPTARG};;        
     esac
 done
 
@@ -104,13 +107,6 @@ auth:
   adminUser: \"${CC_KEYCLOAK_ADMIN_USER}\"
   existingSecret: \"$SECRET\"
 
-postgresql:
-  enabled: true
-  auth:
-    username: \"${CC_KEYCLOAK_POSTGRES_USERNAME}\"
-    database: \"${CC_KEYCLOAK_POSTGRES_DATABASE}\"
-    existingSecret: \"$SECRET\"
-
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -134,6 +130,17 @@ extraEnvVars:
 
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
+
+
+echo " 
+postgresql:
+  enabled: true
+  auth:
+    username: \"${CC_KEYCLOAK_POSTGRES_USERNAME}\"
+    database: \"${CC_KEYCLOAK_POSTGRES_DATABASE}\"
+    existingSecret: \"$SECRET\"
+    " >> ${OVR}
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB1"
 
 if [ ! -z "${CC_KEYCLOAK_REALM_NAME}" ] && [ ! -z "${CC_KEYCLOAK_CLIENT_NAME}" ] ; then
 echo "
@@ -166,6 +173,7 @@ keycloakConfigCli:
         ]
       }      
 "  >> ${OVR}
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB1"
 else
 info "Skiping relm configuration, Define CC_KEYCLOAK_REALM_NAME, CC_KEYCLOAK_CLIENT_NAME and CC_KEYCLOAK_CLIENT_SECRET in xxx-overrides.env"
 fi
@@ -207,13 +215,14 @@ initContainers: |
 
 extraVolumeMounts:
   - name: theme
-    mountPath: /opt/bitnami/keycloak/themes/custom
+    mountPath: /opt/bitnami/keycloak/themes/${THEME_NAME}
 
 extraVolumes:
   - name: theme
     emptyDir: {}
 
 " >> ${OVR}
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB2"
 else
 echo "Skiping custom theme, Use -i \"custom-keycloak-theme-image\" and -f \"theme-folder-in-custom-image-to-copy\" "
 fi
