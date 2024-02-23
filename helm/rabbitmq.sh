@@ -101,6 +101,8 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 1
 
+clustering:
+  forceBoot: true
 extraEnvVars: 
   - name: \"LOG_LEVEL\"
     value: \"ERROR\" 

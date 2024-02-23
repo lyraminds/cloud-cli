@@ -17,13 +17,13 @@ PORT=""
 # NPN=${9:-`echo "${APP_NAME}" | tr -d -`}
 REFENV=""
 PROTO="http"
-
+OVER_WRITE="true"
 
 #==============================================
 source bin/base.sh
-H="
-./kube/service.sh -a \"apply\" -s \"common-namespace\" -p \"nodepoolname\" -i \"docker-image-url\" -n \"application-name\" -e \"sub-domain\" -c \"port\"
-./kube/service.sh -a \"apply|create|delete|replace\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" 
+H='
+./kube/service.sh -a "apply" -s "common-namespace" -p "nodepoolname" -i "docker-image-url" -n "application-name" -e "sub-domain" -c "port"
+./kube/service.sh -a "apply|create|delete|replace" -n "app-name" -s "common-namespace" -p "nodepoolname" 
 
 -i image name
    mcr.microsoft.com/azure-cognitive-services/vision/read:3.2
@@ -46,13 +46,16 @@ H="
             periodSeconds: 60
             timeoutSeconds: 20
 
--r \"${REPLICA_COUNT}\" 
--r \"replica-count\" 
-"
+-r "${REPLICA_COUNT}" 
+-r "replica-count" 
+
+-w "true"
+-w "true|false" true will overwrite existing file in deploy folder
+'
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:o:c:v:e:i:u: flag
+while getopts a:p:n:s:r:o:c:v:e:i:u:w: flag
 do
 info "kube/service.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -67,6 +70,7 @@ info "kube/service.sh ${flag} ${OPTARG}"
         e) SUB_DOMAIN=${OPTARG};;
         i) IMG_NAME=${OPTARG};;
         u) APP_IMG_URL=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -114,6 +118,9 @@ fi
 HNAME="$(fqhn $SUB_DOMAIN)"
 SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ]; then
+
+EXIST_SECRET="${CC_APP_SECRET_FOLDER}/${SECRET}"  
+if [ ! -d "${EXIST_SECRET}" ]; then
 secret-file "${SECRET}"
 secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
 secret-add "$PORT" "local-port" 
@@ -121,11 +128,14 @@ secret-add "${APP_NAME}.${NS}.svc.cluster.local:$PORT" "local-url-port"
 secret-add "${HNAME}" "public-url" 
 ./kube/secret.sh "${SECRET}" "${NS}"
 fi
+fi
 
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-deploy.yaml"
+
+if [ "${OVER_WRITE}" == "true" ]; then
 
 echo " 
 ######################## Namespace, Service ${NS}, ${APP_NAME} Service ###########################
@@ -251,6 +261,7 @@ fi
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
 
+fi
 #storageClass: managed-premium,
 # if [ ! -z ${SECRET_NAME} ]; then
 # ../secret/custom "${SECRET}" "${NS}" "${SECRET_NAME}"
