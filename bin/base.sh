@@ -451,8 +451,8 @@ local IS_SECRET=${6:-"true"}
 
 local F="${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F}" ]; then
-echo "====${$CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
-local F2="${$CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+echo "====${CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
+local F2="${CC_APP_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
 if [ ! -f "${F2}" ]; then
 echo "secret not found at ${F1}"
 echo "OR"
