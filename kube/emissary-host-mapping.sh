@@ -2,12 +2,14 @@
 APP_NAME=${1}
 NS=${2}
 SERVICE=${3}
-SUB_DOMAIN=${4:-$APP_NAME}
+# SUB_DOMAIN=${4:-$APP_NAME}
 #BEHIND_L7, L7
 OVR_FOLDER=${5:-"${CC_BASE_DEPLOY_FOLDER}"}
 LB=${6:-"BEHIND_L7"}
 
 source bin/base.sh
+
+
 
 HNAME="$(fqhn $SUB_DOMAIN)"
 

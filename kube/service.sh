@@ -285,8 +285,10 @@ run-sleep "6"
 
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ]; then
 if [ ! -z ${SUB_DOMAIN} ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}"
+string=$(sed "s/.//g" <<< "$string")
+SUB_DOMAIN=$string
 
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}"
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
 
 fi
