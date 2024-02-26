@@ -182,9 +182,7 @@ spec:
         app: ${APP_NAME}
         env: ${MYENV}
     spec:
-      volumes:
-        - name: data
-          emptyDir: {}
+      restartPolicy: Always
       containers:
         - name: ${APP_NAME}
           image: ${APP_IMG_URL}
@@ -208,18 +206,23 @@ echo "
             readOnly: true
           resources: {}
       volumes:
+        - name: data
+          emptyDir: {}
         - name: secrets-store-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              CC_SECRET_PROVIDER_CLASS: "${CC_SECRET_PROVIDER_CLASS}"
-            CC_NODE_PUBLISTH_SECRET_REF:                       # Only required when using service principal mode
+              secretProviderClass: "${CC_SECRET_PROVIDER_CLASS}"
+            nodePublishSecretRef:                       # Only required when using service principal mode
               name: ${CC_NODE_PUBLISTH_SECRET_REF}                 # Only required when using service principal mode
 " >> "${OVR}"
 else
 echo "
           resources: {}
+      volumes:
+        - name: data
+          emptyDir: {}
 " >> "${OVR}"
 fi
 
@@ -285,8 +288,9 @@ run-sleep "6"
 
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ]; then
 if [ ! -z ${SUB_DOMAIN} ]; then
-string=$(sed "s/.//g" <<< "$string")
-SUB_DOMAIN=$string
+if [ "${SUB_DOMAIN}" == "." ]; then
+SUB_DOMAIN=""
+fi
 
 ./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}"
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"

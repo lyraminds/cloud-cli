@@ -276,17 +276,21 @@ if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" ==
 
 run-cmd "kubectl ${ACTION} -f ${OVR}"
 vlog "kubectl -n $NS set env deployment/${APP_NAME} env=${MYENV}"
-rlog "kubectl -n $NS delete deploy ${APP_NAME}"
 
+run-cmd "kubectl -n $NS logs service/${APP_NAME}-${APP_NAME}"
+elif [ "${ACTION}" == "delete" ]; then
+echo "removing"
+# run-cmd "kubectl -n $NS delete sdep/${APP_NAME}"
+# run-cmd "kubectl -n $NS delete service/${APP_NAME}-${APP_NAME}"
 elif [ "${ACTION}" == "upgrade" ]; then
 
 run-cmd "kubectl -n ${NS} set image deployment/${APP_NAME} ${APP_NAME}=${APP_IMG}"
 run-cmd "kubectl -n ${NS} rollout status deployment/${APP_NAME}"
 
+run-cmd "kubectl -n $NS logs service/${APP_NAME}-${APP_NAME}"
 fi
 
 run-cmd "kubectl -n $NS get all"
-run-cmd "kubectl -n $NS logs service/${APP_NAME}-${APP_NAME}"
 
 echo "kubectl -n $NS logs service/${APP_NAME}-${APP_NAME} --follow"
 echo "https://${DNS}.${DOMAIN_NAME}/seldon/${NS}/${APP_NAME}/api/v1.0/predictions"
