@@ -221,6 +221,7 @@ echo "
 elif [ -f "${CC_GEN_ENV_CONFIG_MAP_PATH}" ]; then
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
 CNFMAP=`cat "${CC_GEN_ENV_CONFIG_MAP_PATH}"`
+export CC_GEN_ENV_CONFIG_MAP_PATH=""
 echo "${CNFMAP}" >> "${OVR}"
 else
 echo "

@@ -492,7 +492,7 @@ export E_NS="${2}"
 export CC_GEN_ENV_FILE="${1}" 
 export PORT="${3}" 
 export SUB_DOMAIN="${4}" 
-
+export CC_GEN_ENV_CONFIG_MAP_PATH=""
 local G="${CC_APP_DEPLOY_FOLDER}/${E_NS}"
 export CC_GEN_ENV_FILEPATH="${G}/${CC_GEN_ENV_FILE}.env"
 initdir "${G}"
@@ -528,6 +528,7 @@ if [ "${CC_SECRET_STORE}" != "true" ]; then
 fi
 fi
 }
+
 env-write-config-map(){
 
 local G="${CC_APP_DEPLOY_FOLDER}/${E_NS}"
