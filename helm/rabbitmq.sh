@@ -139,7 +139,7 @@ run-sleep "2"
 
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" 
 fi
 # trap cleanup EXIT
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

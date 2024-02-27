@@ -231,6 +231,6 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}"
 fi
 

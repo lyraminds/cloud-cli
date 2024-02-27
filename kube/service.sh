@@ -217,6 +217,11 @@ echo "
             nodePublishSecretRef:                       # Only required when using service principal mode
               name: ${CC_NODE_PUBLISTH_SECRET_REF}                 # Only required when using service principal mode
 " >> "${OVR}"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+elif [ -f "${CC_GEN_ENV_CONFIG_MAP_PATH}" ]; then
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+CNFMAP=`cat "${CC_GEN_ENV_CONFIG_MAP_PATH}"`
+echo "${CNFMAP}" >> "${OVR}"
 else
 echo "
           resources: {}
@@ -224,6 +229,7 @@ echo "
         - name: data
           emptyDir: {}
 " >> "${OVR}"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
 fi
 
 # if [ ${PROBE} = true ]; then
@@ -262,7 +268,7 @@ fi
 
 
 #toleration and taint
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+
 
 fi
 #storageClass: managed-premium,
@@ -292,7 +298,7 @@ if [ "${SUB_DOMAIN}" == "." ]; then
 SUB_DOMAIN=""
 fi
 
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}" "apply"
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
 
 fi
@@ -306,6 +312,7 @@ kubectl -n $NS get service
 
 elif [ "${ACTION}" == "delete" ]; then
 kube/service-uninstall.sh "${NS}" "${APP_NAME}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}" "delete"
 fi
 
 

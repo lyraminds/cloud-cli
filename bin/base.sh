@@ -366,7 +366,11 @@ echo "${_APP}"
 }
 
 fqhn(){
-local vv=$(fqn ${1})
+local sd=${1}
+if [ "${sd}" == "." ]; then
+sd=""
+fi
+local vv=$(fqn ${sd})
 if [ ! -z "${vv}" ]; then
 echo "${vv}.${CC_DOMAIN_NAME}"
 else
@@ -524,7 +528,14 @@ if [ "${CC_SECRET_STORE}" != "true" ]; then
 fi
 fi
 }
+env-write-config-map(){
 
+local G="${CC_APP_DEPLOY_FOLDER}/${E_NS}"
+export CC_GEN_ENV_CONFIG_MAP_PATH="${G}/${CC_GEN_ENV_FILE}.configmap"
+initdir "${G}"
+echo -n "${1}" > "${CC_GEN_ENV_CONFIG_MAP_PATH}"
+
+}
 
 initfirst(){
 

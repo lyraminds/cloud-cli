@@ -2,10 +2,11 @@
 APP_NAME=${1}
 NS=${2}
 SERVICE=${3}
-# SUB_DOMAIN=${4:-$APP_NAME}
+SUB_DOMAIN=${4}
 #BEHIND_L7, L7
 OVR_FOLDER=${5:-"${CC_BASE_DEPLOY_FOLDER}"}
-LB=${6:-"BEHIND_L7"}
+ACTION=${6:-"apply"}
+LB=${7:-"BEHIND_L7"}
 
 source bin/base.sh
 
@@ -79,6 +80,9 @@ spec:
 " > ${OVR}
 fi
 
-# run-cmd "kubectl delete -f ${OVR}"
+if [ "${ACTION}" == "delete" ]; then
+run-cmd "kubectl -n ${NS} delete mapping ${APP_NAME}-mapping"
 # run-sleep "1" 
+else
 run-cmd "kubectl apply -f ${OVR}"
+fi
