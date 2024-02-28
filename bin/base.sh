@@ -437,7 +437,7 @@ env-copy-secret "${1}" "local-url-port" "${2}" "${3}" "http://" "false"
 }
 
 env-url-public(){
-env-copy-secret "${1}" "public-url" "${2}" "${3}" "" "https://" "false"
+env-copy-secret "${1}" "public-url" "${2}" "${3}" "https://" "false"
 }
 
 env-copy(){
