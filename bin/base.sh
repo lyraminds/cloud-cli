@@ -475,12 +475,12 @@ fi
 if [ "${IS_SECRET}" == "true" ]; then
 
 if [ "${CC_SECRET_STORE}" == "true" ]; then
-env-add-secret "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+env-add-secret "${URL_PROTO}${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 else
-env-add-secret "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
+env-add-secret "${URL_PROTO}${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 fi
 else
-env-add "${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}"
+env-add "${URL_PROTO}${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}"
 fi
 }
 
