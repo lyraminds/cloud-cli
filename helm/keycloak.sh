@@ -141,7 +141,7 @@ postgresql:
     existingSecret: \"$SECRET\"
     " >> ${OVR}
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB1"
-
+#  \"secret\": \"${CC_KEYCLOAK_CLIENT_SECRET}\",
 if [ ! -z "${CC_KEYCLOAK_REALM_NAME}" ] && [ ! -z "${CC_KEYCLOAK_CLIENT_NAME}" ] ; then
 echo "
 keycloakConfigCli:
@@ -161,8 +161,7 @@ keycloakConfigCli:
             \"clientId\": \"${CC_KEYCLOAK_CLIENT_NAME}\",
             \"name\": \"${CC_KEYCLOAK_CLIENT_NAME}\",
             \"enabled\": true,
-            \"clientAuthenticatorType\": \"client-secret\",
-            \"secret\": \"${CC_KEYCLOAK_CLIENT_SECRET}\",
+            \"clientAuthenticatorType\": \"client-secret\",           
             \"redirectUris\": [
               \"*\"
             ],
