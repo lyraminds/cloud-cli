@@ -80,7 +80,7 @@ run-cmd "kubectl wait --timeout=90s --for=condition=available deployment emissar
 fi
 
 run-helm "${ACTION}" "${APP_NAME}" "${NS}" "${HELM_FOLDER}" "$OVR"
-run-sleep "6"
+run-sleep "3"
 
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"
 

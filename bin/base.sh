@@ -384,7 +384,7 @@ secret-add(){
 local F="${CC_GEN_SECRET}/${2}"
 export CC_GEN_SECRET_FILES="${CC_GEN_SECRET_FILES} --from-file=${F}"
 initdir "${CC_GEN_SECRET}"
-if [ ! -e "${F}" ]; then
+if [ ! -f "${F}" ]; then
 echo -n "${1}" > "${F}"
 fi
 }
@@ -426,7 +426,7 @@ export CC_ENV_VALUE="${1}"
 export CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
 
-secret-add "$CC_ENV_VALUE" "${CC_SEC_KEY}"
+secret-add "${CC_ENV_VALUE}" "${CC_SEC_KEY}"
 export CC_ENV_VALUE="${CC_SEC_KEY}"  
 env-sub "env-secret.yaml"
 
@@ -449,8 +449,8 @@ env-copy-secret(){
 local APP_NAME="${1}"
 local CC_SEC_KEY="${2}"
 export CC_ENV_NAME="${3:-$CC_SEC_KEY}"
-local PREFIX=${4}
-local URL_PROTO=${5}
+local PREFIX=${4:-""}
+local URL_PROTO=${5:-""}
 local IS_SECRET=${6:-"true"}
 
 local F="${CC_BASE_SECRET_FOLDER}/${APP_NAME}-secret/${CC_SEC_KEY}"
@@ -473,7 +473,6 @@ exit
 fi
 
 if [ "${IS_SECRET}" == "true" ]; then
-
 if [ "${CC_SECRET_STORE}" == "true" ]; then
 env-add-secret "${URL_PROTO}${CC_ENV_VALUE}${PREFIX}" "${CC_ENV_NAME}" "${CC_ENV_NAME}" 
 else

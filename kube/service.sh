@@ -223,7 +223,7 @@ elif [ -f "${CC_GEN_ENV_CONFIG_MAP_PATH}" ]; then
 CNFMAP=`cat "${CC_GEN_ENV_CONFIG_MAP_PATH}"`
 export CC_GEN_ENV_CONFIG_MAP_PATH=""
 echo "${CNFMAP}" >> "${OVR}"
-else
+elif [[ ${REFENV} != *"volumes"* ]]; then
 echo "
           resources: {}
       volumes:
@@ -289,7 +289,7 @@ run-cmd "kubectl ${ACTION} -f ${OVR}"
 run-cmd "kubectl -n $NS get deploy"
 vlog "kubectl -n $NS set env deployment/${APP_NAME} env=${MYENV}"
 rlog "kubectl -n $NS delete deploy ${APP_NAME}"
-run-sleep "6"
+run-sleep "3"
 # ./run-cmd "kubectl -n $NS logs service/${APP_NAME} --follow"
 # run-cmd "kubectl -n $NS logs service/${APP_NAME}"
 
