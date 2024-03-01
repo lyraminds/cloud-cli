@@ -70,7 +70,6 @@ do
         s) S=${OPTARG};;
         d) D=${OPTARG};;
         v) V=${OPTARG};;
-
         t) T=${OPTARG};;
         o) O=${OPTARG};;
     esac
