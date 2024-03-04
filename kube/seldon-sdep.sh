@@ -9,9 +9,9 @@ ACTION="apply"
 INFERENCE="layoutlm"
 MODEL_IMPL=""
 MODEL_PATH=""
-
+VERSION=""
 PROBE="true"
-
+OVER_WRITE="true"
 MYENV=${CC_CUSTOMER_ENV}
 PREDEFINED_MODEL="s3://predefined-models/layoutlm"
 # MODEL_PATH="s3://mlflow/3979f8258cbe4590b9e676adb14d3ca9/artifacts/model"
@@ -20,20 +20,23 @@ PREDEFINED_MODEL="s3://predefined-models/layoutlm"
 
 #==============================================
 source bin/base.sh
-H="
-./kube/seldon-sdep.sh -a \"apply\" -s \"common-namespace\" -p \"nodepoolname\" -i \"${INFERENCE}\" -m \"${MODEL_IMPL}\" -f \"s3://mlflow/3979f8258cbe4590b9e676adb14d3ca9/artifacts/model\"  
-./kube/seldon-sdep.sh -a \"apply|create|delete|replace\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" -i \"inference\" -m \"model-implementation\" -f \"model-file-path\" 
+H='
+./kube/seldon-sdep.sh -a "apply" -s "common-namespace" -p "nodepoolname" -i "${INFERENCE}" -m "${MODEL_IMPL}" -f "s3://mlflow/3979f8258cbe4590b9e676adb14d3ca9/artifacts/model"  
+./kube/seldon-sdep.sh -a "apply|create|delete|replace" -n "app-name" -s "common-namespace" -p "nodepoolname" -i "inference" -m "model-implementation" -f "model-file-path" 
 
 -m Model implementations 
 SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERVER | LC_EXTRACT_TENSORFLOW | YOLO_SERVER | NAME_ADDRESS_SERVER
 
--r \"${REPLICA_COUNT}\" 
--r \"replica-count\" 
-"
+-r "${REPLICA_COUNT}" 
+-r "replica-count" 
+
+-v "true|false"  true will regenerate deployment scripts
+
+'
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:f:c:m: flag
+while getopts a:p:n:s:r:f:c:m:v:w: flag
 do
 info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -45,6 +48,8 @@ info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
         f) MODEL_PATH=${OPTARG};;
         c) INFERENCE=${OPTARG};;
         m) MODEL_IMPL=${OPTARG};;
+        v) VERSION=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -83,6 +88,8 @@ DISP=`cat ./kube/config/seldon-secret.yaml`
 echo "${DISP}" > "${CC_RESOURCES_ROOT}/seldon-secret.yaml"   
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/seldon-secret.yaml"`
+
+if [ "${OVER_WRITE}" == "true" ]; then
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
@@ -271,6 +278,7 @@ echo "
           value: DEBUG
  " >> "${OVR}"
 
+fi
 
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" == "replace" ]; then
 
