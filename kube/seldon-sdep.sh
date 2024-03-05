@@ -25,7 +25,7 @@ H='
 ./kube/seldon-sdep.sh -a "apply|create|delete|replace" -n "app-name" -s "common-namespace" -p "nodepoolname" -i "inference" -m "model-implementation" -f "model-file-path" 
 
 -m Model implementations 
-SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERVER | LC_EXTRACT_TENSORFLOW | YOLO_SERVER | NAME_ADDRESS_SERVER
+SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERVER | LC_EXTRACT_TENSORFLOW | YOLO_SERVER | NAME_ADDRESS_SERVER | GOODS_DESCRIPTION
 
 -r "${REPLICA_COUNT}" 
 -r "replica-count" 
@@ -172,7 +172,13 @@ ENV_LAYOUTLM="
             value: MLFlowBertNerServer
 "
 fi
-
+if [ "${MODEL_IMPL}" == "GOODS_DESCRIPTION" ] ; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowGoodsDescriptionModelServer
+"
+fi
 
 
 echo " 
