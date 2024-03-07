@@ -65,7 +65,7 @@ empty "$MODEL_IMPL" "MODEL_IMPL" "$H"
 empty "$MODEL_PATH" "MODEL_PATH" "$H"
 
 
-SECRET=${APP_NAME}-secret
+export SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "apply" ] || [ "${ACTION}" == "create" ] || [ "${ACTION}" == "replace" ]; then
 MINIO_SERVICE_URL_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-url-port`
 # MINIO_SERVICE_PORT=`cat ${CC_BASE_SECRET_FOLDER}/minio-secret/local-port`
@@ -88,7 +88,7 @@ DISP=`cat ./kube/config/seldon-secret.yaml`
 echo "${DISP}" > "${CC_RESOURCES_ROOT}/seldon-secret.yaml"   
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/seldon-secret.yaml"`
-
+REFENV=`echo "${REFENV}" | envsubst '${SECRET}'`
 if [ "${OVER_WRITE}" == "true" ]; then
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
@@ -294,7 +294,7 @@ vlog "kubectl -n $NS set env deployment/${APP_NAME} env=${MYENV}"
 run-cmd "kubectl -n $NS logs service/${APP_NAME}-${APP_NAME}"
 elif [ "${ACTION}" == "delete" ]; then
 echo "removing"
-# run-cmd "kubectl -n $NS delete sdep/${APP_NAME}"
+run-cmd "kubectl -n $NS delete sdep/${APP_NAME}"
 # run-cmd "kubectl -n $NS delete service/${APP_NAME}-${APP_NAME}"
 elif [ "${ACTION}" == "upgrade" ]; then
 
