@@ -7,6 +7,7 @@ REPLICA_COUNT=4
 ACTION="install"
 SUB_DOMAIN=${APP_NAME}
 DISK=16Gi
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -21,7 +22,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:e: flag
+while getopts a:p:n:s:r:h:d:e:w: flag
 do
 info "helm/minio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -33,6 +34,7 @@ info "helm/minio.sh ${flag} ${OPTARG}"
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -69,6 +71,8 @@ DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
+if [ "${OVER_WRITE}" == "true" ]; then
+
 echo " 
 persistence:
   #managed-premium
@@ -95,6 +99,7 @@ extraEnvVars:
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
+fi
 
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"

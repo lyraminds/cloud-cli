@@ -12,6 +12,7 @@ THEME_VER=""
 ###Custom theme folder in theme image to copy
 THEME_FOLDER=""
 THEME_NAME="custom"
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -36,11 +37,13 @@ by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
 
+-w true
+
 "
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v:t: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t:w: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -55,7 +58,8 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         i) THEME_IMG=${OPTARG};;
         v) THEME_VER=${OPTARG};;
         f) THEME_FOLDER=${OPTARG};;
-        t) THEME_NAME=${OPTARG};;        
+        t) THEME_NAME=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -97,7 +101,7 @@ mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 #================================================
-
+if [ "${OVER_WRITE}" == "true" ]; then
 echo " 
 
 metrics: 
@@ -224,6 +228,8 @@ extraVolumes:
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB2"
 else
 echo "Skiping custom theme, Use -i \"custom-keycloak-theme-image\" and -f \"theme-folder-in-custom-image-to-copy\" "
+fi
+
 fi
 
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"

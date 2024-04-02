@@ -6,6 +6,7 @@ NPN=""
 REPLICA_COUNT=1
 ACTION="install"
 SUB_DOMAIN=${APP_NAME}
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -19,7 +20,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:e: flag
+while getopts a:p:n:s:r:h:e:w: flag
 do
 info "helm/nifi-registry.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -30,6 +31,7 @@ info "helm/nifi-registry.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -58,6 +60,7 @@ DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
+if [ "${OVER_WRITE}" == "true" ]; then
 echo " 
 replicaCount: ${REPLICA_COUNT}
 
@@ -73,6 +76,8 @@ replicaCount: ${REPLICA_COUNT}
 
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
+
+fi
 
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "${OVR}"
 run-sleep "2"

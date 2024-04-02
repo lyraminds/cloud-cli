@@ -8,6 +8,7 @@ ACTION="install"
 # DISK=32Gi
 # SUB_DOMAIN=${APP_NAME}
 APP_VERSION=""
+OVER_WRITE="true"
 
 #================================================
 #istio-system/seldon-gateway
@@ -30,7 +31,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:h:v: flag
+while getopts a:p:n:s:h:v:w: flag
 do
 info "helm/seldon-operator.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -41,7 +42,8 @@ info "helm/seldon-operator.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         # d) DISK=${OPTARG};;
-        v) APP_VERSION=${OPTARG};;        
+        v) APP_VERSION=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;        
     esac
 done
 
@@ -64,7 +66,7 @@ DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
-
+if [ "${OVER_WRITE}" == "true" ]; then
 
 if [ ! -f "${CC_SELDON_OPERATOR_DEPLOYMENT}" ]; then
 echo "####################### WARNING ##############################"
@@ -99,6 +101,8 @@ fi
 
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
+
+fi
 
 run-helm "${ACTION}" "${APP_NAME}" "${NS}" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"

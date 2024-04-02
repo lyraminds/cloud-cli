@@ -7,6 +7,7 @@ REPLICA_COUNT=2
 ACTION="install"
 DISK=32Gi
 SUB_DOMAIN=${APP_NAME}
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -21,7 +22,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:e: flag
+while getopts a:p:n:s:r:h:d:e:w: flag
 do
 info "helm/rabbitmq.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -33,6 +34,7 @@ info "helm/rabbitmq.sh ${flag} ${OPTARG}"
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -66,6 +68,8 @@ RABITMQ_USER_PASS=`cat ${CC_BASE_SECRET_FOLDER}/${SECRET}/rabbitmq-password`
 DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
+
+if [ "${OVER_WRITE}" == "true" ]; then
 
 echo " 
 replicaCount: ${REPLICA_COUNT}
@@ -133,6 +137,8 @@ fi
 
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
+
+fi
 
 run-helm "${ACTION}" "${APP_NAME}" "${NS}" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
