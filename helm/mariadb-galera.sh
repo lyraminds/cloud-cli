@@ -9,6 +9,7 @@ DISK=16Gi
 DB_NAME="${CC_MYSQL_DATABASE}"
 DB_USER="${CC_MYSQL_USERNAME}"
 VERSION=10.5.4-debian-10-r21
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -20,12 +21,14 @@ by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
 
+-w true
+
 "
 
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:b:u:v: flag
+while getopts a:p:n:s:r:h:d:b:u:v:w: flag
 do
 info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -38,7 +41,8 @@ info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
         d) DISK=${OPTARG};;
         b) DB_NAME=${OPTARG};;
         u) DB_USER=${OPTARG};;
-        v) VERSION=${OPTARG};;        
+        v) VERSION=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -80,6 +84,8 @@ DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
+if [ "${OVER_WRITE}" == "true" ]; then
+
 echo " 
 image:
   registry: docker.io
@@ -118,9 +124,11 @@ db:
 #      fi
     " > $OVR
 
+
   #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
+fi
 
 run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 
