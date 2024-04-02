@@ -32,16 +32,21 @@ empty "$SD_NAME" "SUB DOMAIN NAME" "$H"
 empty "$DO" "DOMAIN NAME" "$H"
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 
-export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name $KS --resource-group $RG --output tsv`
-MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`
-empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
-
-
 SDN=${SD_NAME}
 OG="${SDN}-group"
 OR="${SDN}-route"
 ON="${SDN}-orign"
 DOM="${SDN}.${DO}"
+
+E=`az afd profile list -g ${RG} --query "[?name=='${CC_FRONT_DOOR_PROFILE}']"`
+if [ "${E}" != "[]" ]; then
+
+export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name $KS --resource-group $RG --output tsv`
+MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`
+empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
+
+
+
 
 E=`az afd origin-group list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${OG}']"`
 if [ "${E}" == "[]" ]; then
@@ -128,7 +133,9 @@ vlog "az afd route list -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFILE}\" --e
 
 fi
 
-
+else
+echo "No front door skipping ${DOM}"
+fi
 #   --private-link-resource /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group/providers/Microsoft.Storage/storageAccounts/plstest 
 #   --private-link-location EastUS 
 #   --private-link-request-message 'Please approve this request' --private-link-sub-resource table
