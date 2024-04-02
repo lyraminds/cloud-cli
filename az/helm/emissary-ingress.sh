@@ -9,7 +9,7 @@ VER="2.2.2"
 IP_NAME=${CC_EMISSARY_IP_NAME}
 KS=${CC_AKS_CLUSTER_NAME}
 RG=${CC_RESOURCE_GROUP_NAME}
-
+OVER_WRITE="true"
 source bin/base.sh
 
 H="
@@ -25,7 +25,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:i:r:h:v: flag
+while getopts a:p:n:i:r:h:v:w: flag
 do
 info "./az/helm/emissary-ingress.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -35,6 +35,7 @@ info "./az/helm/emissary-ingress.sh ${flag} ${OPTARG}"
         a) ACTION=${OPTARG};;
         h) HELM_NAME=${OPTARG};;
         v) VER=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -51,5 +52,5 @@ export CC_AKS_RESOURCE_GROUP_NAME=`az aks show --query nodeResourceGroup --name 
 MYIP=`az network public-ip show --resource-group ${CC_AKS_RESOURCE_GROUP_NAME} --name ${IP_NAME} --query ipAddress --output tsv`
 empty "$MYIP" "ip under aks resource group ${CC_AKS_RESOURCE_GROUP_NAME}"
 
-./helm/emissary-ingress.sh -a "${ACTION}" -n "${APP_NAME}" -p "${NPN}" -i "${MYIP}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -v ${VER}
+./helm/emissary-ingress.sh -a "${ACTION}" -n "${APP_NAME}" -p "${NPN}" -i "${MYIP}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -w "${OVER_WRITE}" -v ${VER}
 

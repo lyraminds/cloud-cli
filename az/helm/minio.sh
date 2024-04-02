@@ -7,6 +7,7 @@ REPLICA_COUNT=4
 ACTION="install"
 DISK="16Gi"
 SUB_DOMAIN=${APP_NAME}
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -21,7 +22,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:e: flag
+while getopts a:p:n:s:r:h:d:e:w: flag
 do
 info "az/helm/minio.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -33,6 +34,7 @@ info "az/helm/minio.sh ${flag} ${OPTARG}"
         h) HELM_NAME=${OPTARG};;
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -44,7 +46,7 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
-./helm/minio.sh -n "${APP_NAME}" -s "${NS}" -p "$NPN" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}"
+./helm/minio.sh -n "${APP_NAME}" -s "${NS}" -p "$NPN" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -w "${OVER_WRITE}"
 
 if [ "${ACTION}" == "install" ]; then
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"

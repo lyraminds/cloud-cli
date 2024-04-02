@@ -12,6 +12,7 @@ THEME_VER=""
 ###Custom theme folder in theme image to copy
 THEME_FOLDER="${THEME_IMG}"
 THEME_NAME="custom"
+OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
@@ -39,7 +40,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v:t: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t:w: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -54,7 +55,8 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         i) THEME_IMG=${OPTARG};;
         v) THEME_VER=${OPTARG};;
         f) THEME_FOLDER=${OPTARG};;
-        t) THEME_NAME=${OPTARG};; 
+        t) THEME_NAME=${OPTARG};;
+        w) OVER_WRITE=${OPTARG};;
     esac
 done
 
@@ -67,7 +69,7 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
-./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -t ${THEME_NAME} -i "${THEME_IMG}" -v "${THEME_VER}" -f "${THEME_FOLDER}"
+./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -t ${THEME_NAME} -i "${THEME_IMG}" -v "${THEME_VER}" -w "${OVER_WRITE}" -f "${THEME_FOLDER}"
 
 if [ "${ACTION}" == "install" ]; then
 ./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
