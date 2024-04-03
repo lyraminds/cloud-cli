@@ -57,9 +57,9 @@ if [ "$YN" == "y" ]; then
 
 cd ..
 echo "
-Backing up current version to /opt/${IV}-bkp
+Backing up current version to /opt/${IV}
 "
-sudo mv /opt/cloud-cli "/opt/${IV}-bkp"
+sudo mv /opt/cloud-cli "/opt/${IV}"
 
 echo "
 Upgrading cloud-cli from [${IV}] to [${LV}] ...
