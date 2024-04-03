@@ -16,8 +16,20 @@ echo "Visit https://github.com/lyraminds/cloud-cli"
 fi
 
 cd cloud-cli
-echo `cat doc/version.txt`
+IV=`cat doc/version.txt`
+echo "${IV}"
 #Using defaults
+
+LV=$(curl -sS -L https://raw.githubusercontent.com/lyraminds/cloud-cli/main/doc/version.txt)
+
+EXITCODE=$?
+if [ ${EXITCODE} -ne 0 ]; then
+echo "Checking for new version failed..."
+elif [ "${IV}" != "${LV}" ]; then
+echo "
+## New Version ia available ${LV}
+"
+fi
 
 source conf/default.env
 source conf/default-azure.env

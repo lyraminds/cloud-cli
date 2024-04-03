@@ -553,7 +553,7 @@ run-git "${CC_GIT_URL}/${PROJECT_URL}" "${PROJECT}" "${BRANCH}"
 project-replace-url(){
 
 local HNAME=$(fqhn $3)
-echo "===================$HNAME"
+# echo "===================$HNAME"
 project-replace "${1}" "${2}" "${HNAME}" "${4}" "${5}"
 }
 

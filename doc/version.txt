@@ -1,1 +1,1 @@
-Cloud CLI Version v1.19 Build 02042024
+Cloud CLI Version v1.20 Build 02032024
