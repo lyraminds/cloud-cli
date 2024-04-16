@@ -1,0 +1,13 @@
+Release Note
+=============
+
+v1.21
+-----
+
+Fea Constant for account folder
+Fea Ansible deployment generator
+Fea Azure pipeline import script generator
+
+v1.20
+
+Fea Transform for ansible docker compose
