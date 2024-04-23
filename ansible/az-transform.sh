@@ -13,12 +13,19 @@ local BASE_DIR="${CC_LOG_ROOT}/ansible/${F}"
 export CC_CLIENT_NAME=$(fqn "")
 
 
-if [ -d "${BASE_DIR}" ] && [ "${W}" == "true" ]; then
+if [ "${W}" == "true" ]; then
+
+if [ ! -d "${BASE_DIR}" ]; then
+mkdir -p "${BASE_DIR}"
+else
 local TIME=$(date '+%Y-%m-%d-%H-%M-%S')
 local ANSIBLE_BACKUP="${CC_BACKUP_FOLDER}/ansible/${F}_${TIME}/"
 mkdir -p "${ANSIBLE_BACKUP}"
 mv  "${BASE_DIR}" "${ANSIBLE_BACKUP}"
+fi
+
 cp -R "${CC_RESOURCES_ROOT}/templates/ansible/${F}" "${CC_LOG_ROOT}/ansible/"
+
 fi
 
 if [ ! -d "${BASE_DIR}" ]; then
