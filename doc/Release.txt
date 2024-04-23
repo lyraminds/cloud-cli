@@ -1,17 +1,23 @@
 Release Note
 =============
 
+
+v1.23
+
+Bug Failed to copy Ansible group_vars 
+
+
 v1.22 
 
 Enh Ansible transform Simplified
 
 
 v1.21
------
 
 Fea Constant for account folder
 Fea Ansible deployment generator
 Fea Azure pipeline import script generator
+
 
 v1.20
 
