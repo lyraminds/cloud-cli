@@ -1,5 +1,8 @@
 Release Note
 =============
+v1.25
+
+Bug Pipeline transform ansible.cfg path fix 
 
 v1.24
 
