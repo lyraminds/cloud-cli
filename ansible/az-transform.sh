@@ -48,7 +48,7 @@ copy2 "${CC_RESOURCES_ROOT}/templates/ansible/${F}/inventory/hosts" "${BASE_DIR}
 copy2 "${CC_RESOURCES_ROOT}/templates/ansible/${F}/${P}.yml" "${BASE_DIR}/${P}.yml"
 copy2 "${CC_RESOURCES_ROOT}/templates/ansible/${F}/pipeline/${P}.json" "${IMPORT_FILE}"
 
-sed -i "s/${P}/${CC_ACCOUNT_FOLDER_REPLACE}\/ansible\/${F}\/${P}/g" "${IMPORT_FILE}"
+sed -i "s/System.DefaultWorkingDirectory)\/_${CC_ANSIBLE_REPO}/System.DefaultWorkingDirectory)\/_${CC_ANSIBLE_REPO}\/${CC_ACCOUNT_FOLDER_REPLACE}\/ansible\/${F}/g" "${IMPORT_FILE}"
 sed -i "s/ansible.cfg/${CC_ACCOUNT_FOLDER_REPLACE}\/ansible\/${F}\/ansible.cfg/g" "${IMPORT_FILE}"
 }
 

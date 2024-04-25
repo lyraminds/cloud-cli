@@ -1,6 +1,9 @@
 Release Note
 =============
 
+v1.24
+
+Bug Pipeline transform path generation fix 
 
 v1.23
 
