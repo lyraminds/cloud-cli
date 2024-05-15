@@ -74,8 +74,10 @@ export CC_SUB_DOMAIN=$(fqhn "")
 local DATA=`cat "${SRC}"`
 DATA=`echo "${DATA}" | envsubst '${CC_SUB_DOMAIN}' | envsubst '${CC_CLIENT_NAME}' | envsubst '${CC_ORG_CODE}'  | envsubst '${CC_VM_IP}'`
 NAME=$(basename "$filename" ${EXT_FROM})
+
 if [ "${NAME}" == "env.js" ] || [ "${NAME}" == "httpd.conf" ]; then
 echo "${DATA}" > "${DEST}/${NAME}"
+echo "${DATA}" > "${DEST}/${NAME}${EXT_FROM}"
 elif [ "${EXT_FROM}" == ".j2" ] && [ "${EXT_TO}" == ".yaml" ]; then
 DEST="${DEST}/${NAME}"
 mkdir -p "${DEST}"
