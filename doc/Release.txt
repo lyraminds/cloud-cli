@@ -1,5 +1,9 @@
 Release Note
 =============
+v1.26
+
+Bug Transform not changing .env and httpd config
+
 v1.25
 
 Bug Pipeline transform ansible.cfg path fix 
