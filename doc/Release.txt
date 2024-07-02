@@ -1,5 +1,10 @@
 Release Note
 =============
+
+v1.27
+
+Seldon update
+
 v1.26
 
 Bug Transform not changing .env and httpd config
