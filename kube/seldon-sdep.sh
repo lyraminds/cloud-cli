@@ -179,6 +179,22 @@ ENV_LAYOUTLM="
             value: MLFlowGoodsDescriptionModelServer
 "
 fi
+if [ "${MODEL_IMPL}" == "BERTNER_SERVER_46A" ] ; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowBertNer46AServer
+"
+ENV_PREDEFINED=""
+fi
+if [ "${MODEL_IMPL}" == "MACHINE_TRANSLATION" ] ; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowIntentModelServer
+"
+ENV_PREDEFINED=""
+fi
 
 
 echo " 
