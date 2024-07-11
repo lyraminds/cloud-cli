@@ -79,7 +79,7 @@ C="az afd origin create -g \"${RG}\" \
   --origin-group-name ${OG} \
   --origin-name ${ON} \
   --origin-host-header \"${DOM}\" \
-  --priority ${AFD_PRIORITY} --weight 1000 --enabled-state Enabled --http-port 80 --https-port 443"
+  --priority ${AFD_PRIORITY} --weight ${CC_AFD_WEIGHT} --enabled-state Enabled --http-port 80 --https-port 443"
 
 ok && run-cmd "${C}"
 
