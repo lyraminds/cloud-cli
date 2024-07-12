@@ -231,6 +231,8 @@ echo "
           emptyDir: {}
 " >> "${OVR}"
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+else
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
 fi
 
 # if [ ${PROBE} = true ]; then

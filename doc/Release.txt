@@ -1,6 +1,14 @@
 Release Note
 =============
 
+v1.29
+
+Toleration was not applied in some senario
+
+v1.28
+
+Front door weight to 1000
+
 v1.27
 
 Seldon update
