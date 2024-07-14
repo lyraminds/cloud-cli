@@ -239,3 +239,4 @@ if [ "${ACTION}" == "install" ]; then
 ./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}"
 fi
 
+export CC_ENV_APPEND_HOST_MAPPING=''

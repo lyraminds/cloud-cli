@@ -411,6 +411,10 @@ export CC_ENV_NAME="${2}"
 env-sub "env-value.yaml"
 }
 
+env-append-host-mapping(){
+export CC_ENV_APPEND_HOST_MAPPING="${1}"  
+}
+
 env-sub(){
 # export CC_ENV_VALUE="${1}"  
 # export CC_ENV_NAME="${2}"

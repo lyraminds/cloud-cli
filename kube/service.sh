@@ -318,7 +318,7 @@ kube/service-uninstall.sh "${NS}" "${APP_NAME}"
 ./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:${PORT}" "${SUB_DOMAIN}" "${CC_APP_DEPLOY_FOLDER}" "delete"
 fi
 
-
+export CC_ENV_APPEND_HOST_MAPPING=''
 kubectl -n $NS get pods
 vlog "kubectl -n $NS logs service/${APP_NAME}"
 echo "kubectl -n $NS logs service/${APP_NAME}"

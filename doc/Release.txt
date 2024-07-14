@@ -1,17 +1,22 @@
 Release Note
 =============
 
+
+v1.30
+
+Fea Append to host mapping
+
 v1.29
 
-Toleration was not applied in some senario
+Bug Toleration was not applied in some senario
 
 v1.28
 
-Front door weight to 1000
+Enh Front door weight to 1000
 
 v1.27
 
-Seldon update
+Enh Seldon update
 
 v1.26
 
@@ -33,7 +38,6 @@ Bug Failed to copy Ansible group_vars
 v1.22 
 
 Enh Ansible transform Simplified
-
 
 v1.21
 

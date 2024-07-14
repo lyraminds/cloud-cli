@@ -44,8 +44,6 @@ spec:
   timeout_ms: 0
   envoy_override:
     per_connection_buffer_limit_bytes: 2000000000
-
-
 " > ${OVR}
 else
 echo "
@@ -79,6 +77,10 @@ spec:
 ---
 " > ${OVR}
 fi
+
+## Appy appended value and resetting
+echo "${CC_ENV_APPEND_HOST_MAPPING}" >> "${OVR}"
+
 
 if [ "${ACTION}" == "delete" ]; then
 run-cmd "kubectl -n ${NS} delete mapping ${APP_NAME}-mapping"

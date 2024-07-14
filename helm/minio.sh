@@ -108,6 +108,6 @@ if [ "${ACTION}" == "install" ]; then
 ./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9000" "${SUB_DOMAIN}"
 ./kube/emissary-host-mapping.sh "${PUBLIC_APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:9001" "${PUBLIC_SUB_DOMAIN}"
 fi
-
+export CC_ENV_APPEND_HOST_MAPPING=''
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"
 
