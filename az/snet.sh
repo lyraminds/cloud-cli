@@ -5,9 +5,9 @@ VNET=${3:-$CC_VNET_NAME}
 RG=${4:-$CC_RESOURCE_GROUP_NAME}
 
 source bin/base.sh
-H="
-./az/snet.sh \"subnetname\" \"Address\"
-./az/snet.sh \"unique-virtual-subnet-name\" \"10.11.0.0/24\"
+H='
+./az/snet.sh "subnetname" "Address"
+./az/snet.sh "unique-virtual-subnet-name" "10.11.0.0/24"
 snet prefix example 10.11.0.0/16
 Your vnet name = ${VNET}
 Your vnet prefix = ${CC_VNET_PREFIX}
@@ -17,10 +17,10 @@ OR
 
 to get id of default subnet
 
-./snet-get.sh \"\${CC_SUBNET_NAME}\"
-./snet-get.sh \"${CC_SUBNET_NAME}\"
+./snet-get.sh "${CC_SUBNET_NAME}"
+./snet-get.sh "${CC_SUBNET_NAME}"
 
-"
+'
 empty "$1" "Virtual subnet name for vnet $VNET" "${H}"
 empty "$2" "Address" "${H}"
 

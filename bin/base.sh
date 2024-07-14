@@ -396,6 +396,11 @@ export CC_GEN_SECRET_FILES=""
 # secret-add "$1" "$2" "$3"
 }
 
+secret-clear(){
+export CC_GEN_SECRET_FILES=""
+export CC_GEN_SECRET=""
+}
+
 
 export CC_GEN_ENV_FILE=""
 export CC_GEN_ENV_FILEPATH=""
