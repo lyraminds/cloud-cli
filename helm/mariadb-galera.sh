@@ -8,12 +8,11 @@ ACTION="install"
 DISK=16Gi
 DB_NAME="${CC_MYSQL_DATABASE}"
 DB_USER="${CC_MYSQL_USERNAME}"
-VERSION=10.5.4-debian-10-r21
 OVER_WRITE="true"
 #==============================================
 source bin/base.sh
 H="
-./helm/mariadb-galera.sh -a \"install\" -s \"data-namespace\" -p \"npdata\" -d \"16Gi\" -r \"${REPLICA_COUNT}\" -v \"${VERSION}\" 
+./helm/mariadb-galera.sh -a \"install\" -s \"data-namespace\" -p \"npdata\" -d \"16Gi\" -r \"${REPLICA_COUNT}\" 
 ./helm/mariadb-galera.sh -a \"install\" -s \"data-namespace\" -p \"npdata\" -d \"16Gi\" -u "database-user" -b "database-name" -r \"1\" 
 ./helm/mariadb-galera.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -s \"data-namespace\" -p \"nodepoolname\" -d \"disk-space\" -u "database-user" -b "database-name" -r \"replica-count\" -h \"helm-chart-folder-name\" 
 
@@ -28,7 +27,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:b:u:v:w: flag
+while getopts a:p:n:s:r:h:d:b:u:w: flag
 do
 info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -41,7 +40,6 @@ info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
         d) DISK=${OPTARG};;
         b) DB_NAME=${OPTARG};;
         u) DB_USER=${OPTARG};;
-        v) VERSION=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
     esac
 done
@@ -57,7 +55,7 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
-empty "$VERSION" "VERSION or TAG" "$H"
+
 
 # export CC_MYSQL_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
@@ -86,22 +84,11 @@ OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
 if [ "${OVER_WRITE}" == "true" ]; then
 
-echo " 
-image:
-  registry: docker.io
-  repository: bitnami/mariadb-galera
-  tag: ${VERSION}
-  pullPolicy: IfNotPresent
-  pullSecrets: []
-  debug: false 
 
-podManagementPolicy: \"Parallel\"
+
+echo " 
+
 replicaCount: ${REPLICA_COUNT}
-galera:
-  bootstrap:
-    forceBootstrap: true
-    bootstrapFromNode: 0
-    forceSafeToBootstrap: true
 
 persistence:
   size: \"${DISK}\"
@@ -114,6 +101,8 @@ db:
   user: \"${DB_USER}\"
   name: \"${DB_NAME}\"
 
+    " > $OVR
+
 # initdbScripts:
 #   my_init_script.sh: |
 #      #!/bin/sh
@@ -122,8 +111,18 @@ db:
 #        mysql -P 3306 -uroot -p${CC_MYSQL_ROOT_PASSWORD} -e \"grant all privileges on *.* TO '${CC_MYSQL_ROOT_USERNAME}'@'10.%' identified by '${CC_MYSQL_ROOT_PASSWORD}';flush privileges;\";
 #        mysql -P 3306 -uroot -p${CC_MYSQL_ROOT_PASSWORD} -e \"grant all privileges on ${DB_NAME}.* TO '${DB_USER}'@'10.%' identified by '${CC_MYSQL_USER_PASSWORD}';flush privileges;\";
 #      fi
-    " > $OVR
 
+
+
+if [ ! -f "${CC_MARIADB_DEPLOYMENT}" ]; then
+echo "---------------------- INFO ------------------------"
+echo "No mariadb custom deployments found at [${CC_MARIADB_DEPLOYMENT}], define right path at [CC_MARIADB_DEPLOYMENT] in xx-overrides.env"
+echo "Will continue with out additonal custom configuration for mariadb in 3 sec..."
+echo "---------------------- INFO ------------------------"
+sleep "3"
+else
+cat ${CC_MARIADB_DEPLOYMENT} >> ${OVR}
+fi
 
   #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"

@@ -1,6 +1,15 @@
 Release Note
 =============
 
+v1.31
+
+Fea Mariadb additonal configuration for cluster
+
+1. az-override.env add this line near CC_SELDON_OPERATOR_DEPLOYMENT
+export CC_MARIADB_DEPLOYMENT=${CC_RESOURCES_ROOT}/mariadb-deploy.yaml
+
+2. Use the required changes in mariadb-deploy.yaml in resources folder
+
 
 v1.30
 
