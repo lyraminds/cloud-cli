@@ -82,7 +82,7 @@ DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
 
-if [ "${OVER_WRITE}" == "true" ]; then
+if [ "${OVER_WRITE}" == "true" ] || [ ! -f "${OVR}" ]; then
 
 
 

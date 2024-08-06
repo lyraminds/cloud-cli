@@ -89,7 +89,7 @@ echo "${DISP}" > "${CC_RESOURCES_ROOT}/seldon-secret.yaml"
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/seldon-secret.yaml"`
 REFENV=`echo "${REFENV}" | envsubst '${SECRET}'`
-if [ "${OVER_WRITE}" == "true" ]; then
+if [ "${OVER_WRITE}" == "true" ] || [ ! -f "${OVR}" ]; then
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"

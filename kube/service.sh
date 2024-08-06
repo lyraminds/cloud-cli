@@ -135,7 +135,7 @@ DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-deploy.yaml"
 
-if [ "${OVER_WRITE}" == "true" ]; then
+if [ "${OVER_WRITE}" == "true" ] || [ ! -f "${OVR}" ]; then
 
 echo " 
 ######################## Namespace, Service ${NS}, ${APP_NAME} Service ###########################
