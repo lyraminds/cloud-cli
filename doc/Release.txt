@@ -5,7 +5,7 @@ Release Note
 
 v1.32
 
-Fea -w "false" , create override.yml files even -w is false if no file exists
+Fea -w "false" , create override.yml if not file exists
 
 v1.31
 
