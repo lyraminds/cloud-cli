@@ -132,6 +132,15 @@ ENV_LAYOUTLM="
             value: /mnt/models
 "
 fi
+if [ "${MODEL_IMPL}" == "EFORM_JPMC_YOLO_SERVER" ]; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowEFormYOLOServer
+          - name: YOLO_BASE_MODEL_PATH
+            value: /mnt/models
+"
+fi
 if [ "${MODEL_IMPL}" == "LAYOUTLM_SERVER" ]; then
 ENV_LAYOUTLM="
           env:
