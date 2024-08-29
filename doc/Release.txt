@@ -1,6 +1,9 @@
 Release Note
 =============
 
+v1.34
+
+Enh dr(disaster recovery) to skip the prefix like prod
 
 v1.33
 
