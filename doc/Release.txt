@@ -1,6 +1,16 @@
 Release Note
 =============
 
+
+v1.35
+
+Fea Keycloak additonal configuration for cluster
+
+1. az-override.env add this line 
+export CC_KEYCLOAK_DEPLOYMENT=${CC_RESOURCES_ROOT}/keycloak-deploy.yaml
+
+2. Use the required changes in keycloak-deploy.yaml in resources folder, begin with env variables
+
 v1.34
 
 Enh dr(disaster recovery) to skip the prefix like prod

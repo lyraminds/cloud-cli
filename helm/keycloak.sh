@@ -132,6 +132,10 @@ extraEnvVars:
 
     " > ${OVR}
 
+if [ -f "${CC_KEYCLOAK_DEPLOYMENT}" ]; then
+cat ${CC_KEYCLOAK_DEPLOYMENT} >> ${OVR}
+fi    
+
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}"
 
