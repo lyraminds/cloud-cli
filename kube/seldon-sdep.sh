@@ -204,8 +204,22 @@ ENV_LAYOUTLM="
 "
 ENV_PREDEFINED=""
 fi
-
-
+if [ "${MODEL_IMPL}" == "NOUN_EXTRACTION" ] ; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowNounServer
+"
+ENV_PREDEFINED=""
+fi
+if [ "${MODEL_IMPL}" == "ALERT_CLASSIFICATION_SERVER" ] ; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowAlertClassificationServer
+"
+ENV_PREDEFINED=""
+fi
 echo " 
 ######################## ${NAME} SeldonDeployment ###########################
 apiVersion: machinelearning.seldon.io/v1alpha2

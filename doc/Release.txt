@@ -1,6 +1,9 @@
 Release Note
 =============
 
+v1.36
+
+Fea Seldon new implementations
 
 v1.35
 
