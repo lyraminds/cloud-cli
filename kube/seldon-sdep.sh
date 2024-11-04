@@ -89,11 +89,14 @@ echo "${DISP}" > "${CC_RESOURCES_ROOT}/seldon-secret.yaml"
 fi
 REFENV=`cat "${CC_RESOURCES_ROOT}/seldon-secret.yaml"`
 REFENV=`echo "${REFENV}" | envsubst '${SECRET}'`
-if [ "${OVER_WRITE}" == "true" ] || [ ! -f "${OVR}" ]; then
 
 DPF="${CC_APP_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-deploy.yaml"
+
+if [ "${OVER_WRITE}" == "true" ] || [ ! -f "${OVR}" ]; then
+
+
 
 STORAGE_CONF="
           image: seldonio/rclone-storage-initializer:1.13.1
