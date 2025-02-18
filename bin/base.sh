@@ -599,3 +599,25 @@ log "project-replace ignored. File not found ${RPATH}"
 fi
 
 }
+
+
+env-add-config-map() {
+    local file_path="${CC_RESOURCES_ROOT}/${1}.configmap"
+    
+    if [ ! -f "${file_path}" ]; then
+        echo "No config map configuration found at ${file_path}"
+        return 1
+    fi
+    
+    local data
+    data=$(<"${file_path}")
+
+    # Dynamically substitute all provided environment variables
+    shift # Remove the first argument (file name)
+    for var in "$@"; do
+        data=$(envsubst "\${${var}}" <<< "${data}")
+    done
+
+    env-write-config-map "${data}"
+}
+
