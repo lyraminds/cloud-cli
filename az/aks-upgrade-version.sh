@@ -12,7 +12,7 @@ az aks get-upgrades \
 	--output table 
 fi
 
-H="np-upgrade-version "1.27.7" 
+H="aks-upgrade-version.sh "1.27.7" 
 empty "$1" "KUBERNETES_VERSION" "$H"
 
 

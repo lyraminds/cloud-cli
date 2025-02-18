@@ -13,7 +13,7 @@ az aks get-upgrades \
 	--output table 
 fi
 
-H="np-upgrade-version \"nodepoolname\" \"1.27.7\""
+H="./az/np-upgrade-version.sh \"nodepoolname\" \"1.27.7\""
 
 empty "$1" "Node pool name" "$H"
 empty "$2" "KUBERNETES_VERSION" "$H"
