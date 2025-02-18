@@ -1,21 +1,4 @@
-# Documentation for Common Shell Script Functions
-
-## `run-git`
-
-**Description:** Clones or updates a Git repository.
-
-**Parameters:**
-
-- `$1`: Git URL.
-- `$2`: Git project name.
-- `$3`: Branch name (optional, defaults to `main`).
-
-**Usage:**
-
-```sh
-run-git "http://git.company.com/companyspace" "myproject" "master"
-```
-----
+# Documentation for build-docker Shell Script Functions
 
 
 ## `build-acr`
@@ -71,3 +54,21 @@ You have already defined git url in your config file
 
 ```
 ---
+
+
+## `run-git`
+
+**Description:** Clones or updates a Git repository.
+
+**Parameters:**
+
+- `$1`: Git URL.
+- `$2`: Git project name.
+- `$3`: Branch name (optional, defaults to `main`).
+
+**Usage:**
+
+```sh
+run-git "http://git.company.com/companyspace" "myproject" "master"
+```
+----
