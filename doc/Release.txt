@@ -1,6 +1,12 @@
 Release Note
 =============
 
+v1.38
+
+Enh New Documentation
+Enh better option to create config mapping
+Enh Help typo fixes 
+
 v1.37
 
 Fea Seldon sdep deploy over write issues
