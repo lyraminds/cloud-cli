@@ -1,6 +1,6 @@
 ## How To define Environment variable for your deployment
 
-**Create env-vars.sh **
+**Create env-vars.sh**
 
 Define common base properties for all deployment
 
