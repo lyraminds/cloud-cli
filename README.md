@@ -75,7 +75,12 @@ To create an AKS cluster (You need a valid Azure subscription and user credentia
 ./install-aks.sh 
 ``````
 
-## Documents
+## Sample Documents
+
+[env-vars](/doc/tutorial/env-vars-sample.md)
+
+
+## Reference Documents
 
 [env-vars](/doc/env-vars.md)
 
