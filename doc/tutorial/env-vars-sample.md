@@ -1,6 +1,6 @@
 ## How To define Environment variable for your deployment
 
-**Create "env-vars.sh" **
+**Create env-vars.sh **
 
 Define common base properties for all deployment
 
@@ -76,7 +76,7 @@ env-append-host-mapping '
 
 ----
 
-**Deploy a front end UI**
+**Deploy a backend API**
 
 ```sh
 env-app-api(){
