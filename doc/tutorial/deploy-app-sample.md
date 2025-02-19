@@ -1,6 +1,6 @@
 ## How To deploy application
 
-**Create env-vars.sh** See here
+**Create env-vars.sh** [env-vars](/doc/tutorial/env-vars-sample.md)
 
 
 **Create deploy-app.sh** 
