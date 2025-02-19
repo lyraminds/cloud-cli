@@ -79,6 +79,8 @@ To create an AKS cluster (You need a valid Azure subscription and user credentia
 
 [env-vars](/doc/tutorial/env-vars-sample.md)
 
+[deploy-app](/doc/tutorial/deploy-app-sample.md)
+
 
 ## Reference Documents
 
