@@ -37,7 +37,7 @@ VERSION=1.0.0
 build-acr "${VERSION}" "feat/new-ui" "web-ui-project-name" "teamspace/Repo/_git" "Dockerfile.prod" "--no-cache"
 
 #Github 
-build-acr "${VERSION}" "main" "web-api-project-name" "" "Dockerfile.prod" "--no-cache --build-arg SOURCE_BRANCH=master --build-arg NPM_TOKEN=${CC_NPM_TOKEN}"
+build-acr "${VERSION}" "main" "web-api-project-name" "myorg" "Dockerfile.prod" "--no-cache --build-arg SOURCE_BRANCH=master --build-arg NPM_TOKEN=${CC_NPM_TOKEN}"
 ```
 
 
@@ -50,7 +50,7 @@ You have already defined git url in your config file
 #export CC_GIT_URL="https://myname@dev.azure.com"
 
 ## Github
-#export CC_GIT_URL="https://github.com/myorg"
+#export CC_GIT_URL="https://github.com/"
 
 ```
 ---
