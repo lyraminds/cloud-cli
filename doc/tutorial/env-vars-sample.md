@@ -1,8 +1,11 @@
 ## How To define Environment variable for your deployment
 
+You define your environment variables, secret, config map, host mapping etc in env-vars
+
 **Create env-vars.sh**
 
-Define common base properties for all deployment
+Define common base properties for all deployments.
+These are private functions
 
 ```sh
 rabbitmq(){
@@ -28,7 +31,7 @@ env-url-public "keycloak" "KEYCLOAK_SERVER_URL"
 
 ```
 
-**Deploy a front end UI**
+**Define env vars for front end UI**
 
 ```sh
 env-app-ui(){
@@ -76,7 +79,7 @@ env-append-host-mapping '
 
 ----
 
-**Deploy a backend API**
+**Deploy env vars for your backend API**
 
 ```sh
 env-app-api(){
@@ -113,7 +116,7 @@ env-write '
               - name: LOG_LEVEL
                 value: DEBUG          
               - name: NAMESPACE
-                value: my-namespace                                            
+                value: ns-api                                            
 
 '
 }
@@ -124,3 +127,7 @@ env-write '
 ## Reference
 
 [env-vars](/doc/env-vars.md)
+
+## Sample
+
+[deploy-app](/doc/tutorial/deploy-app-sample.md)
