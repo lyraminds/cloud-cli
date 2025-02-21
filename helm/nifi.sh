@@ -16,6 +16,8 @@ H="
 ./helm/nifi.sh -a \"install\" -s \"common-namespace\" -p \"nodepoolname\" -d \"16Gi\" -i "apache/nifi" -v "1.14.0" -r \"1\" 
 ./helm/nifi.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" -d \"disk-space\" -i "docker-image-name" -v "image-version" -r \"replica-count\" -h \"helm-chart-folder-name\" 
 
+-l region name for subdomain
+
 by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
@@ -26,7 +28,7 @@ exit 0;
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:v:e:w: flag
+while getopts a:p:n:s:r:h:d:i:v:e:w:l: flag
 do
 info "helm/nifi.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -41,6 +43,7 @@ info "helm/nifi.sh ${flag} ${OPTARG}"
         v) VER=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;
     esac
 done
 
@@ -54,7 +57,17 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 
 
-SECRET=nifi-secret
+HNAME="$(fqhn $SUB_DOMAIN $_SD_REGION)"
+SECRET=${APP_NAME}-secret
+if [ "${ACTION}" == "install" ]; then
+secret-file "${SECRET}"
+secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
+secret-add "8080" "local-port" 
+secret-add "${APP_NAME}.${NS}.svc.cluster.local:8080" "local-url-port" 
+secret-add "${HNAME}" "public-url" 
+./kube/secret.sh "${SECRET}" "${NS}"
+fi
+
 DPF="${CC_BASE_DEPLOY_FOLDER}/${NS}"
 mkdir -p "${DPF}"
 OVR="${DPF}/${APP_NAME}-overrides.yaml"
@@ -99,7 +112,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" 
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:8080" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" "apply" "BEHIND_L7" "${_SD_REGION}"
 fi
 export CC_ENV_APPEND_HOST_MAPPING=''
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

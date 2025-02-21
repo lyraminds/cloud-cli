@@ -353,11 +353,12 @@ kubectl get pods -n ${NS}
 
 
 fqn(){
-if [ ! -z "$CC_SUB_DOMAIN_SUFFIX" -a "$CC_SUB_DOMAIN_SUFFIX" != " " ]; then
+local SD_PREFIX=${2:-$CC_SUB_DOMAIN_SUFFIX}  
+if [ ! -z "$SD_PREFIX" -a "$SD_PREFIX" != " " ]; then
 if [ ! -z "${1}" ]; then
-_APP="${CC_SUB_DOMAIN_SUFFIX}-${1}"
+_APP="${SD_PREFIX}-${1}"
 else
-_APP="${CC_SUB_DOMAIN_SUFFIX}"
+_APP="${SD_PREFIX}"
 fi
 else
 _APP="${1}"
@@ -367,10 +368,11 @@ echo "${_APP}"
 
 fqhn(){
 local sd=${1}
+local prefix=${2}
 if [ "${sd}" == "." ]; then
 sd=""
 fi
-local vv=$(fqn ${sd})
+local vv=$(fqn ${sd} ${prefix})
 if [ ! -z "${vv}" ]; then
 echo "${vv}.${CC_DOMAIN_NAME}"
 else

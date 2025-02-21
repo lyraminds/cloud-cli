@@ -7,12 +7,12 @@ SUB_DOMAIN=${4}
 OVR_FOLDER=${5:-"${CC_BASE_DEPLOY_FOLDER}"}
 ACTION=${6:-"apply"}
 LB=${7:-"BEHIND_L7"}
+_SD_REGION=${8}
 
 source bin/base.sh
 
 
-
-HNAME="$(fqhn $SUB_DOMAIN)"
+HNAME="$(fqhn $SUB_DOMAIN $_SD_REGION)"
 
 DPF="${OVR_FOLDER}/${NS}"
 mkdir -p "${DPF}"

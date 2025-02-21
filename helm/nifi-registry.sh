@@ -13,6 +13,8 @@ H="
 ./helm/nifi-registry.sh -a \"install\" -n \"nifi-registry\" -s \"common-namespace\" -p \"nodepoolname\" -r \"1\" -h \""nifi-registry"\" 
 ./helm/nifi-registry.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" -r \"replica-count\" -h \"helm-chart-folder-name\" 
 
+-l region name for subdomain
+
 by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
@@ -20,7 +22,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:e:w: flag
+while getopts a:p:n:s:r:h:e:w:l: flag
 do
 info "helm/nifi-registry.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -32,6 +34,7 @@ info "helm/nifi-registry.sh ${flag} ${OPTARG}"
         h) HELM_NAME=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;
     esac
 done
 
@@ -44,8 +47,8 @@ empty "$ACTION" "ACTION" "$H"
 empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 
-HNAME="$(fqhn $SUB_DOMAIN)"
-SECRET=nifi-registry-secret
+HNAME="$(fqhn $SUB_DOMAIN $_SD_REGION)"
+SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
 secret-add "${APP_NAME}.${NS}.svc.cluster.local" "local-url" 
@@ -83,7 +86,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "${OVR}"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" 
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:18080" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" "apply" "BEHIND_L7" "${_SD_REGION}"
 fi
 export CC_ENV_APPEND_HOST_MAPPING=''
 vlog "kubectl -n "$NS" describe service ${APP_NAME}"

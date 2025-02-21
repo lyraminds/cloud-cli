@@ -14,6 +14,8 @@ H="
 ./helm/rabbitmq.sh -a \"install\" -s \"common-namespace\" -p \"nodepoolname\" -d \"${DISK}\" -r \"${REPLICA_COUNT}\" 
 ./helm/rabbitmq.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" -d \"disk-space\" -r \"replica-count\" -h \"helm-chart-folder-name\" 
 
+-l region name for subdomain
+
 by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
@@ -22,7 +24,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:e:w: flag
+while getopts a:p:n:s:r:h:d:e:w:l: flag
 do
 info "helm/rabbitmq.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -35,6 +37,7 @@ info "helm/rabbitmq.sh ${flag} ${OPTARG}"
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;
     esac
 done
 
@@ -50,9 +53,9 @@ empty "$DISK" "DISK" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 # export CC_RABBITMQ_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
-HNAME="$(fqhn $SUB_DOMAIN)"
+HNAME="$(fqhn $SUB_DOMAIN $_SD_REGION)"
 
-SECRET=rabbitmq-secret
+SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "install" ]; then
 secret-file "${SECRET}"
 secret-add "${CC_RABBITMQ_USER_PASSWORD}" "rabbitmq-password" 
@@ -145,7 +148,7 @@ run-sleep "2"
 
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" 
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:15672" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" "apply" "BEHIND_L7" "${_SD_REGION}"
 fi
 export CC_ENV_APPEND_HOST_MAPPING=''
 # trap cleanup EXIT

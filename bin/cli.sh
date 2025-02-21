@@ -153,7 +153,7 @@ export VERSION=${VERSION:-"1.0"}
 export BUILD_ENV=${X_ENV}
 
 ENV_PREFIX=""
-if [ ! -z "$BUILD_ENV" ] || [ "$BUILD_ENV" = "" ]; then
+if [ ! -z "$BUILD_ENV" ] || [ "$BUILD_ENV" == "" ]; then
 ENV_PREFIX="-${BUILD_ENV}"
 fi
 
@@ -162,7 +162,7 @@ export APP_NAME=${CUSTOMER}-${PROJECT}${ENV_PREFIX}
 export APP_IMAGE=${CUSTOMER}/${PROJECT}${ENV_PREFIX}:${VERSION}
 export APP_VOLUME=/volumes/${APP_NAME}
 
-if [ ! -z "$DOCKER_COMPOSE_FILE" ] || [ "$DOCKER_COMPOSE_FILE" = "" ]; then
+if [ ! -z "$DOCKER_COMPOSE_FILE" ] || [ "$DOCKER_COMPOSE_FILE" == "" ]; then
 export DOCKER_COMPOSE_FILE=docker-compose${ENV_PREFIX}.yml
 fi
 

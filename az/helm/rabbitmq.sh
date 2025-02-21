@@ -14,6 +14,8 @@ H="
 ./az/helm/rabbitmq.sh -a \"install\" -s \"common-namespace\" -p \"nodepoolname\" -d \"${DISK}\" -r \"${REPLICA_COUNT}\" 
 ./az/helm/rabbitmq.sh -a \"install|upgrade|uninstall\" -n \"app-name\" -s \"common-namespace\" -p \"nodepoolname\" -d \"disk-space\" -r \"replica-count\" -h \"helm-chart-folder-name\" 
 
+-l region name for subdomain
+
 by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
@@ -22,7 +24,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:e:w: flag
+while getopts a:p:n:s:r:h:d:e:w:l: flag
 do
 info "./az/helm/rabbitmq.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -35,6 +37,7 @@ info "./az/helm/rabbitmq.sh ${flag} ${OPTARG}"
         d) DISK=${OPTARG};;
         e) SUB_DOMAIN=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};; 
     esac
 done
 
@@ -46,8 +49,13 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
-./helm/rabbitmq.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -w "${OVER_WRITE}"
+if [ ! -z "${_SD_REGION}" ] && [ "${_SD_REGION}" != "" ]; then
+APP_NAME=${APP_NAME}-${_SD_REGION}
+_SD_REGION=${CC_CUSTOMER}-${_SD_REGION}
+fi
+
+./helm/rabbitmq.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -w "${OVER_WRITE}" -l "${_SD_REGION}"
 
 if [ "${ACTION}" == "install" ]; then
-./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
+./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN} ${_SD_REGION}`"
 fi

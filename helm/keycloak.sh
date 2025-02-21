@@ -36,14 +36,14 @@ by default app name is helm folder name
 
 -h helm-chart-folder-name 
 -n app-name 
-
+-l region name for subdomain
 -w true
 
 "
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v:t:w: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t:w:l: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -60,6 +60,7 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         f) THEME_FOLDER=${OPTARG};;
         t) THEME_NAME=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;
     esac
 done
 
@@ -74,12 +75,12 @@ empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
-HNAME="$(fqhn $SUB_DOMAIN)"
+HNAME="$(fqhn $SUB_DOMAIN ${_SD_REGION})"
 export CC_KEYCLOAK_PUBLIC_URL=https://${HNAME}
 # export CC_KEYCLOAK_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
 
-SECRET="keycloak-secret"
+SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "install" ]; then
 
 secret-file "${SECRET}"
@@ -240,7 +241,7 @@ run-helm "${ACTION}" "${APP_NAME}" "$NS" "${HELM_FOLDER}" "$OVR"
 run-sleep "2"
 
 if [ "${ACTION}" == "install" ]; then
-./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}"
+./kube/emissary-host-mapping.sh "${APP_NAME}" "${NS}" "${APP_NAME}.${NS}.svc:80" "${SUB_DOMAIN}" "${CC_BASE_DEPLOY_FOLDER}" "apply" "BEHIND_L7" "${_SD_REGION}"
 fi
 
 export CC_ENV_APPEND_HOST_MAPPING=''

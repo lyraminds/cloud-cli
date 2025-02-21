@@ -1,6 +1,10 @@
 Release Note
 =============
 
+v1.39
+
+Enh Support for multile instance of mariadb minio keycloak 
+
 v1.38
 
 Enh New Documentation

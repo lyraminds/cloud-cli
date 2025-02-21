@@ -40,7 +40,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:i:e:f:v:t:w: flag
+while getopts a:p:n:s:r:h:d:i:e:f:v:t:w:l: flag
 do
 info "helm/keycloak.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -57,6 +57,7 @@ info "helm/keycloak.sh ${flag} ${OPTARG}"
         f) THEME_FOLDER=${OPTARG};;
         t) THEME_NAME=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;
     esac
 done
 
@@ -69,8 +70,13 @@ empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 empty "$SUB_DOMAIN" "SUB DOMAIN" "$H"
 
-./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -t ${THEME_NAME} -i "${THEME_IMG}" -v "${THEME_VER}" -w "${OVER_WRITE}" -f "${THEME_FOLDER}"
+if [ ! -z "${_SD_REGION}" ] && [ "${_SD_REGION}" != "" ]; then
+APP_NAME=${APP_NAME}-${_SD_REGION}
+_SD_REGION=${CC_CUSTOMER}-${_SD_REGION}
+fi
+
+./helm/keycloak.sh -n "${APP_NAME}" -s "${NS}" -p "${NPN}" -a "${ACTION}" -r "${REPLICA_COUNT}" -h "${HELM_NAME}" -d "${DISK}" -e "${SUB_DOMAIN}" -t ${THEME_NAME} -i "${THEME_IMG}" -v "${THEME_VER}" -w "${OVER_WRITE}" -f "${THEME_FOLDER}" -l "${_SD_REGION}"
 
 if [ "${ACTION}" == "install" ]; then
-./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN}`"
+./az/afd-aks-origin.sh -n "`fqn ${SUB_DOMAIN} ${_SD_REGION}`"
 fi

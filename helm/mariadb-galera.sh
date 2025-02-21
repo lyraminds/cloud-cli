@@ -6,8 +6,7 @@ NPN=""
 REPLICA_COUNT=1
 ACTION="install"
 DISK=16Gi
-DB_NAME="${CC_MYSQL_DATABASE}"
-DB_USER="${CC_MYSQL_USERNAME}"
+
 OVER_WRITE="true"
 #==============================================
 source bin/base.sh
@@ -27,7 +26,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:b:u:w: flag
+while getopts a:p:n:s:r:h:d:b:u:w:l: flag
 do
 info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -41,13 +40,13 @@ info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
         b) DB_NAME=${OPTARG};;
         u) DB_USER=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        l) _SD_REGION=${OPTARG};;  
     esac
 done
 
 HELM_FOLDER=${CC_HELM_CHARTS_ROOT}/${HELM_NAME}
 
-empty "$DB_USER" "Database New User Name" "$H"
-empty "$DB_NAME" "Database Name" "$H"
+
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
 empty "$NPN" "NODE POOL NAME" "$H"
@@ -56,10 +55,31 @@ empty "$REPLICA_COUNT" "REPLICA_COUNT" "$H"
 empty "$HELM_NAME" "HELM_NAME" "$H"
 empty "$DISK" "DISK" "$H"
 
+if [ ! -z "${_SD_REGION}" ] && [ "${_SD_REGION}" != "" ]; then
+CV=""
+if [ "${CC_RESOURCE_VERSION}" != "" ]; then
+CV="_${CC_RESOURCE_VERSION}"
+fi
+DB_PREFIX="${CC_CUSTOMER}_${_SD_REGION}${CV}"
 
+DB_NAME="${DB_PREFIX}_db"
+DB_USER="${DB_PREFIX}_user"
+
+APP_NAME=${APP_NAME}-${_SD_REGION}
+fi
 # export CC_MYSQL_SERVICE_URL=${APP_NAME}.${NS}.svc.cluster.local
 
-SECRET=mariadb-galera-secret
+if [ -z "${DB_USER}" ] || [ "${DB_USER}" == "" ]; then
+DB_USER="${CC_MYSQL_USERNAME}"
+fi
+if [ -z "${DB_NAME}" ] || [ "${DB_NAME}" == "" ]; then
+DB_NAME="${CC_MYSQL_DATABASE}"
+fi
+
+empty "$DB_USER" "Database New User Name" "$H"
+empty "$DB_NAME" "Database Name" "$H"
+
+SECRET=${APP_NAME}-secret
 if [ "${ACTION}" == "install" ]; then
 
 #define secret and create
