@@ -48,11 +48,15 @@ C="az aks nodepool add \
     -g ${RG} \
     --cluster-name ${KS} \
     --name ${NPN} \
-    --node-taints ${CC_NODE_POOL_TAINT_TYPE}=${NPN}:${CC_NODE_POOL_TAINT_EFFECT} \
-    --labels join=${NPN} \
+    # --node-taints ${CC_NODE_POOL_TAINT_TYPE}=${NPN}:${CC_NODE_POOL_TAINT_EFFECT} \
+    # --labels join=${NPN} \
     --node-vm-size ${VMSIZE} \
     --node-osdisk-size ${DISKSIZE} \
     --tags ${CC_TAGS} ${OPTIONS} "
+
+if [[ "$OPTIONS" != *"mode System"* ]]; then
+C="${C} --node-taints ${CC_NODE_POOL_TAINT_TYPE}=${NPN}:${CC_NODE_POOL_TAINT_EFFECT} --labels join=${NPN}"
+fi   
 
 ok && run-cmd "$C"
 
