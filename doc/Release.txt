@@ -1,9 +1,13 @@
 Release Note
 =============
 
+v1.41
+
+Bug nodepool creation cause missing taint
+
 v1.40
 
-Disable taint for system ndepool creation
+Enh Disable taint for system nodepool creation
 
 v1.39
 
