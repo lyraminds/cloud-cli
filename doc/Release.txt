@@ -1,6 +1,10 @@
 Release Note
 =============
 
+v1.40
+
+Disable taint for system ndepool creation
+
 v1.39
 
 Enh Support for multile instance of mariadb minio keycloak 
