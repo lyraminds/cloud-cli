@@ -19,6 +19,8 @@ by default app name is helm folder name
 -h helm-chart-folder-name 
 -n app-name 
 
+-c 32315  replace the DB_NODE_PORT defined in mariadb-galeria-deploy.yaml a node port
+
 -w true
 
 "
@@ -26,7 +28,7 @@ by default app name is helm folder name
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:h:d:b:u:w:l: flag
+while getopts a:p:n:s:r:h:d:b:u:w:l:c: flag
 do
 info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -40,7 +42,8 @@ info "helm/mariadb-galera.sh ${flag} ${OPTARG}"
         b) DB_NAME=${OPTARG};;
         u) DB_USER=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
-        l) _SD_REGION=${OPTARG};;  
+        l) _SD_REGION=${OPTARG};;
+        c) NODE_PORT=${OPTARG};;  
     esac
 done
 
@@ -74,6 +77,9 @@ DB_USER="${CC_MYSQL_USERNAME}"
 fi
 if [ -z "${DB_NAME}" ] || [ "${DB_NAME}" == "" ]; then
 DB_NAME="${CC_MYSQL_DATABASE}"
+fi
+if [ -z "${NODE_PORT}" ] || [ "${NODE_PORT}" == "" ]; then
+NODE_PORT="32315"
 fi
 
 empty "$DB_USER" "Database New User Name" "$H"
@@ -141,7 +147,15 @@ echo "Will continue with out additonal custom configuration for mariadb in 3 sec
 echo "---------------------- INFO ------------------------"
 sleep "3"
 else
-cat ${CC_MARIADB_DEPLOYMENT} >> ${OVR}
+
+export DB_NODE_PORT=${NODE_PORT}
+
+# Read file and substitute environment variable
+MADEP=$(envsubst '${DB_NODE_PORT}' < "${CC_MARIADB_DEPLOYMENT}")
+
+# Append the processed content to OVR
+echo "${MADEP}" >> "${OVR}"
+
 fi
 
   #toleration and taint

@@ -1,9 +1,14 @@
 Release Note
 =============
 
+v1.43
+
+Fea Provide nodePort for database
+-c 32315  replace the DB_NODE_PORT defined in mariadb-galeria-deploy.yaml a node port
+
 v1.42
 
-Option for podAntiAffinity
+Fea Option for podAntiAffinity
 use -y with weight eg -y 100
 ./kube/service.sh -y "100"
 
