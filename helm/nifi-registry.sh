@@ -78,7 +78,7 @@ replicaCount: ${REPLICA_COUNT}
 # fi
 
 #toleration and taint
-./kube/set-taint.sh "${NPN}" "${OVR}"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB0"
 
 fi
 

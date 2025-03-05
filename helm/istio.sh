@@ -73,7 +73,7 @@ echo "
 replicaCount: ${REPLICA_COUNT}
  " > $OVR 
 
-./kube/set-taint.sh "${NPN}" "${OVR}"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB0"
 
 echo "
 replicaCount: ${REPLICA_COUNT}

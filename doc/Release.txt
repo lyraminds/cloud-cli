@@ -1,6 +1,12 @@
 Release Note
 =============
 
+v1.42
+
+Option for podAntiAffinity
+use -y with weight eg -y 100
+./kube/service.sh -y "100"
+
 v1.41
 
 Bug nodepool creation cause missing taint
@@ -8,16 +14,24 @@ Bug nodepool creation cause missing taint
 v1.40
 
 Enh Disable taint for system nodepool creation
+    -o "--mode System"
 
 v1.39
 
-Enh Support for multile instance of mariadb minio keycloak 
+Enh Support for multile instance of mariadb minio keycloak in the same cluster
+    -l sg for singapore, -l uk for united kingdom etc
 
 v1.38
 
 Enh New Documentation
 Enh better option to create config mapping
-Enh Help typo fixes 
+
+    export SD_UI_FQN=$(fqhn "${SD_UI}")
+    export SD_PAY_FQN=$(fqhn "${SD_PAY}")
+
+    # Process template with environment variables
+    #${1} or project-name-config.configmap file should exist in CC_RESOURCES_ROOT folder
+    env-add-config-map "${1}" "SD_UI_FQN" "SD_PAY_FQN"
 
 v1.37
 
@@ -61,6 +75,14 @@ export CC_MARIADB_DEPLOYMENT=${CC_RESOURCES_ROOT}/mariadb-deploy.yaml
 v1.30
 
 Fea Append to host mapping
+
+    env-append-host-mapping '
+    add_request_headers:
+        X-ProxyPort:
+        value: "443"
+        X-ProxyScheme:
+        value: https
+    '
 
 v1.29
 

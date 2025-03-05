@@ -51,11 +51,14 @@ H='
 
 -w "true"
 -w "true|false" true will overwrite existing file in deploy folder
+
+-y POD_ANTI_AFFINITY_WEIGHT
+-y 100 will enable pod POD_ANTI_AFFINITY to the current environmnet and set weight to 100
 '
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:o:c:v:e:i:u:w: flag
+while getopts a:p:n:s:r:o:c:v:e:i:u:w:y: flag
 do
 info "kube/service.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -71,6 +74,7 @@ info "kube/service.sh ${flag} ${OPTARG}"
         i) IMG_NAME=${OPTARG};;
         u) APP_IMG_URL=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;       
     esac
 done
 
@@ -217,9 +221,9 @@ echo "
             nodePublishSecretRef:                       # Only required when using service principal mode
               name: ${CC_NODE_PUBLISTH_SECRET_REF}                 # Only required when using service principal mode
 " >> "${OVR}"
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
 elif [ -f "${CC_GEN_ENV_CONFIG_MAP_PATH}" ]; then
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
 CNFMAP=`cat "${CC_GEN_ENV_CONFIG_MAP_PATH}"`
 export CC_GEN_ENV_CONFIG_MAP_PATH=""
 echo "${CNFMAP}" >> "${OVR}"
@@ -230,9 +234,9 @@ echo "
         - name: data
           emptyDir: {}
 " >> "${OVR}"
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
 else
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
 fi
 
 # if [ ${PROBE} = true ]; then
