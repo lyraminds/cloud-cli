@@ -54,11 +54,18 @@ H='
 
 -y POD_ANTI_AFFINITY_WEIGHT
 -y 100 will enable pod POD_ANTI_AFFINITY to the current environmnet and set weight to 100
+
+-h <hpa template file> HorizontalPodAutoscaler template file
+-h /hpa/hpa-1-3.yaml 
+
+-m <memory> applied in hpa template file
+-m "512Mi"
+
 '
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:o:c:v:e:i:u:w:y: flag
+while getopts a:p:n:s:r:o:c:v:e:i:u:w:y:h:m: flag
 do
 info "kube/service.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -74,7 +81,9 @@ info "kube/service.sh ${flag} ${OPTARG}"
         i) IMG_NAME=${OPTARG};;
         u) APP_IMG_URL=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
-        y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;       
+        y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;
+        h) HPA_FILE=${OPTARG};;
+        m) HPA_MEMORY=${OPTARG};;
     esac
 done
 
@@ -237,6 +246,25 @@ echo "
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
 else
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB3" "${POD_ANTI_AFFINITY_WEIGHT}"
+fi
+
+if [ ! -z "${HPA_FILE}" -a "${HPA_FILE}" != "" ]; then
+
+HPA_FILE=${CC_RESOURCES_ROOT}/${HPA_FILE}
+
+if [ -f "${HPA_FILE}" ]; then
+
+export CC_APP_NAME=${APP_NAME}
+export CC_NAME_SPACE=${NS}
+export CC_AVG_MEMORY=${HPA_MEMORY}
+# Read file and substitute environment variable
+HPA_DATA=$(envsubst '${CC_APP_NAME} ${CC_NAME_SPACE} ${CC_AVG_MEMORY}' < "${HPA_FILE}")
+
+# Append the processed content to OVR
+echo "${HPA_DATA}" >> "${OVR}"
+
+fi
+
 fi
 
 # if [ ${PROBE} = true ]; then

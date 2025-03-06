@@ -1,6 +1,12 @@
 Release Note
 =============
 
+v1.44
+
+Fea HPA Support define Hpa template in resources folder
+-h "hpa/hpa-1-3.yaml" -m "250Mi"
+
+
 v1.43
 
 Fea Provide nodePort for database
