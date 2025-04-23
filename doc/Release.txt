@@ -1,6 +1,10 @@
 Release Note
 =============
 
+v1.45
+
+SIGNATURE_CLEANER and SIGNATURE_COMPARISON in seldon
+
 v1.44
 
 Fea HPA Support define Hpa template in resources folder

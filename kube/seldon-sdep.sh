@@ -153,6 +153,24 @@ ENV_LAYOUTLM="
             value: /mnt/models
 "
 fi
+if [ "${MODEL_IMPL}" == "SIGNATURE_CLEANER" ]; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFlowSignatureProcessorServer
+          - name: SIGNATURE_CLEANER_BASE_MODEL_PATH
+            value: /mnt/models
+"
+fi
+if [ "${MODEL_IMPL}" == "SIGNATURE_COMPARISON" ]; then
+ENV_LAYOUTLM="
+          env:
+          - name: MODEL_NAME
+            value: MLFLowSiamese
+          - name: SIGNATURE_COMPARISON_BASE_MODEL_PATH
+            value: /mnt/models
+"
+fi
 if [ "${MODEL_IMPL}" == "LAYOUTLM_CLASSIFICATION_SERVER" ]; then
 ENV_LAYOUTLM="
           env:
