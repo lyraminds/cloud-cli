@@ -99,6 +99,10 @@ extraEnvVars:
 
 " > $OVR
 
+if [ -f "${CC_MINIO_DEPLOYMENT}" ]; then
+cat ${CC_MINIO_DEPLOYMENT} >> ${OVR}
+fi   
+
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB0"
 

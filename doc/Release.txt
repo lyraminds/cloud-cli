@@ -1,6 +1,14 @@
 Release Note
 =============
 
+
+v1.46
+
+Fea Minio and Rabbitmq common configuration 
+
+export CC_MINIO_DEPLOYMENT=${CC_RESOURCES_ROOT}/minio-deploy.yaml
+export CC_RABBITMQ_DEPLOYMENT=${CC_RESOURCES_ROOT}/rabbitmq-deploy.yaml
+
 v1.45
 
 SIGNATURE_CLEANER and SIGNATURE_COMPARISON in seldon

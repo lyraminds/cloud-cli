@@ -138,6 +138,11 @@ extraConfiguration: |
  " >> ${OVR}   
 fi
 
+if [ -f "${CC_RABBITMQ_DEPLOYMENT}" ]; then
+cat ${CC_RABBITMQ_DEPLOYMENT} >> ${OVR}
+fi  
+
+
 #toleration and taint
 ./kube/set-taint.sh "${NPN}" "${OVR}" "TAB0"
 

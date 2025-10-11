@@ -25,18 +25,17 @@ empty "$1" "Virtual subnet name for vnet $VNET" "${H}"
 empty "$2" "Address" "${H}"
 
 
-E=`az network vnet subnet list -g ${RG} --query "[?name=='${SNET}']"`
+E=`az network vnet subnet list -g ${RG} --vnet-name ${VNET} --query "[?name=='${SNET}']"`
 if [ "${E}" == "[]" ]; then
 
 C="az network vnet subnet create -g ${RG} -n ${SNET} \
---vnet-name ${VNET}
---address-prefix ${ADDR} \
---tags ${CC_TAGS}
+--vnet-name ${VNET} \
+--address-prefix ${ADDR}
 "
 echo "$C"
 ok && run-cmd "$C"
-rlog "az network vnet subnet delete -g ${RG} -n ${SNET}"
-vlog "az network vnet subnet list -g ${RG} --query "[?name==\'${SNET}\']""
+rlog "az network vnet subnet delete -g ${RG} --vnet-name ${VNET} -n ${SNET}"
+vlog "az network vnet subnet list -g ${RG} --vnet-name ${VNET} --query \"[?name=='${SNET}']\""
 fi
 
 

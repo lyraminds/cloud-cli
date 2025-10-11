@@ -25,7 +25,7 @@ https://learn.microsoft.com/en-us/azure/virtual-machines/sizes
 
 help "${1}" "${H}"
 
-while getopts o:p:m:c:d: flag
+while getopts o:p:m:c:d:s: flag
 do
 info "az/aks-np.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -34,6 +34,8 @@ info "az/aks-np.sh ${flag} ${OPTARG}"
         m) VMSIZE=${OPTARG};;
         c) KS=${OPTARG};;
         d) DISKSIZE=${OPTARG};;
+        s) SUBNET_NAME=$OPTARG;;
+        \?) echo "${H}"; return 1 ;;
     esac
 done
 
@@ -44,13 +46,24 @@ empty "$DISKSIZE" "Disk Size" "$H"
 E=`az aks nodepool list -g ${RG} --cluster-name ${KS} --query "[?name=='${NPN}']"`
 if [ "${E}" == "[]" ]; then
 
+if [ -n "$SUBNET_NAME" ]; then
+  echo "Fetching subnet ID for: $SUBNET_NAME"
+  SUBNET_ID=$(az network vnet subnet show \
+    --resource-group ${RG} \
+    --vnet-name ${CC_VNET_NAME} \
+    --name ${SUBNET_NAME} \
+    --query id -o tsv)
+else
+  echo "No subnet specified. Node pool will use default subnet."
+fi
+
 C="az aks nodepool add \
     -g ${RG} \
     --cluster-name ${KS} \
     --name ${NPN} \
     --node-vm-size ${VMSIZE} \
     --node-osdisk-size ${DISKSIZE} \
-    --tags ${CC_TAGS} ${OPTIONS} "
+    ${SUBNET_ID:+--vnet-subnet-id "$SUBNET_ID"} --tags ${CC_TAGS} ${OPTIONS} "
 
     # --node-taints ${CC_NODE_POOL_TAINT_TYPE}=${NPN}:${CC_NODE_POOL_TAINT_EFFECT} \
     # --labels join=${NPN} \

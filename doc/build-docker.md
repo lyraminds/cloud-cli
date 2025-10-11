@@ -72,3 +72,48 @@ You have already defined git url in your config file
 run-git "http://git.company.com/companyspace" "myproject" "master"
 ```
 ----
+
+
+
+✅ To build Docker images in parallel:
+
+- Add `&` at the end of each build command.
+- Add `wait` at the end of the script to wait for all jobs to complete.
+- The number of parallel jobs depends on the number of agents or CPU quota available.
+
+Example:
+
+```
+backend() {
+local PROJECT=${1}; 
+build-acr "${VERSION}" "develop" "${PROJECT}" "myspace/MyProject/_git" "Dockerfile" "--build-arg INDEX_URL=${CC_PYTHON_REPO}"
+}
+
+frontend() {
+local PROJECT=${1}; 
+build-acr "${VERSION}" "develop-v2" "${PROJECT}" "myspace/MyProject/_git" "Dockerfile" "--build-arg SOURCE_BRANCH=master --build-arg NPM_TOKEN=${CC_NPM_TOKEN}" 
+}
+
+backend "reports-api" &
+backend "app-api" &
+frontend "app-ui" &
+
+wait
+echo "✅ All builds completed."
+
+```
+
+📝 To log output for each build:
+
+Use `> logs/logfilename.log 2>&1 &` to redirect stdout and stderr to a log file.
+
+Example:
+
+```
+backend "reports-api" > logs/reports-api.log 2>&1 &
+backend "app-api" > logs/app-api.log 2>&1 &
+frontend "app-ui" > logs/app-ui.log 2>&1 &
+
+wait
+echo "✅ All builds completed."
+```
