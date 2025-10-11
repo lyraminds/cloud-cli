@@ -53,13 +53,13 @@ if [ "${ACTION}" == "uninstall" ]; then
 ACTION=delete
 fi
 
+
 EF="microsoft-ocr.yaml"
 if [ ! -f "${CC_RESOURCES_ROOT}/${EF}" ]; then
-DISP=`cat ./kube/config/${EF}`
-DISP=`echo "${DISP}" | envsubst '${CC_MICROSOFT_OCR_ENDPOINT_URI}' | envsubst '${CC_MICROSOFT_OCR_API_KEY}'`
-echo "${DISP}" > "${CC_RESOURCES_ROOT}/${EF}"   
+REFENV=$(envsubst '${CC_MICROSOFT_OCR_ENDPOINT_URI} ${CC_MICROSOFT_OCR_API_KEY}' < "./kube/config/${EF}" | tee "${CC_RESOURCES_ROOT}/${EF}")
+elif [ -f "${CC_MICROSOFT_OCR_DEPLOYMENT}" ]; then
+REFENV=$(envsubst '${CC_MICROSOFT_OCR_ENDPOINT_URI} ${CC_MICROSOFT_OCR_API_KEY}' < "${CC_MICROSOFT_OCR_DEPLOYMENT}")
 fi
-REFENV=`cat "${CC_RESOURCES_ROOT}/${EF}"`
 
 ./kube/service.sh -a "${ACTION}" -n "${APP_NAME}" -e "${SUB_DOMAIN}" -c "${PORT}" -s "${NS}" -p "${NPN}" -o "${REFENV}" -u "${IMG_URL}" -r "${REPLICA_COUNT}"
 

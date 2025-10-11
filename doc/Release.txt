@@ -1,6 +1,8 @@
 Release Note
 =============
+v1.47
 
+Bug Ocr and keycloak not replacing env public url defined in az-override
 
 v1.46
 

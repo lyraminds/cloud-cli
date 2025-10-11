@@ -124,17 +124,25 @@ service:
 
 proxyAddressForwarding: true
 extraEnvVars: 
-  - name: KEYCLOAK_FRONTEND_URL 
-    value: \"${CC_KEYCLOAK_PUBLIC_URL}\" 
-  - name: KEYCLOAK_LOG_LEVEL 
-    value: \"ERROR\" 
-  - name: KEYCLOAK_PROXY_ADDRESS_FORWARDING 
-    value: \"true\" 
+  # - name: KEYCLOAK_FRONTEND_URL 
+  #   value: \"${CC_KEYCLOAK_PUBLIC_URL}\" 
+  # - name: KEYCLOAK_LOG_LEVEL 
+  #   value: \"ERROR\" 
+  # - name: KEYCLOAK_PROXY_ADDRESS_FORWARDING 
+  #   value: \"true\" 
 
     " > ${OVR}
 
 if [ -f "${CC_KEYCLOAK_DEPLOYMENT}" ]; then
-cat ${CC_KEYCLOAK_DEPLOYMENT} >> ${OVR}
+
+# Read file and substitute environment variable
+MADEP=$(envsubst '${CC_KEYCLOAK_PUBLIC_URL}' < "${CC_KEYCLOAK_DEPLOYMENT}")
+
+# Append the processed content to OVR
+echo "${MADEP}" >> "${OVR}"
+
+# cat ${CC_KEYCLOAK_DEPLOYMENT} >> ${OVR}
+
 fi    
 
 #toleration and taint
