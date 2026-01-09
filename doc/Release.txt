@@ -1,5 +1,11 @@
 Release Note
 =============
+v1.48
+
+Fea Option for podAntiAffinity seldon
+use -y with weight eg -y 100
+./kube/seldon-sdep.sh -y "100"
+
 v1.47
 
 Bug Ocr and keycloak not replacing env public url defined in az-override

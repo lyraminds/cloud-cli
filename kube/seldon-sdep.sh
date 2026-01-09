@@ -28,7 +28,10 @@ H='
 SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERVER | LC_EXTRACT_TENSORFLOW | YOLO_SERVER | NAME_ADDRESS_SERVER | GOODS_DESCRIPTION
 
 -r "${REPLICA_COUNT}" 
--r "replica-count" 
+-r "replica-count"
+
+-y POD_ANTI_AFFINITY_WEIGHT
+-y 100 will enable pod POD_ANTI_AFFINITY to the current environmnet and set weight to 100
 
 -v "true|false"  true will regenerate deployment scripts
 
@@ -36,7 +39,7 @@ SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERV
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:f:c:m:v:w: flag
+while getopts a:p:n:s:r:f:c:m:v:w:y: flag
 do
 info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -50,6 +53,7 @@ info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
         m) MODEL_IMPL=${OPTARG};;
         v) VERSION=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
+        y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;
     esac
 done
 
@@ -310,7 +314,7 @@ echo "
 fi
 
 #toleration and taint
-./kube/set-taint.sh "${NPN}" "${OVR}" "TAB4"
+./kube/set-taint.sh "${NPN}" "${OVR}" "TAB4" "${POD_ANTI_AFFINITY_WEIGHT}"
 
 
 echo "
