@@ -61,11 +61,20 @@ H='
 -m <memory> applied in hpa template file
 -m "512Mi"
 
+-t "${SMALL_RESOURCE} | ${MEDIUM_RESOURCE} | ${LARGE_RESOURCE}"  will set the resource limits and requests for the deployment.
+SMALL_RESOURCE="          
+          resources:
+            requests:
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+"
+
 '
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:o:c:v:e:i:u:w:y:h:m: flag
+while getopts a:p:n:s:r:o:c:v:e:i:u:w:y:h:m:t: flag
 do
 info "kube/service.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -84,10 +93,11 @@ info "kube/service.sh ${flag} ${OPTARG}"
         y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;
         h) HPA_FILE=${OPTARG};;
         m) HPA_MEMORY=${OPTARG};;
+        t) POD_RESOURCES=${OPTARG};;
     esac
 done
 
-
+POD_RESOURCES=${POD_RESOURCES:-"          resources: {}"}
 
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
@@ -238,7 +248,7 @@ export CC_GEN_ENV_CONFIG_MAP_PATH=""
 echo "${CNFMAP}" >> "${OVR}"
 elif [[ ${REFENV} != *"volumes"* ]]; then
 echo "
-          resources: {}
+${POD_RESOURCES}
       volumes:
         - name: data
           emptyDir: {}

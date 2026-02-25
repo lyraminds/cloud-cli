@@ -35,11 +35,19 @@ SKLEARN_SERVER | LAYOUTLM_SERVER | LAYOUTLM_CLASSIFICATION_SERVER | BERTNER_SERV
 
 -v "true|false"  true will regenerate deployment scripts
 
+-t "${SMALL_RESOURCE} | ${MEDIUM_RESOURCE} | ${LARGE_RESOURCE}"  will set the resource limits and requests for the deployment.
+SMALL_RESOURCE="          
+          resources:
+            requests:
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+"
 '
 
 help "${1}" "${H}"
 
-while getopts a:p:n:s:r:f:c:m:v:w:y: flag
+while getopts a:p:n:s:r:f:c:m:v:w:y:t: flag
 do
 info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
     case "${flag}" in
@@ -54,10 +62,11 @@ info "kube/seldon-sdep.sh ${flag} ${OPTARG}"
         v) VERSION=${OPTARG};;
         w) OVER_WRITE=${OPTARG};;
         y) POD_ANTI_AFFINITY_WEIGHT=${OPTARG};;
+        t) POD_RESOURCES=${OPTARG};;
     esac
 done
 
-
+POD_RESOURCES=${POD_RESOURCES:-"          resources: {}"}
 
 empty "$APP_NAME" "APP NAME" "$H"
 empty "$NS" "NAMESPACE" "$H"
@@ -273,12 +282,7 @@ spec:
         containers:
         - name: ${APP_NAME}${ENV_LAYOUTLM}
           # Not required for letter of credit
-          # resources:
-          #   requests:
-          #     memory: 2560Mi
-          #   limits:
-          #     memory: 3072Mi
-
+${POD_RESOURCES}
           securityContext:
             privileged: true
             runAsGroup: 0

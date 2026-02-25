@@ -1,5 +1,22 @@
 Release Note
 =============
+v1.49
+
+Fea option to set resources
+
+-t "${SMALL_RESOURCE} | ${MEDIUM_RESOURCE} | ${LARGE_RESOURCE}"  will set the resource limits and requests for the deployment.
+SMALL_RESOURCE="          
+          resources:
+            requests:
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+"
+ define your required resources in env-vars.sh
+
+./kube/seldon-sdep.sh -t "${SMALL_RESOURCE}"
+./kube/sertice.sh -t "${SMALL_RESOURCE}"
+
 v1.48
 
 Fea Option for podAntiAffinity seldon
