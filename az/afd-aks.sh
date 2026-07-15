@@ -21,8 +21,8 @@ done
 
 
 empty "$RG" "Resource group" "${H}"
-
+if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
 source az/afd-profile.sh ${RG}
 source az/afd-endpoint.sh ${RG}
 
-
+fi

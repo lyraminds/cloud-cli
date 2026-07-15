@@ -5,7 +5,7 @@ RG=${1:-$CC_RESOURCE_GROUP_NAME}
 source bin/base.sh
 
 #--sku {Premium_AzureFrontDoor, Standard_AzureFrontDoor}
-
+if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
 E=`az afd profile list -g ${RG} --query "[?name=='${CC_FRONT_DOOR_PROFILE}']"`
 if [ "${E}" == "[]" ]; then
 
@@ -17,7 +17,7 @@ vlog "az afd profile show -g ${RG} -n ${CC_FRONT_DOOR_PROFILE}"
 
 fi
 
-
+fi
 
 
 

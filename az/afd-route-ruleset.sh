@@ -24,7 +24,7 @@ empty "$RG" "RESOURCE GROUP NAME" "$H"
 empty "$RSN" "Rule set name" "$H"
 empty "$SD_NAME" "Subdomain" "$H"
 #--sku {Premium_AzureFrontDoor, Standard_AzureFrontDoor}
-
+if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
 E=`az afd rule-set list -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE} --query "[?name=='${RSN}']"`
 if [ "${E}" != "[]" ]; then
 if [ "${SD_NAME}" == "." ]; then
@@ -37,7 +37,7 @@ C="az afd route update -g ${RG} --endpoint-name "${CC_FRONT_DOOR_ENDPOINT}" --pr
 ok && run-cmd "$C"
 
 fi
-
+fi
 
 
 

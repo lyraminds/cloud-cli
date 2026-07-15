@@ -30,6 +30,8 @@ empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 DOM="${SD_NAME}.${DO}"
 
+if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+
 E=`az afd custom-domain list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${SD_NAME}']"`
 if [ "${E}" == "[]" ]; then
 
@@ -54,5 +56,5 @@ vlog "az afd custom-domain show -g ${RG} --profile-name \"${CC_FRONT_DOOR_PROFIL
 
 fi
 
-
+fi
 

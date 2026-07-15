@@ -1,5 +1,10 @@
 Release Note
 =============
+v1.50
+
+export CC_ENABLE_ADF_DOMAIN="false"
+to stop adf creation routes and domain creations
+
 v1.49
 
 Fea option to set resources
