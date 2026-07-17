@@ -22,7 +22,7 @@ empty "$RG" "RESOURCE GROUP NAME" "$H"
 empty "$RSN" "Rule set name" "$H"
 
 #--sku {Premium_AzureFrontDoor, Standard_AzureFrontDoor}
-if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
 E=`az afd rule-set list -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE} --query "[?name=='${RSN}']"`
 if [ "${E}" == "[]" ]; then
 

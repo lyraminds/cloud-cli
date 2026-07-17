@@ -19,9 +19,13 @@ info "az/adf-aks.sh ${flag} ${OPTARG}"
     esac
 done
 
+echo "===================== ${CC_ENABLE_AFD_DOMAIN} ==========================="
 
 empty "$RG" "Resource group" "${H}"
-if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
+
+echo "===================== ${CC_ENABLE_AFD_DOMAIN} ==========================="
+
 source az/afd-profile.sh ${RG}
 source az/afd-endpoint.sh ${RG}
 

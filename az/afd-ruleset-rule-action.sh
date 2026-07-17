@@ -21,7 +21,7 @@ info "az/afd-ruleset-rule-action.sh ${flag} ${OPTARG}"
         o) OPTIONS=${OPTARG};;
     esac
 done
-if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
 empty "$RG" "RESOURCE GROUP NAME" "$H"
 empty "$RSN" "Rule set name" "$H"
 empty "$OPTIONS" "Options" "$H"

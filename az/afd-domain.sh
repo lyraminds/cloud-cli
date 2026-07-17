@@ -30,7 +30,7 @@ empty "$RG" "RESOURCE GROUP NAME" "$H"
 
 DOM="${SD_NAME}.${DO}"
 
-if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
 
 E=`az afd custom-domain list -g ${RG} --profile-name "${CC_FRONT_DOOR_PROFILE}" --query "[?name=='${SD_NAME}']"`
 if [ "${E}" == "[]" ]; then

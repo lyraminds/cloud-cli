@@ -4,7 +4,7 @@ RG=${1:-$CC_RESOURCE_GROUP_NAME}
 
 source bin/base.sh
 
-if [ "${CC_ENABLE_ADF_DOMAIN}" = "true" ]; then
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
 E=`az afd endpoint list -g ${RG} --profile-name ${CC_FRONT_DOOR_PROFILE} --query "[?name=='${CC_FRONT_DOOR_ENDPOINT}']"`
 if [ "${E}" == "[]" ]; then
 

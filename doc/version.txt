@@ -1,1 +1,1 @@
-CloudCLI-v1.50-b150726
+CloudCLI-v1.51-b170726
