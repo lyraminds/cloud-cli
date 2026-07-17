@@ -27,6 +27,7 @@ info "az/adf-aks-origin.sh ${flag} ${OPTARG}"
     esac
 done
 
+if [ "${CC_ENABLE_AFD_DOMAIN}" = "true" ]; then
 
 empty "$SD_NAME" "SUB DOMAIN NAME" "$H"
 empty "$DO" "DOMAIN NAME" "$H"
@@ -135,6 +136,8 @@ fi
 
 else
 echo "No front door skipping ${DOM}"
+fi
+
 fi
 #   --private-link-resource /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group/providers/Microsoft.Storage/storageAccounts/plstest 
 #   --private-link-location EastUS 
